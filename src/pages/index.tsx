@@ -29,28 +29,29 @@ export default function Home() {
                   <span className="text-yellow-400">pohodlne</span>
                 </h1>
                 <p className="text-lg sm:text-xl text-white/90 mb-8">
-                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút. Letiská, dlhé trasy, firemné transfery – vždy načas.
+                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút.<br />
+                  Letiská, dlhé trasy, firemné transfery – vždy načas.
                 </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="#objednavka">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
-                  >
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Objednať teraz
-                  </Button>
-                </a>
-                <a href="tel:+421911606206">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
-                  >
-                    <Phone className="w-5 h-5 mr-2" />
-                    <span className="tabular-nums">+421 911 606 206</span>
-                  </Button>
-                </a>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="#objednavka">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
+                    >
+                      <Calendar className="w-5 h-5 mr-2" />
+                      Objednať teraz
+                    </Button>
+                  </a>
+                  <a href="tel:+421911606206">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
+                    >
+                      <Phone className="w-5 h-5 mr-2" />
+                      <span className="tabular-nums">+421 911 606 206</span>
+                    </Button>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
