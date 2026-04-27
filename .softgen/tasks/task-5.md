@@ -1,6 +1,6 @@
 ---
 title: Hero Background Image
-status: in_progress
+status: done
 priority: medium
 type: feature
 tags: [hero, design, background]
@@ -13,9 +13,9 @@ position: 5
 Add hero-bg.png as background image to hero section with gradient overlay for text readability.
 
 ## Checklist
-- [ ] Add background image to hero section
-- [ ] Apply dark gradient overlay for readability
-- [ ] Ensure form remains readable on image background
+- [x] Add background image to hero section
+- [x] Apply dark gradient overlay for readability
+- [x] Ensure form remains readable on image background
 
 ## Acceptance
 - Hero section displays background image
