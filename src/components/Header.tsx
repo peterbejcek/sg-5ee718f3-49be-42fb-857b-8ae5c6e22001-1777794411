@@ -56,108 +56,93 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "text-sm font-medium transition-colors",
-                isScrolled 
-                  ? "text-foreground/80 hover:text-primary" 
-                  : "text-primary-foreground/90 hover:text-white"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          <Link 
+            href="#sluzby" 
+            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
+              isScrolled ? "text-foreground" : "text-white"
+            }`}
+          >
+            Služby
+          </Link>
+          <Link 
+            href="#cennik" 
+            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
+              isScrolled ? "text-foreground" : "text-white"
+            }`}
+          >
+            Cenník
+          </Link>
+          <Link 
+            href="#kontakt" 
+            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
+              isScrolled ? "text-foreground" : "text-white"
+            }`}
+          >
+            Kontakt
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <a href="tel:+421911606206" className="hidden sm:flex items-center gap-2 group">
-            <div className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-              isScrolled ? "bg-primary/10 text-primary" : "bg-white/10 text-white"
-            )}>
-              <Phone className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-medium opacity-80 leading-none">Dispečing 24/7</span>
-              <span className="font-display font-bold text-lg tabular-nums leading-none mt-1">
-                +421 911 606 206
-              </span>
-            </div>
-          </a>
+        {/* Call Button - Desktop */}
+        <a href="tel:+421911606206" className="hidden md:block">
+          <Button 
+            size="lg"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-12 px-6 text-base"
+          >
+            <Phone className="w-5 h-5 mr-2" />
+            +421 911 606 206
+          </Button>
+        </a>
 
-          <a href="tel:+421911606206" className="sm:hidden">
-            <Button size="icon" variant={isScrolled ? "default" : "secondary"} className={!isScrolled ? "bg-white text-primary hover:bg-white/90" : ""}>
-              <Phone className="w-5 h-5" />
-            </Button>
-          </a>
-
-          <a href="/#objednavka" className="hidden md:block">
+        {/* Mobile Menu Button */}
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild className="md:hidden">
             <Button 
-              className={cn(
-                "font-display font-bold px-6",
-                isScrolled 
-                  ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
-                  : "bg-white text-primary hover:bg-white/90"
-              )}
+              variant="ghost" 
+              size="icon"
+              className={`h-12 w-12 ${isScrolled ? "text-primary" : "text-white"}`}
             >
-              Objednať teraz
+              <Menu className="h-6 w-6" />
             </Button>
-          </a>
-
-          {/* Mobile Menu */}
-          <div className="lg:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className={cn(
-                    isScrolled 
-                      ? "text-primary hover:bg-primary/10" 
-                      : "text-white hover:bg-white/20"
-                  )}
-                >
-                  <Menu className="w-6 h-6" />
-                  <span className="sr-only">Otvoriť menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[350px] bg-background">
-                <div className="flex flex-col h-full mt-6">
-                  <nav className="flex flex-col gap-4 text-lg font-medium text-foreground">
-                    {navLinks.map((link) => (
-                      <Link 
-                        key={link.href}
-                        href={link.href}
-                        onClick={() => setIsOpen(false)}
-                        className="hover:text-primary transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
-                  
-                  <div className="mt-auto flex flex-col gap-4 pb-8">
-                    <a href="tel:+421911606206" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 text-lg">
-                        <Phone className="w-5 h-5 mr-2" />
-                        +421 911 606 206
-                      </Button>
-                    </a>
-                    <a href="/#objednavka" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 h-12 text-lg">
-                        Objednať online
-                      </Button>
-                    </a>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <nav className="flex flex-col gap-6 mt-8">
+              <Link 
+                href="#sluzby" 
+                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
+                onClick={() => setIsOpen(false)}
+              >
+                Služby
+              </Link>
+              <Link 
+                href="#cennik" 
+                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
+                onClick={() => setIsOpen(false)}
+              >
+                Cenník
+              </Link>
+              <Link 
+                href="#kontakt" 
+                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
+                onClick={() => setIsOpen(false)}
+              >
+                Kontakt
+              </Link>
+              
+              <div className="pt-6 border-t border-border">
+                <a href="tel:+421911606206">
+                  <Button 
+                    size="lg"
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-14 text-lg"
+                  >
+                    <Phone className="w-5 h-5 mr-2" />
+                    +421 911 606 206
+                  </Button>
+                </a>
+              </div>
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );

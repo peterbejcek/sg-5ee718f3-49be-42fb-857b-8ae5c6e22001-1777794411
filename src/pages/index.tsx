@@ -115,37 +115,61 @@ export default function Home() {
             {/* Bottom Fade Transition */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
           </div>
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl">
-              <div>
-                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
-                  E-TAXI Košice –<br />
-                  <span className="text-yellow-400">rýchlo</span>, spoľahlivo,<br />
-                  <span className="text-yellow-400">pohodlne</span>
-                </h1>
-                <p className="text-lg sm:text-xl text-white/90 mb-8">
-                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút.<br />
-                  Letiská, dlhé trasy, firemné transfery – vždy načas.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a href="#objednavka">
-                    <Button
+          {/* Content */}
+          <div className="relative z-10 container py-20 sm:py-24 md:py-32">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left Column - Hero Text */}
+              <div className="text-center lg:text-left space-y-6 sm:space-y-8">
+                <div className="space-y-4">
+                  <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-white leading-tight">
+                    Taxík v Košiciach kedykoľvek potrebujete
+                  </h1>
+                  <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-2xl mx-auto lg:mx-0">
+                    Profesionálna taxislužba 24/7. Rýchla objednávka online alebo cez telefón.
+                  </p>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <a href="tel:+421911606206" className="w-full sm:w-auto">
+                    <Button 
                       size="lg"
-                      className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
+                      className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-14 sm:h-16 px-8 text-base sm:text-lg"
                     >
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Objednať teraz
+                      <Phone className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                      Zavolať teraz
                     </Button>
                   </a>
-                  <a href="tel:+421911606206">
-                    <Button
+                  <a href="#sluzby" className="w-full sm:w-auto">
+                    <Button 
                       size="lg"
-                      className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
+                      variant="outline"
+                      className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-primary font-display font-semibold h-14 sm:h-16 px-8 text-base sm:text-lg"
                     >
-                      <Phone className="w-5 h-5 mr-2" />
-                      <span className="tabular-nums">+421 911 606 206</span>
+                      <Calendar className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                      Rezervovať jazdu
                     </Button>
                   </a>
+                </div>
+
+                {/* Features */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-6 sm:pt-8">
+                  <div className="text-center lg:text-left">
+                    <div className="text-2xl sm:text-3xl font-bold text-white mb-1">24/7</div>
+                    <div className="text-sm sm:text-base text-white/80">Dispečing</div>
+                  </div>
+                  <div className="text-center lg:text-left">
+                    <div className="text-2xl sm:text-3xl font-bold text-white mb-1">15 min</div>
+                    <div className="text-sm sm:text-base text-white/80">Príchod</div>
+                  </div>
+                  <div className="text-center lg:text-left">
+                    <div className="text-2xl sm:text-3xl font-bold text-white mb-1">6 €</div>
+                    <div className="text-sm sm:text-base text-white/80">Min. cena</div>
+                  </div>
+                  <div className="text-center lg:text-left">
+                    <div className="text-2xl sm:text-3xl font-bold text-white mb-1">100%</div>
+                    <div className="text-sm sm:text-base text-white/80">Spoľahlivosť</div>
+                  </div>
                 </div>
               </div>
             </div>
