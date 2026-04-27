@@ -22,13 +22,15 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-primary/50"></div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6">
-                Rýchla a spoľahlivá preprava v Košiciach
-              </h1>
-              <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl">
-                Profesionálna taxislužba dostupná 24/7. Moderný vozový park,
-                skúsení vodiči, konkurenčné ceny.
-              </p>
+              <div>
+                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
+                  E-TAXI Košice – <span className="text-yellow-400">rýchlo</span>, spoľahlivo, <span className="text-yellow-400">pohodlne</span>
+                </h1>
+                <p className="text-lg sm:text-xl text-white/90 mb-8">
+                  Profesionálna taxislužba dostupná 24/7. Moderný vozový park,
+                  skúsení vodiči, konkurenčné ceny.
+                </p>
+              </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a href="#objednavka" className="flex-1 sm:flex-none">
                   <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold text-lg">
