@@ -42,20 +42,13 @@ export function Header() {
       )}
     >
       <div className="container h-16 sm:h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 z-10 relative">
-          <div className="w-10 h-10 flex items-center justify-center">
-            <img 
-              src="/etaxi_logo_svg.svg" 
-              alt="E-TAXI Košice Logo" 
-              className={cn(
-                "w-full h-full object-contain transition-all",
-                !isScrolled ? "brightness-0 invert" : ""
-              )}
-            />
-          </div>
-          <span className="font-display font-bold text-xl sm:text-2xl hidden sm:inline-block">
-            E-TAXI
-          </span>
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3">
+          <img
+            src="/etaxi_logo_svg.svg"
+            alt="E-TAXI Košice"
+            className="h-12 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}
