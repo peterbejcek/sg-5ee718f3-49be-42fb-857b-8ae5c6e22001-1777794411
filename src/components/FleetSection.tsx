@@ -9,67 +9,59 @@ export function FleetSection() {
 
   const vehicles = [
     {
-      id: 1,
-      name: "Tesla Model 3",
-      type: "sedan",
-      capacity: 4,
-      features: [
-        { icon: Zap, label: "Elektrický pohon" },
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-      ],
-      image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-      isEco: true,
-    },
-    {
-      id: 2,
-      name: "VW Passat GTE",
-      type: "sedan",
-      capacity: 4,
-      features: [
-        { icon: Zap, label: "Plug-in hybrid" },
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-      ],
-      image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80",
-      isEco: true,
-    },
-    {
-      id: 3,
-      name: "Toyota Corolla Hybrid",
-      type: "sedan",
-      capacity: 4,
-      features: [
-        { icon: Fuel, label: "Hybrid pohon" },
-        { icon: Wind, label: "Klimatizácia" },
-      ],
-      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80",
-      isEco: true,
-    },
-    {
-      id: 4,
+      id: "1",
       name: "VW Golf VII",
-      type: "sedan",
+      type: "sedan" as const,
       capacity: 4,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-      ],
-      image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80",
-      isEco: false,
+      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      image: "/VW_Golf_VII.png",
+      description: "Komfortný sedan pre mestskú aj medzimestkú dopravu"
     },
     {
-      id: 5,
-      name: "Škoda Superb III",
-      type: "sedan",
+      id: "2",
+      name: "Toyota Corolla",
+      type: "sedan" as const,
       capacity: 4,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-      ],
-      image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80",
-      isEco: false,
+      features: ["klimatizacia", "wifi"],
+      image: "/corolla_krakov.PNG",
+      description: "Spoľahlivý sedan s nízkou spotrebou"
     },
+    {
+      id: "3",
+      name: "Tesla Model 3",
+      type: "sedan" as const,
+      capacity: 4,
+      features: ["klimatizacia", "wifi"],
+      image: "/tesla_Budapest.PNG",
+      description: "Prémiové elektrické vozidlo"
+    },
+    {
+      id: "4",
+      name: "Volkswagen Passat",
+      type: "kombi" as const,
+      capacity: 5,
+      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      image: "/VW_Kosice.PNG",
+      description: "Priestranné kombi s veľkým batožinovým priestorom"
+    },
+    {
+      id: "5",
+      name: "Škoda Octavia Combi",
+      type: "kombi" as const,
+      capacity: 5,
+      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop",
+      description: "Praktické kombi pre rodiny a väčšie skupiny"
+    },
+    {
+      id: "6",
+      name: "Mercedes-Benz Vito",
+      type: "van" as const,
+      capacity: 8,
+      features: ["klimatizacia", "wifi"],
+      image: "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=800&auto=format&fit=crop",
+      description: "Priestranný van pre väčšie skupiny a batožinu"
+    }
   ];
 
   const filteredVehicles = vehicles.filter((vehicle) => {
