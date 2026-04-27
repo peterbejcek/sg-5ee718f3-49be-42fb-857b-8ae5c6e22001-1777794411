@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Wifi, Wind, Zap, Fuel, Phone, Calendar, Baby } from "lucide-react";
+import { Users, Wifi, Wind, Zap, Phone, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,11 @@ export function FleetSection() {
       name: "VW Passat GTE",
       type: "kombi" as const,
       capacity: 5,
+      isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
         { icon: Zap, label: "Ekologický" },
-        { icon: Baby, label: "Detská sedačka" }
+        { icon: Users, label: "Detská sedačka" }
       ],
       image: "/VW_Kosice.PNG",
       description: "Ekologické plug-in hybrid kombi s veľkým batožinovým priestorom"
@@ -26,6 +27,7 @@ export function FleetSection() {
       name: "Toyota Corolla",
       type: "sedan" as const,
       capacity: 4,
+      isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
         { icon: Wifi, label: "WiFi" }
@@ -38,6 +40,7 @@ export function FleetSection() {
       name: "Tesla Model 3",
       type: "sedan" as const,
       capacity: 4,
+      isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
         { icon: Wifi, label: "WiFi" },
@@ -51,9 +54,10 @@ export function FleetSection() {
       name: "VW Golf VII Variant",
       type: "kombi" as const,
       capacity: 4,
+      isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Baby, label: "Detská sedačka" }
+        { icon: Users, label: "Detská sedačka" }
       ],
       image: "/VW_Golf_VII.png",
       description: "Komfortné kombi pre mestskú aj medzimestkú dopravu"
@@ -63,9 +67,10 @@ export function FleetSection() {
       name: "Škoda Octavia Combi",
       type: "kombi" as const,
       capacity: 5,
+      isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Baby, label: "Detská sedačka" }
+        { icon: Users, label: "Detská sedačka" }
       ],
       image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop",
       description: "Praktické kombi pre rodiny a väčšie skupiny"
@@ -75,6 +80,7 @@ export function FleetSection() {
       name: "Mercedes-Benz Vito",
       type: "van" as const,
       capacity: 8,
+      isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" }
       ],
