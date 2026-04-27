@@ -2,6 +2,7 @@ import { aboutData } from "@/data/about";
 import { Shield, Leaf, ShieldCheck, Eye, Phone, Mail, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 const iconMap = {
   Shield,
@@ -12,9 +13,21 @@ const iconMap = {
 
 export function AboutSection() {
   return (
-    <section id="o-nas" className="py-16 sm:py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center mb-12">
+    <motion.section 
+      className="py-16 sm:py-20 bg-muted/30"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="container">
+        <motion.div 
+          className="text-center max-w-3xl mx-auto mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
             {aboutData.title}
           </h2>
@@ -24,7 +37,7 @@ export function AboutSection() {
           <p className="text-muted-foreground text-lg">
             {aboutData.description}
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           {aboutData.stats.map((stat, idx) => (
@@ -41,30 +54,53 @@ export function AboutSection() {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
+        <motion.div 
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+        >
           {aboutData.values.map((value, idx) => {
             const Icon = iconMap[value.icon as keyof typeof iconMap];
             return (
-              <Card key={idx} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-lg">
-                      <Icon className="w-6 h-6 text-primary" />
+              <motion.div
+                key={idx}
+                className="text-center"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 }
+                }}
+              >
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-primary/10 p-3 rounded-lg">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-semibold text-xl mb-2">
+                          {value.title}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {value.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-display font-semibold text-xl mb-2">
-                        {value.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {value.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         <Card className="bg-primary text-primary-foreground">
           <CardContent className="p-8">
@@ -103,6 +139,6 @@ export function AboutSection() {
           </CardContent>
         </Card>
       </div>
-    </section>
+    </motion.section>
   );
 }

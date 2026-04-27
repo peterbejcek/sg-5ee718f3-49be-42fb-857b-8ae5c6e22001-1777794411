@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { faqData, faqItems } from "@/data/faq";
 import {
   Accordion,
@@ -10,7 +11,14 @@ import { Button } from "@/components/ui/button";
 
 export function FAQSection() {
   return (
-    <section id="faq" className="py-16 sm:py-20 bg-background">
+    <motion.section
+      id="faq"
+      className="py-16 sm:py-20 bg-muted/30"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+    >
       <div className="container">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
@@ -55,6 +63,6 @@ export function FAQSection() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
