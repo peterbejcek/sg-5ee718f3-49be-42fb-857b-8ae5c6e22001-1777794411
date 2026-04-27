@@ -21,10 +21,10 @@ export function Header() {
           <a href="#objednavka" className="hidden md:block">
             <Button
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold"
+              className="bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Objednať prepravu
+              Objednať teraz
             </Button>
           </a>
           

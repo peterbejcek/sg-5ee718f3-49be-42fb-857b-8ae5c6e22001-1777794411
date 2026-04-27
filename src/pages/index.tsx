@@ -33,16 +33,22 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a href="#objednavka" className="flex-1 sm:flex-none">
-                  <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold text-lg">
+                <a href="#objednavka">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
+                  >
                     <Calendar className="w-5 h-5 mr-2" />
-                    Objednať prepravu
+                    Objednať teraz
                   </Button>
                 </a>
-                <a href="tel:+421911606206" className="flex-1 sm:flex-none">
-                  <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold text-lg">
+                <a href="tel:+421911606206">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
+                  >
                     <Phone className="w-5 h-5 mr-2" />
-                    Zavolať teraz
+                    <span className="tabular-nums">+421 911 606 206</span>
                   </Button>
                 </a>
               </div>
@@ -118,15 +124,21 @@ export default function Home() {
               </Card>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
               <a href="#objednavka">
-                <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
+                >
                   <Calendar className="w-5 h-5 mr-2" />
-                  Objednať prepravu
+                  Objednať teraz
                 </Button>
               </a>
               <a href="tel:+421911606206">
-                <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold"
+                >
                   <Phone className="w-5 h-5 mr-2" />
                   Zavolať +421 911 606 206
                 </Button>
