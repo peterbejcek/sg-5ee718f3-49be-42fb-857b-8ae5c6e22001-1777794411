@@ -56,21 +56,21 @@ export function Footer() {
               <Link href="/prepravny-poriadok" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Prepravný poriadok
               </Link>
-              <a href="/#objednavka" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <Link href="/#objednavka" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Objednať jazdu
-              </a>
+              </Link>
             </div>
           </div>
 
           <div>
             <h4 className="font-display font-semibold text-lg mb-4">O nás</h4>
             <div className="space-y-2">
-              <a href="/#o-nas" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <Link href="/#o-nas" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 O spoločnosti
-              </a>
-              <a href="/#blog" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              </Link>
+              <Link href="/#blog" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Blog a novinky
-              </a>
+              </Link>
             </div>
           </div>
         </div>
