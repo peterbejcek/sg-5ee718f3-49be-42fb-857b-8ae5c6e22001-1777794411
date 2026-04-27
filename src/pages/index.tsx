@@ -5,7 +5,7 @@ import { FleetSection } from "@/components/FleetSection";
 import { Footer } from "@/components/Footer";
 import { AboutSection } from "@/components/AboutSection";
 import { BlogSection } from "@/components/BlogSection";
-import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2 } from "lucide-react";
+import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
