@@ -1,162 +1,160 @@
 import { useState } from "react";
-import { Users, Wifi, Wind, Zap, Fuel } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Users, Wifi, Wind, Zap, Fuel, Phone, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-
-type VehicleType = "sedan" | "hatchback" | "suv";
-
-interface Vehicle {
-  id: string;
-  name: string;
-  type: VehicleType;
-  capacity: number;
-  features: string[];
-  image: string;
-  eco: boolean;
-}
-
-const vehicles: Vehicle[] = [
-  {
-    id: "1",
-    name: "Tesla Model 3",
-    type: "sedan",
-    capacity: 4,
-    features: ["Plne elektrické", "WiFi", "Klimatizácia", "Premium audio"],
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop",
-    eco: true,
-  },
-  {
-    id: "2",
-    name: "VW Passat GTE",
-    type: "sedan",
-    capacity: 4,
-    features: ["Plug-in hybrid", "WiFi", "Klimatizácia", "Veľký kufor"],
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&auto=format&fit=crop",
-    eco: true,
-  },
-  {
-    id: "3",
-    name: "Toyota Corolla Hybrid",
-    type: "sedan",
-    capacity: 4,
-    features: ["Hybrid", "WiFi", "Klimatizácia", "Nízka spotreba"],
-    image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&auto=format&fit=crop",
-    eco: true,
-  },
-  {
-    id: "4",
-    name: "VW Golf VII",
-    type: "hatchback",
-    capacity: 4,
-    features: ["Benzín", "WiFi", "Klimatizácia", "Kompaktné"],
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&auto=format&fit=crop",
-    eco: false,
-  },
-  {
-    id: "5",
-    name: "Škoda Superb III",
-    type: "sedan",
-    capacity: 4,
-    features: ["Diesel", "WiFi", "Klimatizácia", "Premium priestor"],
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&auto=format&fit=crop",
-    eco: false,
-  },
-];
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export function FleetSection() {
-  const [showEcoOnly, setShowEcoOnly] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
 
-  const filteredVehicles = showEcoOnly
-    ? vehicles.filter((v) => v.eco)
-    : vehicles;
+  const vehicles = [
+    {
+      id: 1,
+      name: "Tesla Model 3",
+      type: "sedan",
+      capacity: 4,
+      features: [
+        { icon: Zap, label: "Elektrický pohon" },
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+      ],
+      image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+      isEco: true,
+    },
+    {
+      id: 2,
+      name: "VW Passat GTE",
+      type: "sedan",
+      capacity: 4,
+      features: [
+        { icon: Zap, label: "Plug-in hybrid" },
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+      ],
+      image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80",
+      isEco: true,
+    },
+    {
+      id: 3,
+      name: "Toyota Corolla Hybrid",
+      type: "sedan",
+      capacity: 4,
+      features: [
+        { icon: Fuel, label: "Hybrid pohon" },
+        { icon: Wind, label: "Klimatizácia" },
+      ],
+      image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80",
+      isEco: true,
+    },
+    {
+      id: 4,
+      name: "VW Golf VII",
+      type: "sedan",
+      capacity: 4,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+      ],
+      image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80",
+      isEco: false,
+    },
+    {
+      id: 5,
+      name: "Škoda Superb III",
+      type: "sedan",
+      capacity: 4,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+      ],
+      image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80",
+      isEco: false,
+    },
+  ];
+
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "eco") return vehicle.isEco;
+    return false;
+  });
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-16 sm:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
-            Náš vozový park
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Moderné a ekologické vozidlá s plazbou kartou v každom aute
-          </p>
-        </div>
+        <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4">
+          Náš vozový park
+        </h2>
+        <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Moderné a udržiavané vozidlá pre váš komfort a bezpečnosť
+        </p>
 
-        <div className="mb-8 flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={() => setShowEcoOnly(false)}
-            className={`px-4 py-2 rounded-lg font-display font-medium transition-colors ${
-              !showEcoOnly
-                ? "bg-primary text-primary-foreground"
-                : "bg-background border border-border hover:border-primary"
-            }`}
+        <div className="flex justify-center gap-3 mb-12 flex-wrap">
+          <Button
+            variant={activeFilter === "all" ? "default" : "outline"}
+            onClick={() => setActiveFilter("all")}
+            className="font-display"
           >
             Všetky vozidlá
-          </button>
-          <button
-            onClick={() => setShowEcoOnly(true)}
-            className={`px-4 py-2 rounded-lg font-display font-medium transition-colors ${
-              showEcoOnly
-                ? "bg-primary text-primary-foreground"
-                : "bg-background border border-border hover:border-primary"
-            }`}
+          </Button>
+          <Button
+            variant={activeFilter === "eco" ? "default" : "outline"}
+            onClick={() => setActiveFilter("eco")}
+            className="font-display"
           >
-            Ekologické (Hybrid/Elektro)
-          </button>
+            <Zap className="w-4 h-4 mr-2" />
+            Ekologické
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {filteredVehicles.map((vehicle) => (
-            <Card
-              key={vehicle.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="aspect-[4/3] overflow-hidden relative">
+            <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative h-48 bg-muted">
                 <img
                   src={vehicle.image}
                   alt={vehicle.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                 />
-                {vehicle.eco && (
-                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                    <Zap className="w-3 h-3" />
-                    ECO
-                  </div>
+                {vehicle.isEco && (
+                  <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
+                    Ekologické
+                  </Badge>
                 )}
               </div>
               <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-display font-semibold text-xl mb-1">
-                      {vehicle.name}
-                    </h3>
-                    <Badge variant="outline" className="capitalize">
-                      {vehicle.type === "sedan"
-                        ? "Sedan"
-                        : vehicle.type === "hatchback"
-                        ? "Hatchback"
-                        : "SUV"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1 text-primary font-display font-semibold text-lg">
-                    <Users className="w-5 h-5" />
-                    <span className="tabular-nums">{vehicle.capacity}</span>
-                  </div>
+                <h3 className="font-display font-semibold text-xl mb-3">
+                  {vehicle.name}
+                </h3>
+                <div className="flex items-center gap-2 mb-4 text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm">Kapacita: {vehicle.capacity} osoby</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {vehicle.features.map((feature, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="text-xs"
-                    >
-                      {feature}
+                  {vehicle.features.map((feature, idx) => (
+                    <Badge key={idx} variant="secondary" className="gap-1">
+                      <feature.icon className="w-3 h-3" />
+                      {feature.label}
                     </Badge>
                   ))}
                 </div>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#objednavka">
+            <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold">
+              <Calendar className="w-5 h-5 mr-2" />
+              Objednať prepravu
+            </Button>
+          </a>
+          <a href="tel:+421911606206">
+            <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold">
+              <Phone className="w-5 h-5 mr-2" />
+              Zavolať +421 911 606 206
+            </Button>
+          </a>
         </div>
       </div>
     </section>

@@ -3,151 +3,154 @@ import { Header } from "@/components/Header";
 import { BookingForm } from "@/components/BookingForm";
 import { FleetSection } from "@/components/FleetSection";
 import { Footer } from "@/components/Footer";
-import {
-  Phone,
-  Clock,
-  Shield,
-  CreditCard,
-  Plane,
-  Calendar,
-  Wine,
-} from "lucide-react";
+import { Phone, Calendar, Clock, Wine, Plane, CreditCard, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   return (
     <>
       <SEO
-        title="E-TAXI Košice – Rýchla a spoľahlivá preprava"
-        description="Profesionálna taxislužba v Košiciach. Objednajte si taxík online alebo zavolajte +421 911 606 206. Moderný vozový park, klimatizácia, WiFi."
+        title="E-TAXI Košice - Rýchla a spoľahlivá taxislužba 24/7"
+        description="Profesionálna taxislužba v Košiciach. Moderný vozový park, letisková preprava, Drink Taxi. Zavolajte +421 911 606 206"
+        image="/og-image.png"
       />
       <Header />
       <main className="pt-16">
+        {/* Hero Section */}
         <section className="relative min-h-[calc(100vh-4rem)] flex items-center py-12 sm:py-16 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg3.png')" }}>
           <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-primary/50"></div>
           <div className="container mx-auto px-4 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div>
-                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
-                  Rýchla a spoľahlivá preprava v Košiciach
-                </h1>
-                <p className="text-lg sm:text-xl text-white/90 mb-8">
-                  Profesionálna taxislužba dostupná 24/7. Moderný vozový park,
-                  skúsení vodiči, konkurenčné ceny.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 lg:hidden">
-                  <a href="tel:+421911606206" className="flex-1">
-                    <button className="w-full h-14 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold text-lg rounded-lg flex items-center justify-center gap-2 transition-colors">
-                      <Phone className="w-5 h-5" />
-                      Zavolať teraz
-                    </button>
-                  </a>
-                </div>
-              </div>
-
-              <div className="lg:block">
-                <BookingForm />
+            <div className="max-w-3xl">
+              <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6">
+                Rýchla a spoľahlivá preprava v Košiciach
+              </h1>
+              <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl">
+                Profesionálna taxislužba dostupná 24/7. Moderný vozový park,
+                skúsení vodiči, konkurenčné ceny.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a href="#objednavka" className="flex-1 sm:flex-none">
+                  <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold text-lg">
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Objednať prepravu
+                  </Button>
+                </a>
+                <a href="tel:+421911606206" className="flex-1 sm:flex-none">
+                  <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold text-lg">
+                    <Phone className="w-5 h-5 mr-2" />
+                    Zavolať teraz
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="py-16 bg-background border-t border-border">
+        {/* Services Section */}
+        <section className="py-16 sm:py-20 bg-background">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
-                Naše služby
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Komplexné taxislužby pre každú príležitosť
-              </p>
+            <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-12">
+              Naše služby
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <Zap className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="font-display font-semibold text-xl mb-3">
+                    Okamžitá preprava
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Zavolajte nám a taxík je u vás do niekoľkých minút. Dostupní 24/7.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <Clock className="w-12 h-12 text-primary mb-4" />
+                  <h3 className="font-display font-semibold text-xl mb-3">
+                    Časové objednávky
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Naplánujte si cestu vopred. 0€ príplatok za včasnú objednávku.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <Wine className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="font-display font-semibold text-xl mb-3">
+                    Drink Taxi
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Bezpečná cesta domov po oslave. Váš vodič aj váš alkohol v bezpečí.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <Plane className="w-12 h-12 text-primary mb-4" />
+                  <h3 className="font-display font-semibold text-xl mb-3">
+                    Letisková preprava
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Budapest, Krakov, Debrecín, Bratislava, Viedeň, Katowice - pohodlne a za férové ceny.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <CreditCard className="w-12 h-12 text-accent mb-4" />
+                  <h3 className="font-display font-semibold text-xl mb-3">
+                    Platba kartou
+                  </h3>
+                  <p className="text-muted-foreground">
+                    V každom našom vozidle môžete platiť kartou. Žiadne starosti s hotovosťou.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Phone className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3">
-                  Okamžitá preprava
-                </h3>
-                <p className="text-muted-foreground">
-                  Zavolajte a taxík je u vás do 5-10 minút. Rýchla a spoľahlivá
-                  služba kedykoľvek potrebujete.
-                </p>
-              </div>
 
-              <div className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Calendar className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3">
-                  Časové objednávky
-                </h3>
-                <p className="text-muted-foreground">
-                  Objednajte si taxík vopred bez príplatku. Garantovaná preprava
-                  presne podľa vášho plánu.
-                </p>
-              </div>
-
-              <div className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Wine className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3">
-                  Drink Taxi
-                </h3>
-                <p className="text-muted-foreground">
-                  Bezpečný odvoz po večierku. Váš osobný vodič vás bezpečne
-                  dovezie domov.
-                </p>
-              </div>
-
-              <div className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Plane className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3">
-                  Letisková preprava
-                </h3>
-                <p className="text-muted-foreground mb-3">
-                  Pohodlný transfer na letisko a späť. Preprava do viacerých
-                  destinácií:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Budapest",
-                    "Krakov",
-                    "Debrecín",
-                    "Bratislava",
-                    "Viedeň",
-                    "Katowice",
-                  ].map((city) => (
-                    <span
-                      key={city}
-                      className="text-xs px-2 py-1 bg-muted rounded-md"
-                    >
-                      {city}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow md:col-span-2 lg:col-span-1">
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <CreditCard className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="font-display font-semibold text-xl mb-3">
-                  Platba kartou
-                </h3>
-                <p className="text-muted-foreground">
-                  Platba kartou dostupná v každom aute. Žiadne poplatky, žiadne
-                  starosti s hotovosťou.
-                </p>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="#objednavka">
+                <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Objednať prepravu
+                </Button>
+              </a>
+              <a href="tel:+421911606206">
+                <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold">
+                  <Phone className="w-5 h-5 mr-2" />
+                  Zavolať +421 911 606 206
+                </Button>
+              </a>
             </div>
           </div>
         </section>
 
         <FleetSection />
+
+        {/* Booking Form Section */}
+        <section id="objednavka" className="py-16 sm:py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4">
+                Objednať prepravu
+              </h2>
+              <p className="text-center text-muted-foreground mb-8">
+                Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na{" "}
+                <a href="tel:+421911606206" className="text-accent font-semibold hover:underline">
+                  +421 911 606 206
+                </a>
+              </p>
+              <BookingForm />
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
