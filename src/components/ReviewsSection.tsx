@@ -1,8 +1,8 @@
+import { motion } from "framer-motion";
 import { reviews, reviewsData } from "@/data/reviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink, Quote } from "lucide-react";
-import { motion } from "framer-motion";
 
 export function ReviewsSection() {
   const renderStars = (rating: number) => {
@@ -73,17 +73,16 @@ export function ReviewsSection() {
           whileInView="show"
           viewport={{ once: true }}
         >
-          {reviewsData.reviews.map((review, index) => (
+          {reviews.map((review, index) => (
             <motion.div
-              key={index}
-              className="bg-card border border-border rounded-lg p-6 shadow-lg relative"
+              key={review.id || index}
               variants={{
                 hidden: { opacity: 0, scale: 0.95 },
                 show: { opacity: 1, scale: 1 }
               }}
             >
-              <Card key={review.id} className="hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
+              <Card className="hover:shadow-lg transition-shadow h-full">
+                <CardContent className="pt-6 h-full flex flex-col">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="font-display font-semibold text-lg mb-1">
@@ -110,7 +109,7 @@ export function ReviewsSection() {
                     </div>
                   )}
 
-                  <p className="text-foreground/80 leading-relaxed">
+                  <p className="text-foreground/80 leading-relaxed flex-grow">
                     {review.text}
                   </p>
                 </CardContent>

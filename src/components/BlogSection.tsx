@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { blogData } from "@/data/blog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, ArrowRight } from "lucide-react";
+import { blogPosts } from "@/data/blog";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Calendar, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function BlogSection() {
   return (
@@ -39,7 +40,7 @@ export function BlogSection() {
           whileInView="show"
           viewport={{ once: true }}
         >
-          {blogData.posts.slice(0, 3).map((post) => (
+          {blogPosts.slice(0, 3).map((post) => (
             <motion.div
               key={post.id}
               variants={{
@@ -47,7 +48,7 @@ export function BlogSection() {
                 show: { opacity: 1, y: 0 }
               }}
             >
-              <Card className="shadow-lg hover:shadow-xl transition-shadow h-full">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow h-full flex flex-col">
                 {post.image && (
                   <div className="h-48 bg-muted overflow-hidden">
                     <img
@@ -71,13 +72,13 @@ export function BlogSection() {
                     {post.excerpt}
                   </p>
                 </CardHeader>
-                <CardContent className="pt-0">
+                <CardContent className="pt-0 mt-auto">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <User className="w-3 h-3" />
                       {post.author}
                     </span>
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={`/blog/${post.id}`}>
                       <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
                         Čítať viac
                         <ArrowRight className="w-4 h-4 ml-1" />
