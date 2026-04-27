@@ -56,6 +56,9 @@ export function Footer() {
               <Link href="/prepravny-poriadok" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Prepravný poriadok
               </Link>
+              <Link href="/#faq" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                Často kladené otázky
+              </Link>
               <Link href="/#objednavka" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Objednať jazdu
               </Link>
