@@ -68,6 +68,9 @@ export function Footer() {
               <Link href="/#o-nas" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 O spoločnosti
               </Link>
+              <Link href="/#recenzie" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                Recenzie zákazníkov
+              </Link>
               <Link href="/#blog" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Blog a novinky
               </Link>

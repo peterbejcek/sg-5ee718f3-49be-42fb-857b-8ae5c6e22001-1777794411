@@ -5,6 +5,7 @@ import { FleetSection } from "@/components/FleetSection";
 import { Footer } from "@/components/Footer";
 import { AboutSection } from "@/components/AboutSection";
 import { BlogSection } from "@/components/BlogSection";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -155,6 +156,8 @@ export default function Home() {
         <AboutSection />
 
         <BlogSection />
+
+        <ReviewsSection />
 
         {/* Booking Form Section */}
         <section id="objednavka" className="py-16 sm:py-20 bg-muted/30">
