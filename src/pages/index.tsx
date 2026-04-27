@@ -24,7 +24,9 @@ export default function Home() {
             <div className="max-w-3xl">
               <div>
                 <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
-                  E-TAXI Košice – <span className="text-yellow-400">rýchlo</span>, spoľahlivo, <span className="text-yellow-400">pohodlne</span>
+                  E-TAXI Košice –<br />
+                  <span className="text-yellow-400">rýchlo</span>, spoľahlivo,<br />
+                  <span className="text-yellow-400">pohodlne</span>
                 </h1>
                 <p className="text-lg sm:text-xl text-white/90 mb-8">
                   Profesionálna taxislužba dostupná 24/7. Moderný vozový park,
