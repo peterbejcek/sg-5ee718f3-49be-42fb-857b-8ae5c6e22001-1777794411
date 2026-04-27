@@ -13,7 +13,12 @@ export function FleetSection() {
       name: "VW Golf VII",
       type: "sedan" as const,
       capacity: 4,
-      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      isEco: false,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+        { icon: Users, label: "Detská sedačka" }
+      ],
       image: "/VW_Golf_VII.png",
       description: "Komfortný sedan pre mestskú aj medzimestkú dopravu"
     },
@@ -22,7 +27,11 @@ export function FleetSection() {
       name: "Toyota Corolla",
       type: "sedan" as const,
       capacity: 4,
-      features: ["klimatizacia", "wifi"],
+      isEco: true,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" }
+      ],
       image: "/corolla_krakov.PNG",
       description: "Spoľahlivý sedan s nízkou spotrebou"
     },
@@ -31,7 +40,11 @@ export function FleetSection() {
       name: "Tesla Model 3",
       type: "sedan" as const,
       capacity: 4,
-      features: ["klimatizacia", "wifi"],
+      isEco: true,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" }
+      ],
       image: "/tesla_Budapest.PNG",
       description: "Prémiové elektrické vozidlo"
     },
@@ -40,7 +53,12 @@ export function FleetSection() {
       name: "Volkswagen Passat",
       type: "kombi" as const,
       capacity: 5,
-      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      isEco: false,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+        { icon: Users, label: "Detská sedačka" }
+      ],
       image: "/VW_Kosice.PNG",
       description: "Priestranné kombi s veľkým batožinovým priestorom"
     },
@@ -49,7 +67,12 @@ export function FleetSection() {
       name: "Škoda Octavia Combi",
       type: "kombi" as const,
       capacity: 5,
-      features: ["klimatizacia", "wifi", "detska-sedacka"],
+      isEco: false,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" },
+        { icon: Users, label: "Detská sedačka" }
+      ],
       image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop",
       description: "Praktické kombi pre rodiny a väčšie skupiny"
     },
@@ -58,7 +81,11 @@ export function FleetSection() {
       name: "Mercedes-Benz Vito",
       type: "van" as const,
       capacity: 8,
-      features: ["klimatizacia", "wifi"],
+      isEco: false,
+      features: [
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Wifi, label: "WiFi" }
+      ],
       image: "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=800&auto=format&fit=crop",
       description: "Priestranný van pre väčšie skupiny a batožinu"
     }
@@ -71,7 +98,7 @@ export function FleetSection() {
   });
 
   return (
-    <section className="py-16 sm:py-20 bg-background">
+    <section id="vozovy-park" className="py-16 sm:py-20 bg-background">
       <div className="container mx-auto px-4">
         <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4">
           Náš vozový park
