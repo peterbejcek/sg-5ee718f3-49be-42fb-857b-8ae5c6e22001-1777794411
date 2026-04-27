@@ -2,6 +2,7 @@ import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { BookingForm } from "@/components/BookingForm";
 import { FleetSection } from "@/components/FleetSection";
+import { PricingSection } from "@/components/PricingSection";
 import { Footer } from "@/components/Footer";
 import { AboutSection } from "@/components/AboutSection";
 import { BlogSection } from "@/components/BlogSection";
@@ -153,6 +154,8 @@ export default function Home() {
         </section>
 
         <FleetSection />
+
+        <PricingSection />
 
         <AboutSection />
 

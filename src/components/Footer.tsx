@@ -50,7 +50,7 @@ export function Footer() {
           <div>
             <h4 className="font-display font-semibold text-lg mb-4">Informácie</h4>
             <div className="space-y-2">
-              <Link href="/cennik" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <Link href="/#cennik" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 Cenník
               </Link>
               <Link href="/prepravny-poriadok" className="block text-primary-foreground/80 hover:text-primary-foreground transition-colors">
