@@ -11,15 +11,90 @@ import { FAQSection } from "@/components/FAQSection";
 import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Head from "next/head";
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://etaxi-kosice.sk",
+    "name": "E-TAXI Košice",
+    "image": "https://etaxi-kosice.sk/og-image.png",
+    "description": "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery, firemné objednávky, moderný vozový park.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Košice",
+      "addressCountry": "SK"
+    },
+    "telephone": "+421911606206",
+    "email": "info@etaxi-kosice.sk",
+    "url": "https://etaxi-kosice.sk",
+    "priceRange": "€€",
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "48.7164",
+      "longitude": "21.2611"
+    },
+    "areaServed": {
+      "@type": "GeoCircle",
+      "geoMidpoint": {
+        "@type": "GeoCoordinates",
+        "latitude": "48.7164",
+        "longitude": "21.2611"
+      },
+      "geoRadius": "100000"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Taxislužby",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Mestská taxislužba",
+            "description": "Taxislužba v rámci mesta Košice"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Letiskové transfery",
+            "description": "Transfer na letisko Košice, Budapešť, Krakov, Viedeň"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Firemné transfery",
+            "description": "Pravidelné firemné objednávky a transfery"
+          }
+        }
+      ]
+    }
+  };
+
   return (
     <>
-      <SEO
-        title="E-TAXI Košice - Rýchla a spoľahlivá taxislužba 24/7"
-        description="Profesionálna taxislužba v Košiciach. Moderný vozový park, letisková preprava, Drink Taxi. Zavolajte +421 911 606 206"
-        image="/og-image.png"
+      <SEO 
+        title="E-TAXI Košice | Taxislužba 24/7 | Letiskové transfery Budapešť, Krakov, Viedeň"
+        description="Profesionálna taxislužba v Košiciach ✓ Online objednávka ✓ Letiskové transfery ✓ Moderný vozový park ✓ Transparentné ceny ✓ Volajte: +421 911 606 206"
+        keywords="taxi Košice, taxík Košice, taxislužba Košice, letiskový transfer, Košice letisko, taxi na letisko, transfer Budapešť, transfer Krakov, transfer Viedeň, online objednávka taxi, taxi 24/7"
       />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </Head>
       <Header />
       <main className="pt-16">
         {/* Hero Section */}
