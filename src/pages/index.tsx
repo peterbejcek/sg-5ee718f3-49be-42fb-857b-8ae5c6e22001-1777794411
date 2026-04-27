@@ -22,7 +22,7 @@ export default function Home() {
       />
       <Header />
       <main className="pt-16">
-        <section className="relative min-h-[calc(100vh-4rem)] flex items-center py-12 sm:py-16 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg.png')" }}>
+        <section className="relative min-h-[calc(100vh-4rem)] flex items-center py-12 sm:py-16 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg3.png')" }}>
           <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-primary/50"></div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
