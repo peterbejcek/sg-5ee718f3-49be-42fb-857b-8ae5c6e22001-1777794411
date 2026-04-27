@@ -44,11 +44,15 @@ export function Header() {
       <div className="container h-16 sm:h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <img
-            src="/etaxi_logo_svg.svg"
-            alt="E-TAXI Košice"
-            className="h-12 w-auto"
-          />
+          <div className={`p-2 rounded-lg transition-colors ${
+            isScrolled ? "" : "bg-white"
+          }`}>
+            <img
+              src="/etaxi_logo_svg.svg"
+              alt="E-TAXI Košice"
+              className="h-12 w-auto"
+            />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
