@@ -3,7 +3,9 @@ import { Header } from "@/components/Header";
 import { BookingForm } from "@/components/BookingForm";
 import { FleetSection } from "@/components/FleetSection";
 import { Footer } from "@/components/Footer";
-import { Phone, Calendar, Clock, Wine, Plane, CreditCard, Zap } from "lucide-react";
+import { AboutSection } from "@/components/AboutSection";
+import { BlogSection } from "@/components/BlogSection";
+import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -149,6 +151,10 @@ export default function Home() {
         </section>
 
         <FleetSection />
+
+        <AboutSection />
+
+        <BlogSection />
 
         {/* Booking Form Section */}
         <section id="objednavka" className="py-16 sm:py-20 bg-muted/30">
