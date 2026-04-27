@@ -131,7 +131,7 @@ export default function Home() {
                   className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
-                  Objednať teraz
+                  Objednať jazdu teraz
                 </Button>
               </a>
               <a href="tel:+421911606206">
