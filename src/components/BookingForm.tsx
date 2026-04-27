@@ -4,6 +4,8 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -11,14 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Navigation, Calendar, Users, Phone } from "lucide-react";
+import { MapPin, Navigation, Calendar, Users, Phone, Briefcase, Plane } from "lucide-react";
 
 const bookingSchema = z.object({
   pickup: z.string().min(3, "Zadajte odberné miesto (min. 3 znaky)"),
   destination: z.string().min(3, "Zadajte cieľ (min. 3 znaky)"),
   datetime: z.string().min(1, "Vyberte dátum a čas"),
-  passengers: z.string().min(1, "Vyberte počet cestujúcich"),
-  phone: z.string().optional(),
+  passengers: z.string().optional(),
+  luggage: z.string().optional(),
+  flightNumber: z.string().optional(),
+  note: z.string().optional(),
+  priceEstimateOnly: z.boolean().default(false),
 });
 
 type BookingFormData = z.infer<typeof bookingSchema>;
@@ -32,13 +37,21 @@ export function BookingForm() {
     formState: { errors },
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      priceEstimateOnly: false,
+    },
   });
 
   const passengers = watch("passengers");
+  const priceEstimateOnly = watch("priceEstimateOnly");
 
   const onSubmit = (data: BookingFormData) => {
     console.log("Booking data:", data);
-    alert("Objednávka odoslaná! Zavoláme vám na potvrdenie.");
+    if (data.priceEstimateOnly) {
+      alert("Pošleme vám cenovú kalkuláciu na email/telefón.");
+    } else {
+      alert("Objednávka odoslaná! Zavoláme vám na potvrdenie.");
+    }
   };
 
   return (
@@ -54,7 +67,7 @@ export function BookingForm() {
         <div>
           <Label htmlFor="pickup" className="flex items-center gap-2 mb-2">
             <MapPin className="w-4 h-4 text-primary" />
-            Odberné miesto
+            Odkiaľ <span className="text-destructive">*</span>
           </Label>
           <Input
             id="pickup"
@@ -72,7 +85,7 @@ export function BookingForm() {
         <div>
           <Label htmlFor="destination" className="flex items-center gap-2 mb-2">
             <Navigation className="w-4 h-4 text-primary" />
-            Cieľ
+            Kam <span className="text-destructive">*</span>
           </Label>
           <Input
             id="destination"
@@ -90,7 +103,7 @@ export function BookingForm() {
         <div>
           <Label htmlFor="datetime" className="flex items-center gap-2 mb-2">
             <Calendar className="w-4 h-4 text-primary" />
-            Dátum a čas
+            Kedy <span className="text-destructive">*</span>
           </Label>
           <Input
             id="datetime"
@@ -105,45 +118,82 @@ export function BookingForm() {
           )}
         </div>
 
-        <div>
-          <Label htmlFor="passengers" className="flex items-center gap-2 mb-2">
-            <Users className="w-4 h-4 text-primary" />
-            Počet cestujúcich
-          </Label>
-          <Select
-            value={passengers}
-            onValueChange={(value) => setValue("passengers", value)}
-          >
-            <SelectTrigger className="h-12 text-base">
-              <SelectValue placeholder="Vyberte počet" />
-            </SelectTrigger>
-            <SelectContent>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                <SelectItem key={num} value={num.toString()}>
-                  {num} {num === 1 ? "osoba" : num < 5 ? "osoby" : "osôb"}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.passengers && (
-            <p className="text-sm text-destructive mt-1">
-              {errors.passengers.message}
-            </p>
-          )}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="passengers" className="flex items-center gap-2 mb-2">
+              <Users className="w-4 h-4 text-primary" />
+              Počet osôb
+            </Label>
+            <Select
+              value={passengers}
+              onValueChange={(value) => setValue("passengers", value)}
+            >
+              <SelectTrigger className="h-12 text-base">
+                <SelectValue placeholder="Vyberte" />
+              </SelectTrigger>
+              <SelectContent>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                  <SelectItem key={num} value={num.toString()}>
+                    {num} {num === 1 ? "osoba" : num < 5 ? "osoby" : "osôb"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="luggage" className="flex items-center gap-2 mb-2">
+              <Briefcase className="w-4 h-4 text-primary" />
+              Batožina
+            </Label>
+            <Input
+              id="luggage"
+              {...register("luggage")}
+              placeholder="Napr. 2 kufre"
+              className="h-12 text-base"
+            />
+          </div>
         </div>
 
         <div>
-          <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
-            <Phone className="w-4 h-4 text-primary" />
-            Telefónne číslo (voliteľné)
+          <Label htmlFor="flightNumber" className="flex items-center gap-2 mb-2">
+            <Plane className="w-4 h-4 text-primary" />
+            Číslo letu
           </Label>
           <Input
-            id="phone"
-            type="tel"
-            {...register("phone")}
-            placeholder="+421 xxx xxx xxx"
+            id="flightNumber"
+            {...register("flightNumber")}
+            placeholder="Napr. FR1234"
             className="h-12 text-base"
           />
+        </div>
+
+        <div>
+          <Label htmlFor="note" className="mb-2 block">
+            Poznámka
+          </Label>
+          <Textarea
+            id="note"
+            {...register("note")}
+            placeholder="Napr. detská sedačka, výmena kontaktu..."
+            className="min-h-[80px] text-base resize-none"
+          />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="priceEstimateOnly"
+            checked={priceEstimateOnly}
+            onCheckedChange={(checked) =>
+              setValue("priceEstimateOnly", checked as boolean)
+            }
+          />
+          <label
+            htmlFor="priceEstimateOnly"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Len cenová kalkulácia (nezáväzné)
+          </label>
         </div>
       </div>
 
@@ -153,7 +203,7 @@ export function BookingForm() {
           size="lg"
           className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold h-14"
         >
-          Objednať taxík
+          {priceEstimateOnly ? "Získať cenovú ponuku" : "Objednať taxík"}
         </Button>
         <a href="tel:+421911606206" className="flex-1">
           <Button

@@ -1,6 +1,6 @@
 ---
 title: Booking Form
-status: in_progress
+status: done
 priority: high
 type: feature
 tags: [form, booking, conversion]
@@ -13,11 +13,11 @@ position: 2
 Interactive booking form on hero section. Fields: pickup location, destination, date/time, passenger count, optional phone. Validate with Zod. High contrast for mobile UX.
 
 ## Checklist
-- [ ] Create BookingForm component with React Hook Form + Zod validation
-- [ ] Fields: pickup (text), destination (text), datetime (input), passengers (select 1-8), phone (optional tel)
-- [ ] Primary CTA button ("Objednať taxík") in indigo, secondary ("Zavolať") in orange
-- [ ] Mobile-optimized inputs (large tap targets, clear labels)
-- [ ] Form validation messages in Slovak
+- [x] Create BookingForm component with React Hook Form + Zod validation
+- [x] Fields: pickup (text), destination (text), datetime (input), passengers (select 1-8), phone (optional tel)
+- [x] Primary CTA button ("Objednať taxík") in indigo, secondary ("Zavolať") in orange
+- [x] Mobile-optimized inputs (large tap targets, clear labels)
+- [x] Form validation messages in Slovak
 
 ## Acceptance
 - Form submits with validation (required fields checked)

@@ -1,6 +1,6 @@
 ---
 title: Fleet Section
-status: todo
+status: done
 priority: medium
 type: feature
 tags: [fleet, vehicles, filters]
@@ -13,11 +13,11 @@ position: 3
 Display vehicle types with photos, capacity, features. Filter by capacity (1-4 passengers, 5-8 passengers) or vehicle type (sedan, kombi, van).
 
 ## Checklist
-- [ ] Create FleetSection component with vehicle cards (5-7 vehicles)
-- [ ] Vehicle data: name, type, capacity, features (klimatizácia, WiFi, detská sedačka), photo
-- [ ] Filter buttons: "Všetky", "1-4 osoby", "5-8 osôb", "Sedan", "Kombi", "Van"
-- [ ] Card layout: image top, details below, capacity icon + number
-- [ ] Use Unsplash vehicle photos (approved domain)
+- [x] Create FleetSection component with vehicle cards (5-7 vehicles)
+- [x] Vehicle data: name, type, capacity, features (klimatizácia, WiFi, detská sedačka), photo
+- [x] Filter buttons: "Všetky", "1-4 osoby", "5-8 osôb", "Sedan", "Kombi", "Van"
+- [x] Card layout: image top, details below, capacity icon + number
+- [x] Use Unsplash vehicle photos (approved domain)
 
 ## Acceptance
 - Filters work (click filter → show only matching vehicles)
