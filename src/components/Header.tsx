@@ -31,11 +31,12 @@ export function Header() {
           <a href="tel:+421911606206">
             <Button
               size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold shadow-lg"
+              variant="ghost"
+              className="text-primary hover:text-primary/80 font-display font-semibold tabular-nums"
             >
               <Phone className="w-5 h-5 mr-2" />
               <span className="hidden sm:inline">+421 911 606 206</span>
-              <span className="sm:hidden tabular-nums">911 606 206</span>
+              <span className="sm:hidden">911 606 206</span>
             </Button>
           </a>
         </div>

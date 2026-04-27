@@ -150,7 +150,7 @@ export function FleetSection() {
             </Button>
           </a>
           <a href="tel:+421911606206">
-            <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold">
+            <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold">
               <Phone className="w-5 h-5 mr-2" />
               Zavolať +421 911 606 206
             </Button>
