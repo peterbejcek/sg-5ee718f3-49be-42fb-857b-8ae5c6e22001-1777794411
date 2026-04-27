@@ -98,8 +98,23 @@ export default function Home() {
       <Header />
       <main className="pt-16">
         {/* Hero Section */}
-        <section className="relative min-h-[calc(100vh-4rem)] flex items-center py-12 sm:py-16 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg3.png')" }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-primary/50"></div>
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{ 
+                backgroundImage: "url('/hero-bg3.png')",
+                filter: "brightness(1.15) saturate(1.1) sepia(0.15)"
+              }}
+            />
+            {/* Warm Golden Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-primary/20" />
+            {/* Dark Overlay for Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/70" />
+            {/* Bottom Fade Transition */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
+          </div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
               <div>
