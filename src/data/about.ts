@@ -7,10 +7,26 @@ export const aboutData = {
   prepravné služby pre obyvateľov a návštevníkov Košíc.`,
   
   stats: [
-    { value: "15 000+", label: "Spokojných zákazníkov" },
-    { value: "25", label: "Moderných vozidiel" },
-    { value: "10+", label: "Rokov skúseností" },
-    { value: "24/7", label: "Nepretržitá prevádzka" }
+    {
+      value: "14",
+      label: "Vozidiel",
+      icon: "car"
+    },
+    {
+      value: "6+",
+      label: "Rokov na trhu",
+      icon: "calendar"
+    },
+    {
+      value: "15000+",
+      label: "Spokojných zákazníkov",
+      icon: "users"
+    },
+    {
+      value: "24/7",
+      label: "Dispečing",
+      icon: "phone"
+    }
   ],
   
   values: [
