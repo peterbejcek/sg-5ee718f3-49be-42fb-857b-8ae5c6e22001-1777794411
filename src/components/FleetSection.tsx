@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Wifi, Wind, Zap, Fuel, Phone, Calendar } from "lucide-react";
+import { Users, Wifi, Wind, Zap, Fuel, Phone, Calendar, Baby } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,24 +10,22 @@ export function FleetSection() {
   const vehicles = [
     {
       id: "1",
-      name: "VW Golf VII",
-      type: "sedan" as const,
-      capacity: 4,
-      isEco: false,
+      name: "VW Passat GTE",
+      type: "kombi" as const,
+      capacity: 5,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Zap, label: "Ekologický" },
+        { icon: Baby, label: "Detská sedačka" }
       ],
-      image: "/VW_Golf_VII.png",
-      description: "Komfortný sedan pre mestskú aj medzimestkú dopravu"
+      image: "/VW_Kosice.PNG",
+      description: "Ekologické plug-in hybrid kombi s veľkým batožinovým priestorom"
     },
     {
       id: "2",
       name: "Toyota Corolla",
       type: "sedan" as const,
       capacity: 4,
-      isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
         { icon: Wifi, label: "WiFi" }
@@ -40,38 +38,34 @@ export function FleetSection() {
       name: "Tesla Model 3",
       type: "sedan" as const,
       capacity: 4,
-      isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" }
+        { icon: Wifi, label: "WiFi" },
+        { icon: Zap, label: "Elektrické" }
       ],
       image: "/tesla_Budapest.PNG",
       description: "Prémiové elektrické vozidlo"
     },
     {
       id: "4",
-      name: "Volkswagen Passat",
+      name: "VW Golf VII Variant",
       type: "kombi" as const,
-      capacity: 5,
-      isEco: false,
+      capacity: 4,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Baby, label: "Detská sedačka" }
       ],
-      image: "/VW_Kosice.PNG",
-      description: "Priestranné kombi s veľkým batožinovým priestorom"
+      image: "/VW_Golf_VII.png",
+      description: "Komfortné kombi pre mestskú aj medzimestkú dopravu"
     },
     {
       id: "5",
       name: "Škoda Octavia Combi",
       type: "kombi" as const,
       capacity: 5,
-      isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Baby, label: "Detská sedačka" }
       ],
       image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop",
       description: "Praktické kombi pre rodiny a väčšie skupiny"
@@ -81,10 +75,8 @@ export function FleetSection() {
       name: "Mercedes-Benz Vito",
       type: "van" as const,
       capacity: 8,
-      isEco: false,
       features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" }
+        { icon: Wind, label: "Klimatizácia" }
       ],
       image: "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=800&auto=format&fit=crop",
       description: "Priestranný van pre väčšie skupiny a batožinu"
