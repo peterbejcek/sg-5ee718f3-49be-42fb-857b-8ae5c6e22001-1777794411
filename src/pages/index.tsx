@@ -29,7 +29,7 @@ export default function Home() {
                   <span className="text-yellow-400">pohodlne</span>
                 </h1>
                 <p className="text-lg sm:text-xl text-white/90 mb-8">
-                  Zavolajte na +421 911 606 206 a auto bude pri vás do 10 minút. Letiská, dlhé trasy, firemné transfery – vždy načas.
+                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút. Letiská, dlhé trasy, firemné transfery – vždy načas.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
