@@ -12,7 +12,6 @@ import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
-import Link from "next/link";
 
 export default function Home() {
   const jsonLd = {
@@ -116,66 +115,37 @@ export default function Home() {
             {/* Bottom Fade Transition */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
           </div>
-          {/* Content */}
-          <div className="relative z-10 container py-20 sm:py-32">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              {/* Left Column - Hero Text */}
-              <div className="text-center lg:text-left space-y-8">
-                <div className="space-y-4">
-                  <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-white leading-tight">
-                    E-TAXI Košice<br />
-                    <span className="text-yellow-400">rýchlo, </span>
-                    <span className="text-white">spoľahlivo</span>
-                    <span className="text-yellow-400">, pohodlne</span>
-                  </h1>
-                  <p className="text-xl text-white/90 max-w-2xl mx-auto lg:mx-0">
-                    Zavolajte na <a href="tel:+421911606206" className="font-semibold hover:text-accent transition-colors">+421 911 606 206</a> a auto bude pri vás do 10 minút.<br />
-                    Letiská, dlhé trasy, firemné transfery – vždy načas.
-                  </p>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Button 
-                    size="lg"
-                    className="bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold text-lg px-8"
-                    asChild
-                  >
-                    <Link href="#objednavka">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-3xl">
+              <div>
+                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
+                  E-TAXI Košice –<br />
+                  <span className="text-yellow-400">rýchlo</span>, spoľahlivo,<br />
+                  <span className="text-yellow-400">pohodlne</span>
+                </h1>
+                <p className="text-lg sm:text-xl text-white/90 mb-8">
+                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút.<br />
+                  Letiská, dlhé trasy, firemné transfery – vždy načas.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="#objednavka">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
+                    >
                       <Calendar className="w-5 h-5 mr-2" />
                       Objednať teraz
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="lg"
-                    className="bg-white hover:bg-white/90 text-primary font-display font-semibold text-lg px-8"
-                    asChild
-                  >
-                    <a href="tel:+421911606206">
+                    </Button>
+                  </a>
+                  <a href="tel:+421911606206">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
+                    >
                       <Phone className="w-5 h-5 mr-2" />
-                      +421 911 606 206
-                    </a>
-                  </Button>
-                </div>
-
-                {/* Social Proof Stats */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8">
-                  <div className="text-center lg:text-left">
-                    <div className="text-3xl font-bold text-white mb-1">24/7</div>
-                    <div className="text-sm text-white/80">Dispečing</div>
-                  </div>
-                  <div className="text-center lg:text-left">
-                    <div className="text-3xl font-bold text-white mb-1">15 min</div>
-                    <div className="text-sm text-white/80">Príchod</div>
-                  </div>
-                  <div className="text-center lg:text-left">
-                    <div className="text-3xl font-bold text-white mb-1">6 €</div>
-                    <div className="text-sm text-white/80">Min. cena</div>
-                  </div>
-                  <div className="text-center lg:text-left">
-                    <div className="text-3xl font-bold text-white mb-1">100%</div>
-                    <div className="text-sm text-white/80">Spoľahlivosť</div>
-                  </div>
+                      <span className="tabular-nums">+421 911 606 206</span>
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>

@@ -124,8 +124,7 @@ export function FleetSection() {
           </p>
         </motion.div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex justify-center gap-3 mb-12 flex-wrap">
           <Button
             variant={activeFilter === "all" ? "default" : "outline"}
             onClick={() => setActiveFilter("all")}
