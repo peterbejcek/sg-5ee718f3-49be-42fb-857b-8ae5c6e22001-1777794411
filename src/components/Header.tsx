@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Phone, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
@@ -14,6 +14,7 @@ export function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -22,8 +23,8 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background shadow-md"
-          : "bg-primary"
+          ? "bg-primary shadow-lg"
+          : "bg-transparent"
       }`}
     >
       <div className="container">
@@ -42,11 +43,11 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             <Link 
               href="#sluzby" 
               className={`font-medium transition-colors hover:text-accent ${
-                isScrolled ? "text-foreground" : "text-white"
+                isScrolled ? "text-white" : "text-white"
               }`}
             >
               Služby
@@ -54,41 +55,77 @@ export function Header() {
             <Link 
               href="#cennik" 
               className={`font-medium transition-colors hover:text-accent ${
-                isScrolled ? "text-foreground" : "text-white"
+                isScrolled ? "text-white" : "text-white"
               }`}
             >
               Cenník
             </Link>
             <Link 
-              href="#kontakt" 
+              href="#recenzie" 
               className={`font-medium transition-colors hover:text-accent ${
-                isScrolled ? "text-foreground" : "text-white"
+                isScrolled ? "text-white" : "text-white"
               }`}
             >
-              Kontakt
+              Recenzie
+            </Link>
+            <Link 
+              href="#faq" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-white" : "text-white"
+              }`}
+            >
+              FAQ
+            </Link>
+            <Link 
+              href="#blog" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-white" : "text-white"
+              }`}
+            >
+              Blog
+            </Link>
+            <Link 
+              href="#o-nas" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-white" : "text-white"
+              }`}
+            >
+              O nás
             </Link>
           </nav>
 
-          {/* Order Button - Desktop */}
-          <Button 
-            size="lg"
-            className={`hidden md:flex font-display font-semibold ${
-              isScrolled 
-                ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
-                : "bg-white hover:bg-white/90 text-primary"
-            }`}
-            asChild
-          >
-            <Link href="#objednavka">Objednať teraz</Link>
-          </Button>
+          {/* Phone + CTA - Desktop */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Phone Number with Icon */}
+            <a href="tel:+421911606206" className="flex items-center gap-2 text-white hover:text-accent transition-colors">
+              <Phone className="w-5 h-5" />
+              <div className="flex flex-col items-start">
+                <span className="text-xs opacity-80">Dispečing 24/7</span>
+                <span className="font-semibold tabular-nums">+421 911 606 206</span>
+              </div>
+            </a>
+            
+            {/* Order Button */}
+            <Button 
+              size="lg"
+              className={`font-display font-semibold ${
+                isScrolled 
+                  ? "bg-white text-primary hover:bg-white/90" 
+                  : "bg-white text-primary hover:bg-white/90"
+              }`}
+              asChild
+            >
+              <Link href="#objednavka">Objednať teraz</Link>
+            </Button>
+          </div>
 
           {/* Mobile Menu Button */}
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild className="md:hidden">
+            <SheetTrigger asChild className="lg:hidden">
               <Button 
                 variant="ghost" 
                 size="icon"
-                className={isScrolled ? "text-primary" : "text-white"}
+                className={`${isScrolled ? "text-white" : "text-white"}`}
               >
                 <Menu className="h-6 w-6" />
               </Button>
@@ -110,23 +147,44 @@ export function Header() {
                   Cenník
                 </Link>
                 <Link 
-                  href="#kontakt" 
+                  href="#recenzie" 
                   className="text-lg font-medium text-foreground hover:text-accent transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Kontakt
+                  Recenzie
+                </Link>
+                <Link 
+                  href="#faq" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  FAQ
+                </Link>
+                <Link 
+                  href="#blog" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Blog
+                </Link>
+                <Link 
+                  href="#o-nas" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  O nás
                 </Link>
                 
                 <div className="pt-6 border-t border-border">
-                  <Button 
-                    size="lg"
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold"
-                    asChild
-                  >
-                    <Link href="#objednavka" onClick={() => setIsMenuOpen(false)}>
-                      Objednať teraz
-                    </Link>
-                  </Button>
+                  <a href="tel:+421911606206">
+                    <Button 
+                      size="lg"
+                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold"
+                    >
+                      <Phone className="w-5 h-5 mr-2" />
+                      +421 911 606 206
+                    </Button>
+                  </a>
                 </div>
               </nav>
             </SheetContent>

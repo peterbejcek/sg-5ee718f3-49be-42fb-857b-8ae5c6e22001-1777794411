@@ -124,7 +124,9 @@ export default function Home() {
                 <div className="space-y-4">
                   <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-white leading-tight">
                     E-TAXI Košice<br />
-                    <span className="text-accent">rýchlo, spoľahlivo, pohodlne</span>
+                    <span className="text-yellow-400">rýchlo, </span>
+                    <span className="text-white">spoľahlivo</span>
+                    <span className="text-yellow-400">, pohodlne</span>
                   </h1>
                   <p className="text-xl text-white/90 max-w-2xl mx-auto lg:mx-0">
                     Zavolajte na <a href="tel:+421911606206" className="font-semibold hover:text-accent transition-colors">+421 911 606 206</a> a auto bude pri vás do 10 minút.<br />
@@ -136,7 +138,7 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                   <Button 
                     size="lg"
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold text-lg px-8"
+                    className="bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold text-lg px-8"
                     asChild
                   >
                     <Link href="#objednavka">
@@ -146,8 +148,7 @@ export default function Home() {
                   </Button>
                   <Button 
                     size="lg"
-                    variant="outline"
-                    className="border-2 border-white text-white hover:bg-white hover:text-primary font-display font-semibold text-lg px-8"
+                    className="bg-white hover:bg-white/90 text-primary font-display font-semibold text-lg px-8"
                     asChild
                   >
                     <a href="tel:+421911606206">
