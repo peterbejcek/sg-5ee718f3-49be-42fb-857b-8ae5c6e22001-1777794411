@@ -2,147 +2,136 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Phone, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { Phone, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
-    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: "/#sluzby", label: "Služby" },
-    { href: "/#cennik", label: "Cenník" },
-    { href: "/#recenzie", label: "Recenzie" },
-    { href: "/#faq", label: "FAQ" },
-    { href: "/#blog", label: "Blog" },
-  ];
-
   return (
-    <header 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        isScrolled 
-          ? "bg-background text-primary border-border shadow-sm" 
-          : "bg-primary text-primary-foreground border-transparent"
-      )}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background shadow-md"
+          : "bg-primary"
+      }`}
     >
-      <div className="container h-16 sm:h-20 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg transition-colors ${
-            isScrolled ? "" : "bg-white"
-          }`}>
-            <img
-              src="/etaxi_logo_svg.svg"
-              alt="E-TAXI Košice"
-              className="h-12 w-auto"
-            />
-          </div>
-        </Link>
+      <div className="container">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg transition-colors ${
+              isScrolled ? "" : "bg-white"
+            }`}>
+              <img
+                src="/etaxi_logo_svg.svg"
+                alt="E-TAXI Košice"
+                className="h-12 w-auto"
+              />
+            </div>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-          <Link 
-            href="#sluzby" 
-            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
-              isScrolled ? "text-foreground" : "text-white"
-            }`}
-          >
-            Služby
-          </Link>
-          <Link 
-            href="#cennik" 
-            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
-              isScrolled ? "text-foreground" : "text-white"
-            }`}
-          >
-            Cenník
-          </Link>
-          <Link 
-            href="#kontakt" 
-            className={`font-medium text-base lg:text-lg transition-colors hover:text-accent ${
-              isScrolled ? "text-foreground" : "text-white"
-            }`}
-          >
-            Kontakt
-          </Link>
-        </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <Link 
+              href="#sluzby" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-foreground" : "text-white"
+              }`}
+            >
+              Služby
+            </Link>
+            <Link 
+              href="#cennik" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-foreground" : "text-white"
+              }`}
+            >
+              Cenník
+            </Link>
+            <Link 
+              href="#kontakt" 
+              className={`font-medium transition-colors hover:text-accent ${
+                isScrolled ? "text-foreground" : "text-white"
+              }`}
+            >
+              Kontakt
+            </Link>
+          </nav>
 
-        {/* Call Button - Desktop */}
-        <a href="tel:+421911606206" className="hidden md:block">
+          {/* Order Button - Desktop */}
           <Button 
             size="lg"
-            className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-12 px-6 text-base"
+            className={`hidden md:flex font-display font-semibold ${
+              isScrolled 
+                ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
+                : "bg-white hover:bg-white/90 text-primary"
+            }`}
+            asChild
           >
-            <Phone className="w-5 h-5 mr-2" />
-            +421 911 606 206
+            <Link href="#objednavka">Objednať teraz</Link>
           </Button>
-        </a>
 
-        {/* Mobile Menu Button */}
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className={`h-12 w-12 ${isScrolled ? "text-primary" : "text-white"}`}
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <nav className="flex flex-col gap-6 mt-8">
-              <Link 
-                href="#sluzby" 
-                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
-                onClick={() => setIsOpen(false)}
+          {/* Mobile Menu Button */}
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className={isScrolled ? "text-primary" : "text-white"}
               >
-                Služby
-              </Link>
-              <Link 
-                href="#cennik" 
-                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
-                onClick={() => setIsOpen(false)}
-              >
-                Cenník
-              </Link>
-              <Link 
-                href="#kontakt" 
-                className="text-xl font-medium text-foreground hover:text-accent transition-colors py-3"
-                onClick={() => setIsOpen(false)}
-              >
-                Kontakt
-              </Link>
-              
-              <div className="pt-6 border-t border-border">
-                <a href="tel:+421911606206">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <nav className="flex flex-col gap-6 mt-8">
+                <Link 
+                  href="#sluzby" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Služby
+                </Link>
+                <Link 
+                  href="#cennik" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Cenník
+                </Link>
+                <Link 
+                  href="#kontakt" 
+                  className="text-lg font-medium text-foreground hover:text-accent transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Kontakt
+                </Link>
+                
+                <div className="pt-6 border-t border-border">
                   <Button 
                     size="lg"
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-14 text-lg"
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold"
+                    asChild
                   >
-                    <Phone className="w-5 h-5 mr-2" />
-                    +421 911 606 206
+                    <Link href="#objednavka" onClick={() => setIsMenuOpen(false)}>
+                      Objednať teraz
+                    </Link>
                   </Button>
-                </a>
-              </div>
-            </nav>
-          </SheetContent>
-        </Sheet>
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
