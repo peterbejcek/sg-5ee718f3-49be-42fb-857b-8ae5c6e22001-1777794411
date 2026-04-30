@@ -24,36 +24,17 @@ export function CookieConsent() {
 
   const handleAccept = () => {
     localStorage.setItem("cookieConsent", "accepted");
-    localStorage.setItem("cookieConsentDate", new Date().toISOString());
-    setIsVisible(false);
-    setTimeout(() => setShowBanner(false), 300);
-    
-    // Enable Google Ads tracking (if implemented)
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("consent", "update", {
-        ad_storage: "granted",
-        analytics_storage: "granted",
-        ad_user_data: "granted",
-        ad_personalization: "granted"
-      });
-    }
+    setShowBanner(false);
   };
 
-  const handleReject = () => {
+  const handleRejectOptional = () => {
+    localStorage.setItem("cookieConsent", "essential-only");
+    setShowBanner(false);
+  };
+
+  const handleRejectAll = () => {
     localStorage.setItem("cookieConsent", "rejected");
-    localStorage.setItem("cookieConsentDate", new Date().toISOString());
-    setIsVisible(false);
-    setTimeout(() => setShowBanner(false), 300);
-    
-    // Disable Google Ads tracking
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("consent", "update", {
-        ad_storage: "denied",
-        analytics_storage: "denied",
-        ad_user_data: "denied",
-        ad_personalization: "denied"
-      });
-    }
+    setShowBanner(false);
   };
 
   if (!showBanner) return null;
@@ -112,21 +93,27 @@ export function CookieConsent() {
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
+                  {/* Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                    <Button
                       onClick={handleAccept}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                      size="lg"
+                      className="bg-primary hover:bg-primary/90 text-white flex-1"
                     >
-                      Prijať všetky cookies
+                      Prijať všetky
                     </Button>
-                    <Button 
-                      onClick={handleReject}
+                    <Button
+                      onClick={handleRejectOptional}
                       variant="outline"
-                      className="border-primary/30 hover:bg-primary/5"
-                      size="lg"
+                      className="border-primary text-primary hover:bg-primary/10 flex-1"
                     >
-                      Odmietnuť marketingové cookies
+                      Len nevyhnutné
+                    </Button>
+                    <Button
+                      onClick={handleRejectAll}
+                      variant="outline"
+                      className="border-destructive text-destructive hover:bg-destructive/10 flex-1"
+                    >
+                      Odmietnuť všetky
                     </Button>
                   </div>
 
