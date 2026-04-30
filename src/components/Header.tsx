@@ -74,20 +74,15 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <a href="tel:+421911606206" className="hidden sm:flex items-center gap-2 group">
-            <div className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-              isScrolled ? "bg-primary/10 text-primary" : "bg-white/10 text-white"
-            )}>
-              <Phone className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-medium opacity-80 leading-none">Dispečing 24/7</span>
-              <span className="font-display font-bold text-lg tabular-nums leading-none mt-1">
+          {/* Call Button - Desktop */}
+          <div className="hidden md:block">
+            <Link href="tel:+421911606206">
+              <Button className="bg-accent hover:bg-accent/90 text-white font-semibold gap-2">
+                <Phone className="h-4 w-4" />
                 +421 911 606 206
-              </span>
-            </div>
-          </a>
+              </Button>
+            </Link>
+          </div>
 
           <a href="tel:+421911606206" className="sm:hidden">
             <Button size="icon" variant={isScrolled ? "default" : "secondary"} className={!isScrolled ? "bg-white text-primary hover:bg-white/90" : ""}>
@@ -140,13 +135,16 @@ export function Header() {
                     ))}
                   </nav>
                   
-                  <div className="mt-auto flex flex-col gap-4 pb-8">
-                    <a href="tel:+421911606206" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 text-lg">
-                        <Phone className="w-5 h-5 mr-2" />
+                  <div className="border-t border-border pt-4 mt-4">
+                    <Link href="tel:+421911606206" className="w-full">
+                      <Button className="w-full bg-accent hover:bg-accent/90 text-white font-semibold gap-2">
+                        <Phone className="h-4 w-4" />
                         +421 911 606 206
                       </Button>
-                    </a>
+                    </Link>
+                  </div>
+                  
+                  <div className="mt-auto flex flex-col gap-4 pb-8">
                     <a href="/#objednavka" onClick={() => setIsOpen(false)}>
                       <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 h-12 text-lg">
                         Objednať online

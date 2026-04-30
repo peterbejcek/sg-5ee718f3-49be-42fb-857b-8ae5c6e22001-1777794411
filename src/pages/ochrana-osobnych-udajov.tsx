@@ -2,6 +2,7 @@ import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Shield, Lock, Eye, UserCheck, FileText, Mail } from "lucide-react";
+import Link from "next/link";
 
 export default function PrivacyPolicy() {
   return (
@@ -226,12 +227,12 @@ export default function PrivacyPolicy() {
 
           {/* Back button */}
           <div className="mt-8 text-center">
-            <a 
+            <Link 
               href="/"
               className="inline-flex items-center text-primary hover:underline font-semibold"
             >
               ← Späť na hlavnú stránku
-            </a>
+            </Link>
           </div>
         </div>
       </main>
