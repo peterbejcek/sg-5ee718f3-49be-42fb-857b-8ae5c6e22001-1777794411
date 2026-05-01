@@ -85,9 +85,110 @@ export default function Home() {
   return (
     <>
       <SEO 
-        title="E-TAXI Košice | Taxislužba 24/7 | Letiskové transfery Budapešť, Krakov, Viedeň"
-        description="Profesionálna taxislužba v Košiciach ✓ Online objednávka ✓ Letiskové transfery ✓ Moderný vozový park ✓ Transparentné ceny ✓ Volajte: +421 911 606 206"
-        keywords="taxi Košice, taxík Košice, taxislužba Košice, letiskový transfer, Košice letisko, taxi na letisko, transfer Budapešť, transfer Krakov, transfer Viedeň, online objednávka taxi, taxi 24/7"
+        title="E-TAXI Košice | Taxislužba 24/7 | Transfery Budapešť, Krakov, Viedeň"
+        description="Profesionálna taxislužba v Košiciach dostupná 24/7 ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Online objednávka ✓ Moderné vozidlá ✓ Dispečing +421 911 606 206"
+        url="https://etaxi-kosice.sk"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "@id": "https://etaxi-kosice.sk",
+            "name": "E-TAXI Košice",
+            "alternateName": "E-TAXI Košice - Taxislužba",
+            "description": "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery Budapešť, Krakov, Viedeň. Online objednávka a okamžité potvrdenie.",
+            "image": "https://etaxi-kosice.sk/og-image.png",
+            "logo": "https://etaxi-kosice.sk/etaxi_logo_svg.svg",
+            "telephone": "+421911606206",
+            "email": "dispecing@e-taxike.sk",
+            "url": "https://etaxi-kosice.sk",
+            "priceRange": "€€",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Košice",
+              "addressRegion": "Košický kraj",
+              "addressCountry": "SK"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": "48.7164",
+              "longitude": "21.2611"
+            },
+            "areaServed": [
+              {
+                "@type": "City",
+                "name": "Košice"
+              },
+              {
+                "@type": "City",
+                "name": "Prešov"
+              },
+              {
+                "@type": "AdministrativeArea",
+                "name": "Košický kraj"
+              }
+            ],
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ],
+              "opens": "00:00",
+              "closes": "23:59"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Taxislužby a transfery",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Mestská taxislužba Košice",
+                    "description": "Rýchla a spoľahlivá taxislužba v Košiciach a okolí dostupná 24/7"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transfer na letisko Budapešť",
+                    "description": "Expresný transfer z Košíc na letisko Budapešť za 250 EUR"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transfer na letisko Krakov",
+                    "description": "Pohodlný transfer z Košíc na letisko Krakov za 290 EUR"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Transfer na letisko Viedeň",
+                    "description": "Profesionálny transfer z Košíc na letisko Viedeň za 450 EUR"
+                  }
+                }
+              ]
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "reviewCount": "127"
+            }
+          })
+        }}
       />
       <Head>
         <script

@@ -8,11 +8,11 @@ import { Plane, Car, Info } from "lucide-react";
 export default function CennikPage() {
   return (
     <>
-      <SEO
-        title="Cenník taxislužby | E-TAXI Košice | Transparentné ceny"
-        description="Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 0,80€/km ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Bez skrytých poplatkov ✓ Online objednávka"
-        keywords="cenník taxi Košice, cena taxi Košice, cena za kilometer taxi, letiskový transfer cena, taxi Budapešť cena, taxi Krakov cena, taxi Viedeň cena, taxi z letiska Košice"
-        url="https://etaxi-kosice.sk/cennik" />
+      <SEO 
+        title="Cenník taxislužby | E-TAXI Košice | Ceny za km a transfery na letisko"
+        description="Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 1,10€/km ✓ Transfer Budapešť 250€ ✓ Transfer Krakov 290€ ✓ Transfer Viedeň 450€ ✓ Transparentné ceny bez skrytých poplatkov"
+        url="https://etaxi-kosice.sk/cennik"
+      />
       
       <Header />
       

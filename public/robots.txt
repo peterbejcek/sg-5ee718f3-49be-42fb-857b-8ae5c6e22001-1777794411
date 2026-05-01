@@ -1,6 +1,6 @@
-# https://www.robotstxt.org/robotstxt.html
+# E-TAXI Košice - Robots.txt
 User-agent: *
 Allow: /
+Disallow: /api/
 
-# Sitemaps
 Sitemap: https://etaxi-kosice.sk/sitemap.xml
