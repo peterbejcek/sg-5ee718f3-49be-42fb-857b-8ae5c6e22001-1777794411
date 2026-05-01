@@ -1,12 +1,22 @@
 import { motion } from "framer-motion";
-import { reviews, reviewsData } from "@/data/reviews";
+import { reviewsData } from "@/data/reviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, ExternalLink, Quote } from "lucide-react";
+import { Star, ExternalLink, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 export function ReviewsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const reviews = reviewsData;
+
+  const nextReview = () => {
+    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+  };
+
+  const prevReview = () => {
+    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) =>
