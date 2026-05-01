@@ -13,12 +13,8 @@ const iconMap = {
 
 export function AboutSection() {
   return (
-    <motion.section 
+    <section 
       className="py-16 sm:py-20 bg-muted/30"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
     >
       <div className="container">
         <motion.div 
@@ -137,6 +133,6 @@ export function AboutSection() {
           </CardContent>
         </Card>
       </div>
-    </motion.section>
+    </section>
   );
 }

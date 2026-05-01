@@ -43,11 +43,11 @@ export default function PrivacyPolicy() {
                   <UserCheck className="h-6 w-6 text-primary" />
                   1. Prevádzkovateľ osobných údajov
                 </h2>
-                <div className="text-muted-foreground space-y-2">
-                  <p><strong>Obchodné meno:</strong> E-TAXI Košice</p>
-                  <p><strong>Adresa:</strong> Košice, Slovenská republika</p>
-                  <p><strong>IČO:</strong> [doplniť IČO]</p>
-                  <p><strong>E-mail:</strong> info@etaxi-kosice.sk</p>
+                <div className="bg-muted p-6 rounded-lg">
+                  <h3 className="font-semibold text-lg mb-3">Prevádzkovateľ:</h3>
+                  <p><strong>Názov:</strong> E-TAXI Košice</p>
+                  <p><strong>Adresa:</strong> Košice, Slovensko</p>
+                  <p><strong>E-mail:</strong> dispecing@e-taxike.sk</p>
                   <p><strong>Telefón:</strong> +421 911 606 206</p>
                 </div>
               </section>

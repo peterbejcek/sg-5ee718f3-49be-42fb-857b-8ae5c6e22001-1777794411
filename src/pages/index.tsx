@@ -27,7 +27,7 @@ export default function Home() {
       "addressCountry": "SK"
     },
     "telephone": "+421911606206",
-    "email": "info@etaxi-kosice.sk",
+    "email": "dispecing@e-taxike.sk",
     "url": "https://etaxi-kosice.sk",
     "priceRange": "€€",
     "openingHoursSpecification": {

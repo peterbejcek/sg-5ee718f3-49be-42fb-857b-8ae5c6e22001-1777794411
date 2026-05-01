@@ -59,7 +59,8 @@ export const aboutData = {
   
   contact: {
     phone: "+421 911 606 206",
-    email: "info@etaxi-kosice.sk",
-    address: "Hlavná 1, 040 01 Košice"
+    email: "dispecing@e-taxike.sk",
+    address: "Košice, Slovensko",
+    hours: "24/7 dispečing"
   }
 };
