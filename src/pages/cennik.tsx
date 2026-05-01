@@ -8,12 +8,12 @@ import { Plane, Car, Info } from "lucide-react";
 export default function CennikPage() {
   return (
     <>
-      <SEO 
+      <SEO
         title="Cenník taxislužby | E-TAXI Košice | Transparentné ceny"
         description="Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 0,80€/km ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Bez skrytých poplatkov ✓ Online objednávka"
         keywords="cenník taxi Košice, cena taxi Košice, cena za kilometer taxi, letiskový transfer cena, taxi Budapešť cena, taxi Krakov cena, taxi Viedeň cena, taxi z letiska Košice"
-        url="https://etaxi-kosice.sk/cennik"
-      />
+        url="https://etaxi-kosice.sk/cennik" />
+      
       <Header />
       
       <main className="pt-24 pb-16">
@@ -26,8 +26,8 @@ export default function CennikPage() {
               </h1>
             </div>
             
-            <p className="text-lg text-muted-foreground mb-12">
-              {pricingData.subtitle}. Všetky ceny zahŕňajú DPH. {pricingData.note}.
+            <p className="text-lg text-muted-foreground mb-12">Transparentné ceny bez skrytých poplatkov. Nie sme platci DPH. Konkrétnu cenu určuje aplikácia vopred.
+
             </p>
 
             <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -41,14 +41,14 @@ export default function CennikPage() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <ul className="space-y-4">
-                    {pricingData.basicPricing.map((item, index) => (
-                      <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                    {pricingData.basicPricing.map((item, index) =>
+                    <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
                         <span className="text-foreground">{item.label}</span>
                         <span className="font-semibold text-[#282462] tabular-nums">
                           {item.price}
                         </span>
                       </li>
-                    ))}
+                    )}
                   </ul>
                 </CardContent>
               </Card>
@@ -63,14 +63,14 @@ export default function CennikPage() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <ul className="space-y-4">
-                    {pricingData.transfers.map((item, index) => (
-                      <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                    {pricingData.transfers.map((item, index) =>
+                    <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
                         <span className="text-foreground">{item.destination}</span>
                         <span className="font-semibold text-[#282462] tabular-nums">
                           {item.price}
                         </span>
                       </li>
-                    ))}
+                    )}
                   </ul>
                 </CardContent>
               </Card>
@@ -86,7 +86,7 @@ export default function CennikPage() {
                   <li>• Ceny sú orientačné a môžu sa líšiť podľa aktuálnej dopravnej situácie</li>
                   <li>• Pri dlhších trasách možnosť dohodnutia paušálnej ceny vopred</li>
                   <li>• Pre firmy vystavujeme faktúry s platbou prevodom</li>
-                  <li>• Pri pravidelných jazdách ponúkame zľavové karty a mesačné paušály</li>
+                  
                 </ul>
               </CardContent>
             </Card>
@@ -95,6 +95,6 @@ export default function CennikPage() {
       </main>
 
       <Footer />
-    </>
-  );
+    </>);
+
 }
