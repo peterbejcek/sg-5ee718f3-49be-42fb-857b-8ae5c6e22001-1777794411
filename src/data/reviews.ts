@@ -18,11 +18,11 @@ export const reviewsData = {
 export const reviews: Review[] = [
   {
     id: "1",
-    name: "Michal K.",
+    name: "Pavol Horváth",
     rating: 5,
-    date: "2026-04-15",
-    text: "Vynikajúca služba! Vodič prišiel presne načas, auto čisté a pohodlné. Určite budem využívať aj naďalej.",
-    service: "Transfer na letisko"
+    date: "pred 8 mesiacmi",
+    text: "dakujem sofer neviem ako sa vola viezol ma na krasnom pasate za prijemny pokec a ochotu,to sa uz dnes tak casto nevidi.",
+    service: "Mestská jazda"
   },
   {
     id: "2",
