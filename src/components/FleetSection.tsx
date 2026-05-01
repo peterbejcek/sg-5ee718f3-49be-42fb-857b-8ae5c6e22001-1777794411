@@ -16,12 +16,11 @@ export function FleetSection() {
       id: "1",
       name: "VW Passat GTE",
       type: "kombi" as const,
-      capacity: 5,
+      capacity: 4,
       isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Zap, label: "Ekologický" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Zap, label: "Ekologický" }
       ],
       image: "/VW_Kosice.PNG",
       description: "Ekologické plug-in hybrid kombi s veľkým batožinovým priestorom"
@@ -34,7 +33,7 @@ export function FleetSection() {
       isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" }
+        { icon: Users, label: "Detská sedačka" }
       ],
       image: "/corolla_krakov.PNG",
       description: "Spoľahlivý sedan s nízkou spotrebou"
@@ -47,7 +46,6 @@ export function FleetSection() {
       isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Wifi, label: "WiFi" },
         { icon: Zap, label: "Elektrické" }
       ],
       image: "/tesla_Budapest.PNG",
@@ -60,8 +58,7 @@ export function FleetSection() {
       capacity: 4,
       isEco: false,
       features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Wind, label: "Klimatizácia" }
       ],
       image: "/VW_Golf_VII.png",
       description: "Komfortné kombi pre mestskú aj medzimestkú dopravu"
@@ -70,7 +67,7 @@ export function FleetSection() {
       id: "5",
       name: "Škoda Octavia Combi",
       type: "kombi" as const,
-      capacity: 5,
+      capacity: 4,
       isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
@@ -83,10 +80,11 @@ export function FleetSection() {
       id: "6",
       name: "Mercedes-Benz Vito",
       type: "van" as const,
-      capacity: 8,
+      capacity: 4,
       isEco: false,
       features: [
-        { icon: Wind, label: "Klimatizácia" }
+        { icon: Wind, label: "Klimatizácia" },
+        { icon: Users, label: "Detská sedačka" }
       ],
       image: "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=800&auto=format&fit=crop",
       description: "Priestranný van pre väčšie skupiny a batožinu"
