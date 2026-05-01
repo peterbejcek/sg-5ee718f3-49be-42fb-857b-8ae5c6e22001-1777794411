@@ -1,21 +1,9 @@
 import { useState } from "react";
-import { Users, Wifi, Wind, Zap, Phone, Calendar, Baby, Shield } from "lucide-react";
+import { Users, Wind, Zap, Phone, Calendar, Baby, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-
-interface Vehicle {
-  name: string;
-  type: "sedan" | "kombi" | "van";
-  capacity: number;
-  features: string[];
-  image: string;
-  description?: string;
-}
-
-type VehicleType = "all" | "sedan" | "kombi" | "van";
-type FilterType = VehicleType | "1-4" | "5-8" | "eco";
 
 export function FleetSection() {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -42,7 +30,7 @@ export function FleetSection() {
       isEco: true,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Baby, label: "Detská sedačka" }
       ],
       image: "/corolla_krakov.PNG",
       description: "Spoľahlivý sedan s nízkou spotrebou"
@@ -80,23 +68,23 @@ export function FleetSection() {
       isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Baby, label: "Detská sedačka" }
       ],
       image: "/VW_Jetta.png",
-      description: "Praktické kombi pre rodiny a väčšie skupiny"
+      description: "Praktické vozidlo pre rodiny a väčšie skupiny"
     },
     {
       id: "6",
-      name: "Mercedes-Benz Vito",
+      name: "Ďalšie vozidlá",
       type: "van" as const,
       capacity: 4,
       isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
-        { icon: Users, label: "Detská sedačka" }
+        { icon: Baby, label: "Detská sedačka" }
       ],
-      image: "https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=800&auto=format&fit=crop",
-      description: "Priestranný van pre väčšie skupiny a batožinu"
+      image: "/auta.png",
+      description: "Celkovo 14 vozidiel k dispozícii"
     }
   ];
 
@@ -149,7 +137,6 @@ export function FleetSection() {
           </Button>
         </div>
 
-        {/* Vehicle Grid */}
         <motion.div 
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={{
@@ -168,13 +155,12 @@ export function FleetSection() {
           {filteredVehicles.map((vehicle) => (
             <motion.div
               key={vehicle.id}
-              className="bg-card border border-border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 show: { opacity: 1, y: 0 }
               }}
             >
-              <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                 <div className="relative h-48 bg-muted">
                   <img
                     src={vehicle.image}
@@ -187,7 +173,7 @@ export function FleetSection() {
                     </Badge>
                   )}
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex-grow flex flex-col">
                   <h3 className="font-display font-semibold text-xl mb-3">
                     {vehicle.name}
                   </h3>
@@ -196,22 +182,22 @@ export function FleetSection() {
                     <span className="text-sm">Kapacita: {vehicle.capacity} osoby</span>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {vehicle.features.map((feature, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/5 text-primary rounded-full text-sm"
-                      >
-                        {feature === "Klimatizácia" && <Wind className="w-4 h-4" />}
-                        {feature === "WiFi" && <Wifi className="w-4 h-4" />}
-                        {feature === "Detská sedačka" && <Baby className="w-4 h-4" />}
-                        {feature === "Bezpečnosť" && <Shield className="w-4 h-4" />}
-                        {feature}
-                      </span>
-                    ))}
+                    {vehicle.features.map((feature, idx) => {
+                      const Icon = feature.icon;
+                      return (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-primary/5 text-primary rounded-full text-sm"
+                        >
+                          <Icon className="w-4 h-4" />
+                          {feature.label}
+                        </span>
+                      );
+                    })}
                   </div>
 
                   {vehicle.description && (
-                    <p className="text-sm text-muted-foreground italic">
+                    <p className="text-sm text-muted-foreground italic mt-auto pt-2">
                       {vehicle.description}
                     </p>
                   )}
@@ -221,7 +207,7 @@ export function FleetSection() {
           ))}
         </motion.div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <a href="#objednavka">
             <Button size="lg" className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold">
               <Calendar className="w-5 h-5 mr-2" />
