@@ -20,10 +20,12 @@ export function Header() {
   }, []);
 
   const menuItems = [
-    { href: "/#sluzby", label: "Služby" },
-    { href: "/cennik", label: "Cenník" },
-    { href: "/#faq", label: "FAQ" },
-    { href: "/#recenzie", label: "Recenzie" },
+    { label: "Služby", href: "#sluzby" },
+    { label: "Vozový park", href: "#vozovy-park" },
+    { label: "O nás", href: "#o-nas" },
+    { label: "Recenzie", href: "#recenzie" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Cenník", href: "/cennik" }
   ];
 
   return (
