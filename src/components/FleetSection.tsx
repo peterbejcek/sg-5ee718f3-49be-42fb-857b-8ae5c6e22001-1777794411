@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Users, Wifi, Wind, Zap, Phone, Calendar } from "lucide-react";
+import { Users, Wifi, Wind, Zap, Phone, Calendar, Baby, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+
+interface Vehicle {
+  name: string;
+  type: "sedan" | "kombi" | "van";
+  capacity: number;
+  features: string[];
+  image: string;
+  description?: string;
+}
 
 type VehicleType = "all" | "sedan" | "kombi" | "van";
 type FilterType = VehicleType | "1-4" | "5-8" | "eco";
@@ -65,15 +74,15 @@ export function FleetSection() {
     },
     {
       id: "5",
-      name: "Škoda Octavia Combi",
-      type: "kombi" as const,
+      name: "VW Jetta",
+      type: "sedan" as const,
       capacity: 4,
       isEco: false,
       features: [
         { icon: Wind, label: "Klimatizácia" },
         { icon: Users, label: "Detská sedačka" }
       ],
-      image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop",
+      image: "/VW_Jetta.png",
       description: "Praktické kombi pre rodiny a väčšie skupiny"
     },
     {
@@ -186,14 +195,26 @@ export function FleetSection() {
                     <Users className="w-4 h-4" />
                     <span className="text-sm">Kapacita: {vehicle.capacity} osoby</span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {vehicle.features.map((feature, idx) => (
-                      <Badge key={idx} variant="secondary" className="gap-1">
-                        <feature.icon className="w-3 h-3" />
-                        {feature.label}
-                      </Badge>
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/5 text-primary rounded-full text-sm"
+                      >
+                        {feature === "Klimatizácia" && <Wind className="w-4 h-4" />}
+                        {feature === "WiFi" && <Wifi className="w-4 h-4" />}
+                        {feature === "Detská sedačka" && <Baby className="w-4 h-4" />}
+                        {feature === "Bezpečnosť" && <Shield className="w-4 h-4" />}
+                        {feature}
+                      </span>
                     ))}
                   </div>
+
+                  {vehicle.description && (
+                    <p className="text-sm text-muted-foreground italic">
+                      {vehicle.description}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
