@@ -83,37 +83,37 @@ export function Footer() {
           {/* Information */}
           <div>
             <div>
-              <h3 className="font-display font-semibold text-lg mb-4 text-foreground">
+              <h3 className="font-display font-semibold text-lg mb-4 text-white">
                 Informácie
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/cennik" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/cennik" className="text-white hover:text-accent transition-colors">
                     Cenník
                   </Link>
                 </li>
                 <li>
-                  <Link href="/prepravny-poriadok" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/prepravny-poriadok" className="text-white hover:text-accent transition-colors">
                     Prepravný poriadok
                   </Link>
                 </li>
                 <li>
-                  <Link href="/ochrana-osobnych-udajov" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/ochrana-osobnych-udajov" className="text-white hover:text-accent transition-colors">
                     Ochrana osobných údajov
                   </Link>
                 </li>
                 <li>
-                  <Link href="#faq" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#faq" className="text-white hover:text-accent transition-colors">
                     FAQ
                   </Link>
                 </li>
                 <li>
-                  <Link href="#recenzie" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#recenzie" className="text-white hover:text-accent transition-colors">
                     Recenzie zákazníkov
                   </Link>
                 </li>
                 <li>
-                  <Link href="#blog" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#blog" className="text-white hover:text-accent transition-colors">
                     Blog
                   </Link>
                 </li>
