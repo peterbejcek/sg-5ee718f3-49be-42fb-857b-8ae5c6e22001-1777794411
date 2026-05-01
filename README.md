@@ -11,23 +11,46 @@ Profesionálna taxislužba v Košiciach s online objednávkovým systémom.
 - Framer Motion
 - shadcn/ui
 
-## 📧 Nastavenie emailov
+## 📧 Nastavenie emailov (SMTP)
 
-Pre funkčnosť odosielania objednávok cez formulár je potrebné nastaviť email službu:
+Pre funkčnosť odosielania objednávok cez formulár je potrebné nakonfigurovať SMTP server:
 
-1. Zaregistrujte sa na [Resend.com](https://resend.com)
-2. Vytvorte API kľúč v dashboard
-3. Skopírujte `.env.example` do `.env.local`
-4. Pridajte váš API kľúč:
+### Postup nastavenia:
 
-```env
-RESEND_API_KEY=re_your_api_key_here
-```
+1. **Skopírujte `.env.example` do `.env.local`:**
+   ```bash
+   cp .env.example .env.local
+   ```
 
-5. V Resend console overíte doménu `e-taxike.sk` alebo použite testing email
+2. **Vyplňte SMTP údaje v `.env.local`:**
+   ```env
+   SMTP_HOST=smtp.m1.websupport.sk
+   SMTP_PORT=465
+   SMTP_USER=dispecing@e-taxike.sk
+   SMTP_PASS=your_actual_password_here
+   ```
 
-**Bez nastaveného API kľúča:**
-- Objednávky sa budú logovať do konzoly
+3. **Reštartujte development server:**
+   ```bash
+   npm run dev
+   ```
+
+### ⚠️ Bezpečnosť:
+
+- **NIKDY** necommitujte `.env.local` do git repository
+- `.env.local` je automaticky ignorovaný v `.gitignore`
+- Pre production (Vercel) pridajte environment variables v dashboard
+
+### 🔧 SMTP Nastavenia:
+
+- **Server:** smtp.m1.websupport.sk
+- **Port:** 465 (SSL/TLS)
+- **Autentifikácia:** Vyžadovaná
+- **Email odosielateľ:** dispecing@e-taxike.sk
+- **Email prijímateľ:** dispecing@e-taxike.sk
+
+### Bez nastaveného SMTP:
+- Objednávky sa budú logovať do server konzoly
 - Používatelia dostanú notifikáciu o potrebe zavolať priamo
 
 ## 🛠️ Inštalácia a spustenie
@@ -48,4 +71,4 @@ npm run start
 
 ## 🌐 Deployment
 
-Projekt je optimalizovaný pre Vercel deployment. Pri deployment nezabudnite pridať `RESEND_API_KEY` do environment variables.
+Projekt je optimalizovaný pre Vercel deployment. Pri deployment nezabudnite pridať environment variables.
