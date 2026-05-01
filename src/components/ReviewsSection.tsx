@@ -83,10 +83,10 @@ export function ReviewsSection() {
                 <CardContent className="pt-6 h-full flex flex-col">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-display font-semibold text-lg mb-1">Diana Švarcová
+                      <h3 className="font-display font-semibold text-lg mb-1">Pavol Horváth
 
                     </h3>
-                      <p className="text-sm text-muted-foreground">pred 3 rokmi
+                      <p className="text-sm text-muted-foreground">pred 8 mesiacmi
 
 
 
@@ -107,8 +107,8 @@ export function ReviewsSection() {
                     </div>
                 }
 
-                  <p className="text-foreground/80 leading-relaxed flex-grow">Naozaj veľmi príjemná cesta šofér pozorný, slušný a neskutočne milý pre ďalšiu cestu v KE budem jednoznačne využívať túto taxislužbu. 💯
-Mladý pán ak toto čítate kľudne sa ozvite a pozývam na kávu ☕
+                  <p className="text-foreground/80 leading-relaxed flex-grow">dakujem sofer neviem ako sa vola viezol ma na krasnom pasate za prijemny pokec a ochotu,to sa uz dnes tak casto nevidi.
+
                 </p>
                 </CardContent>
               </Card>
