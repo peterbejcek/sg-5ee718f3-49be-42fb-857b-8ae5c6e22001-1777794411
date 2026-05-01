@@ -45,12 +45,27 @@ export function BookingForm() {
   const passengers = watch("passengers");
   const priceEstimateOnly = watch("priceEstimateOnly");
 
-  const onSubmit = (data: BookingFormData) => {
-    console.log("Booking data:", data);
-    if (data.priceEstimateOnly) {
-      alert("Pošleme vám cenovú kalkuláciu na email/telefón.");
-    } else {
-      alert("Objednávka odoslaná! Zavoláme vám na potvrdenie.");
+  const onSubmit = async (data: BookingFormData) => {
+    try {
+      const response = await fetch("/api/send-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("✅ Objednávka bola úspešne odoslaná! Čoskoro vás budeme kontaktovať.");
+        form.reset();
+      } else {
+        alert(`⚠️ ${result.message || "Chyba pri odosielaní objednávky. Zavolajte na +421 911 606 206"}`);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("❌ Chyba pri odosielaní objednávky. Zavolajte prosím priamo na +421 911 606 206");
     }
   };
 
