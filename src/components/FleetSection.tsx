@@ -9,84 +9,84 @@ export function FleetSection() {
   const [activeFilter, setActiveFilter] = useState("all");
 
   const vehicles = [
-    {
-      id: "1",
-      name: "VW Passat GTE",
-      type: "kombi" as const,
-      capacity: 4,
-      isEco: true,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Zap, label: "Ekologický" }
-      ],
-      image: "/VW_Kosice.PNG",
-      description: "Ekologické plug-in hybrid kombi s veľkým batožinovým priestorom"
-    },
-    {
-      id: "2",
-      name: "Toyota Corolla",
-      type: "sedan" as const,
-      capacity: 4,
-      isEco: true,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Baby, label: "Detská sedačka" }
-      ],
-      image: "/corolla_krakov.PNG",
-      description: "Spoľahlivý sedan s nízkou spotrebou"
-    },
-    {
-      id: "3",
-      name: "Tesla Model 3",
-      type: "sedan" as const,
-      capacity: 4,
-      isEco: true,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Zap, label: "Elektrické" }
-      ],
-      image: "/tesla_Budapest.PNG",
-      description: "Prémiové elektrické vozidlo"
-    },
-    {
-      id: "4",
-      name: "VW Golf VII Variant",
-      type: "kombi" as const,
-      capacity: 4,
-      isEco: false,
-      features: [
-        { icon: Wind, label: "Klimatizácia" }
-      ],
-      image: "/VW_Golf_VII.png",
-      description: "Komfortné kombi pre mestskú aj medzimestkú dopravu"
-    },
-    {
-      id: "5",
-      name: "VW Jetta",
-      type: "sedan" as const,
-      capacity: 4,
-      isEco: false,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Baby, label: "Detská sedačka" }
-      ],
-      image: "/VW_Jetta.png",
-      description: "Praktické vozidlo pre rodiny a väčšie skupiny"
-    },
-    {
-      id: "6",
-      name: "Ďalšie vozidlá",
-      type: "van" as const,
-      capacity: 4,
-      isEco: false,
-      features: [
-        { icon: Wind, label: "Klimatizácia" },
-        { icon: Baby, label: "Detská sedačka" }
-      ],
-      image: "/auta.png",
-      description: "Celkovo 14 vozidiel k dispozícii"
-    }
-  ];
+  {
+    id: "1",
+    name: "VW Passat GTE",
+    type: "kombi" as const,
+    capacity: 4,
+    isEco: true,
+    features: [
+    { icon: Wind, label: "Klimatizácia" },
+    { icon: Zap, label: "Ekologický" }],
+
+    image: "/VW_Kosice.PNG",
+    description: "Ekologické plug-in hybrid kombi s veľkým batožinovým priestorom"
+  },
+  {
+    id: "2",
+    name: "Toyota Corolla",
+    type: "sedan" as const,
+    capacity: 4,
+    isEco: true,
+    features: [
+    { icon: Wind, label: "Klimatizácia" },
+    { icon: Baby, label: "Detská sedačka" }],
+
+    image: "/corolla_krakov.PNG",
+    description: "Spoľahlivý sedan s nízkou spotrebou"
+  },
+  {
+    id: "3",
+    name: "Tesla Model 3",
+    type: "sedan" as const,
+    capacity: 4,
+    isEco: true,
+    features: [
+    { icon: Wind, label: "Klimatizácia" },
+    { icon: Zap, label: "Elektrické" }],
+
+    image: "/tesla_Budapest.PNG",
+    description: "Prémiové elektrické vozidlo"
+  },
+  {
+    id: "4",
+    name: "VW Golf VII Variant",
+    type: "kombi" as const,
+    capacity: 4,
+    isEco: false,
+    features: [
+    { icon: Wind, label: "Klimatizácia" }],
+
+    image: "/VW_Golf_VII.png",
+    description: "Komfortné kombi pre mestskú aj medzimestkú dopravu"
+  },
+  {
+    id: "5",
+    name: "VW Jetta",
+    type: "sedan" as const,
+    capacity: 4,
+    isEco: false,
+    features: [
+    { icon: Wind, label: "Klimatizácia" },
+    { icon: Baby, label: "Detská sedačka" }],
+
+    image: "/VW_Jetta.png",
+    description: "Praktické vozidlo pre rodiny a väčšie skupiny"
+  },
+  {
+    id: "6",
+    name: "Ďalšie vozidlá",
+    type: "van" as const,
+    capacity: 4,
+    isEco: false,
+    features: [
+    { icon: Wind, label: "Klimatizácia" },
+    { icon: Baby, label: "Detská sedačka" }],
+
+    image: "/auta.png",
+    description: "Celkovo 14 vozidiel k dispozícii"
+  }];
+
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     if (activeFilter === "all") return true;
@@ -95,22 +95,22 @@ export function FleetSection() {
   });
 
   return (
-    <motion.section 
-      id="sluzby" 
+    <motion.section
+      id="sluzby"
       className="py-16 sm:py-20 bg-background"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-    >
+      transition={{ duration: 0.6 }}>
+      
       <div className="container">
-        <motion.div 
+        <motion.div
           className="text-center max-w-3xl mx-auto mb-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+          transition={{ duration: 0.5, delay: 0.2 }}>
+          
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4 text-foreground">
             Náš vozový park
           </h2>
@@ -123,21 +123,21 @@ export function FleetSection() {
           <Button
             variant={activeFilter === "all" ? "default" : "outline"}
             onClick={() => setActiveFilter("all")}
-            className="font-display"
-          >
+            className="font-display">
+            
             Všetky vozidlá
           </Button>
           <Button
             variant={activeFilter === "eco" ? "default" : "outline"}
             onClick={() => setActiveFilter("eco")}
-            className="font-display"
-          >
+            className="font-display">
+            
             <Zap className="w-4 h-4 mr-2" />
             Ekologické
           </Button>
         </div>
 
-        <motion.div 
+        <motion.div
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={{
             hidden: { opacity: 0 },
@@ -150,28 +150,28 @@ export function FleetSection() {
           }}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
-        >
-          {filteredVehicles.map((vehicle) => (
-            <motion.div
-              key={vehicle.id}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
+          viewport={{ once: true, margin: "-50px" }}>
+          
+          {filteredVehicles.map((vehicle) =>
+          <motion.div
+            key={vehicle.id}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              show: { opacity: 1, y: 0 }
+            }}>
+            
               <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                 <div className="relative h-48 bg-muted">
                   <img
-                    src={vehicle.image}
-                    alt={vehicle.name}
-                    className="w-full h-full object-cover"
-                  />
-                  {vehicle.isEco && (
-                    <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
+                  src={vehicle.image}
+                  alt={vehicle.name}
+                  className="w-full h-full object-cover" />
+                
+                  {vehicle.isEco &&
+                <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
                       Ekologické
                     </Badge>
-                  )}
+                }
                 </div>
                 <CardContent className="p-6 flex-grow flex flex-col">
                   <h3 className="font-display font-semibold text-xl mb-3">
@@ -183,28 +183,28 @@ export function FleetSection() {
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {vehicle.features.map((feature, idx) => {
-                      const Icon = feature.icon;
-                      return (
-                        <span
-                          key={idx}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-primary/5 text-primary rounded-full text-sm"
-                        >
+                    const Icon = feature.icon;
+                    return (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/5 text-primary rounded-full text-sm">
+                        
                           <Icon className="w-4 h-4" />
                           {feature.label}
-                        </span>
-                      );
-                    })}
+                        </span>);
+
+                  })}
                   </div>
 
-                  {vehicle.description && (
-                    <p className="text-sm text-muted-foreground italic mt-auto pt-2">
-                      {vehicle.description}
-                    </p>
-                  )}
+                  {vehicle.description &&
+                <p className="text-sm text-muted-foreground italic mt-auto pt-2">Celkovo 14 vozidiel k dispozícii, všetky klimatizované, čisté a v dobrom technickom stave
+
+                </p>
+                }
                 </CardContent>
               </Card>
             </motion.div>
-          ))}
+          )}
         </motion.div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
@@ -222,6 +222,6 @@ export function FleetSection() {
           </a>
         </div>
       </div>
-    </motion.section>
-  );
+    </motion.section>);
+
 }
