@@ -247,11 +247,11 @@ export default function Home() {
 
         <PricingSection />
 
-        <AboutSection />
+        <AboutSection id="about") />
 
-        <BlogSection />
+        <BlogSection id="blog") />
 
-        <ReviewsSection />
+        <ReviewsSection id="reviews") />
 
         <FAQSection />
 

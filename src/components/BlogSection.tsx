@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export function BlogSection() {
   return (
-    <motion.section 
-      id="blog" 
-      className="py-16 sm:py-20 bg-background"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-    >
+    <section id="blog" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
@@ -91,6 +84,6 @@ export function BlogSection() {
           ))}
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   );
 }

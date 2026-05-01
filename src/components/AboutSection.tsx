@@ -13,8 +13,7 @@ const iconMap = {
 
 export function AboutSection() {
   return (
-    <section
-      className="py-16 sm:py-20 bg-muted/30">
+    <section id="o-nas" className="py-24 bg-background">
       
       <div className="container">
         <motion.div

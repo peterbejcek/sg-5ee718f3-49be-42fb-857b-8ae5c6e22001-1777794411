@@ -3,8 +3,11 @@ import { reviews, reviewsData } from "@/data/reviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink, Quote } from "lucide-react";
+import { useState } from "react";
 
 export function ReviewsSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) =>
     <Star
@@ -17,13 +20,7 @@ export function ReviewsSection() {
   };
 
   return (
-    <motion.section
-      id="recenzie"
-      className="py-16 sm:py-20 bg-background"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}>
+    <section id="recenzie" className="py-24 bg-muted/30">
       
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-12">
@@ -146,6 +143,6 @@ Mladý pán ak toto čítate kľudne sa ozvite a pozývam na kávu ☕
           </p>
         </motion.div>
       </div>
-    </motion.section>);
+    </section>);
 
 }
