@@ -26,18 +26,18 @@ export const reviews: Review[] = [
   },
   {
     id: "2",
-    name: "Jana P.",
+    name: "Diana Švarcová",
     rating: 5,
-    date: "2026-04-10",
-    text: "Profesionálny prístup, príjemná komunikácia s dispečingom. Odporúčam každému, kto hľadá spoľahlivú taxislužbu v Košiciach.",
+    date: "pred 3 rokmi",
+    text: "Naozaj veľmi príjemná cesta šofér pozorný, slušný a neskutočne milý pre ďalšiu cestu v KE budem jednoznačne využívať túto taxislužbu. 💯 Mladý pán ak toto čítate kľudne sa ozvite a pozývam na kávu ☕",
     service: "Firemný transfer"
   },
   {
     id: "3",
-    name: "Peter V.",
+    name: "Q Q",
     rating: 5,
-    date: "2026-04-05",
-    text: "Už niekoľko rokov využívam E-TAXI a vždy som spokojný. Rýchle vyzdvihnutie, slušní vodiči, férové ceny.",
+    date: "pred 2 mesiacmi",
+    text: "Ďakujeme za rýchly prístup spoločnosti.Vrelo odporúčam.Spokojnosť 🙂",
     service: "Mestská jazda"
   },
   {
