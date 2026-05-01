@@ -95,13 +95,13 @@ export function FleetSection() {
   });
 
   return (
-    <motion.section
-      id="sluzby"
-      className="py-16 sm:py-20 bg-background"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
+    <motion.section 
+      id="vozovy-park"
+      className="py-24 bg-muted/30"
+      initial="hidden"
+      whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}>
+    >
       
       <div className="container">
         <motion.div

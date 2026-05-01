@@ -153,7 +153,7 @@ export default function Home() {
         </section>
 
         {/* Services Section */}
-        <section className="py-16 sm:py-20 bg-background">
+        <section id="sluzby" className="py-16 sm:py-20 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-12">
               Naše služby
@@ -247,11 +247,11 @@ export default function Home() {
 
         <PricingSection />
 
-        <AboutSection id="about") />
+        <AboutSection />
 
-        <BlogSection id="blog") />
+        <BlogSection />
 
-        <ReviewsSection id="reviews") />
+        <ReviewsSection />
 
         <FAQSection />
 
