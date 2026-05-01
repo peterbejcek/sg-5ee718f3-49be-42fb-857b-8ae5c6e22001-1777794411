@@ -201,13 +201,13 @@ export default function PrivacyPolicy() {
                   <Mail className="h-6 w-6 text-primary" />
                   8. Kontakt pre uplatnenie práv
                 </h2>
-                <p className="text-muted-foreground mb-4">
-                  Pre uplatnenie svojich práv alebo otázky týkajúce sa ochrany osobných údajov nás kontaktujte:
+                <p className="mb-4">
+                  Svoje práva môžete uplatniť kontaktovaním prevádzkovateľa na adrese:
                 </p>
-                <div className="space-y-2 text-muted-foreground">
-                  <p><strong>E-mail:</strong> <a href="mailto:info@etaxi-kosice.sk" className="text-primary hover:underline">info@etaxi-kosice.sk</a></p>
-                  <p><strong>Telefón:</strong> +421 911 606 206</p>
-                  <p><strong>Poštová adresa:</strong> E-TAXI Košice, Košice, Slovenská republika</p>
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="font-semibold">E-TAXI Košice</p>
+                  <p>Email: <a href="mailto:dispecing@e-taxike.sk" className="text-primary hover:underline">dispecing@e-taxike.sk</a></p>
+                  <p>Tel: <a href="tel:+421911606206" className="text-primary hover:underline">+421 911 606 206</a></p>
                 </div>
                 <p className="text-sm text-muted-foreground mt-4">
                   Máte tiež právo podať sťažnosť na <strong>Úrad na ochranu osobných údajov SR</strong> (www.dataprotection.gov.sk)

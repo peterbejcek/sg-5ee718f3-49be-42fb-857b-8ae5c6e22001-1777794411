@@ -107,32 +107,30 @@ export function AboutSection() {
             <h3 className="font-display font-bold text-2xl mb-6 text-center">
               Kontaktujte nás
             </h3>
-            <div className="grid sm:grid-cols-3 gap-6">
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5" />
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="bg-accent/10 p-3 rounded-lg">
+                  <Phone className="w-6 h-6 text-accent" />
+                </div>
                 <div>
-                  <div className="text-sm opacity-90">Telefón</div>
-                  <a href={`tel:${aboutData.contact.phone.replace(/\s/g, '')}`} className="font-semibold tabular-nums hover:underline">
-                    {aboutData.contact.phone}
+                  <h3 className="font-display font-semibold text-lg mb-1">Telefonický kontakt</h3>
+                  <p className="text-muted-foreground mb-2">Dispečing k dispozícii 24 hodín denne, 7 dní v týždni</p>
+                  <a href="tel:+421911606206" className="text-primary font-semibold hover:text-accent transition-colors">
+                    +421 911 606 206
                   </a>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5" />
-                <div>
-                  <div className="text-sm opacity-90">Email</div>
-                  <a href={`mailto:${aboutData.contact.email}`} className="font-semibold hover:underline">
-                    {aboutData.contact.email}
-                  </a>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-accent/10 p-3 rounded-lg">
+                  <Mail className="w-6 h-6 text-accent" />
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5" />
                 <div>
-                  <div className="text-sm opacity-90">Adresa</div>
-                  <div className="font-semibold">
-                    {aboutData.contact.address}
-                  </div>
+                  <h3 className="font-display font-semibold text-lg mb-1">Emailový kontakt</h3>
+                  <p className="text-muted-foreground mb-2">Odpovieme do 24 hodín</p>
+                  <a href="mailto:dispecing@e-taxike.sk" className="text-primary font-semibold hover:text-accent transition-colors">
+                    dispecing@e-taxike.sk
+                  </a>
                 </div>
               </div>
             </div>

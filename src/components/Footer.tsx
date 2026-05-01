@@ -125,23 +125,23 @@ export function Footer() {
           <div>
             <h4 className="font-display font-semibold text-lg mb-4">Kontakt</h4>
             <ul className="space-y-3">
-              <li>
-                <a 
-                  href="tel:+421911606206" 
-                  className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
-                >
-                  <Phone className="w-4 h-4 shrink-0" />
-                  <span className="tabular-nums">+421 911 606 206</span>
-                </a>
+              <li className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-white">Dispečing 24/7</p>
+                  <a href="tel:+421911606206" className="text-white hover:text-accent transition-colors">
+                    +421 911 606 206
+                  </a>
+                </div>
               </li>
-              <li>
-                <a 
-                  href="mailto:info@etaxi-kosice.sk" 
-                  className="flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
-                >
-                  <Mail className="w-4 h-4 shrink-0" />
-                  <span>info@etaxi-kosice.sk</span>
-                </a>
+              <li className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-white">Email</p>
+                  <a href="mailto:dispecing@e-taxike.sk" className="text-white hover:text-accent transition-colors">
+                    dispecing@e-taxike.sk
+                  </a>
+                </div>
               </li>
               <li>
                 <div className="flex items-start gap-2 text-primary-foreground/80 text-sm">
