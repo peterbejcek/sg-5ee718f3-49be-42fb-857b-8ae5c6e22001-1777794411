@@ -9,6 +9,22 @@ export interface SEOProps {
   keywords?: string;
 }
 
+export function SEOElements() {
+  return (
+    <>
+      <meta name="robots" content="index, follow" />
+      <meta name="language" content="Slovak" />
+      <meta name="author" content="E-TAXI Košice" />
+      
+      {/* Geo Tags */}
+      <meta name="geo.region" content="SK-KI" />
+      <meta name="geo.placename" content="Košice" />
+      <meta name="geo.position" content="48.7164;21.2611" />
+      <meta name="ICBM" content="48.7164, 21.2611" />
+    </>
+  );
+}
+
 export function SEO({ 
   title = "E-TAXI Košice | Taxislužba 24/7 | Transfery na letisko Budapešť, Krakov, Viedeň",
   description = "Profesionálna taxislužba v Košiciach ✓ Dispečing 24/7 ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Online objednávka ✓ Moderné vozidlá ✓ Expresné transfery na letiská",
