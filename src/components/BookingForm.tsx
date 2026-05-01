@@ -34,6 +34,7 @@ export function BookingForm() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -59,7 +60,7 @@ export function BookingForm() {
 
       if (response.ok) {
         alert("✅ Objednávka bola úspešne odoslaná! Čoskoro vás budeme kontaktovať.");
-        form.reset();
+        reset();
       } else {
         alert(`⚠️ ${result.message || "Chyba pri odosielaní objednávky. Zavolajte na +421 911 606 206"}`);
       }
