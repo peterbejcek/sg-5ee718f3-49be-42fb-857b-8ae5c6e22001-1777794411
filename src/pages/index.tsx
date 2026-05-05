@@ -1,6 +1,6 @@
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
-import { BookingForm } from "@/components/BookingForm";
+import { SensetBookingForm } from "@/components/SensetBookingForm";
 import { FleetSection } from "@/components/FleetSection";
 import { PricingSection } from "@/components/PricingSection";
 import { Footer } from "@/components/Footer";
@@ -369,7 +369,7 @@ export default function Home() {
                   +421 911 606 206
                 </a>
               </p>
-              <BookingForm />
+              <SensetBookingForm />
             </div>
           </div>
         </section>
