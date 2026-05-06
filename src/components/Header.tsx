@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Phone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "react-i18next";
 
 export function Header() {
   const { t } = useTranslation("common");
