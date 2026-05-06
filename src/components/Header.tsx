@@ -72,9 +72,7 @@ export function Header() {
 
           {/* Right Side: Language Switcher + Call Button */}
           <div className="hidden md:flex items-center gap-3">
-            <div className={isScrolled ? "" : "text-white"}>
-              <LanguageSwitcher />
-            </div>
+            <LanguageSwitcher isScrolled={isScrolled} />
             
             <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="bg-accent rounded-full p-3">
