@@ -46,17 +46,8 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
     // Change i18next language
     await i18n.changeLanguage(locale);
     
-    // Get current path without locale prefix
-    const currentPath = router.asPath;
-    const pathWithoutLocale = currentPath.replace(/^\/(sk|en|de|ru|uk|he|hu|ar)/, '');
-    
     // Navigate to new locale
-    await router.push(pathWithoutLocale || '/', pathWithoutLocale || '/', { locale });
-    
-    // Force reload to ensure proper hydration
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    router.push(router.pathname, router.asPath, { locale });
   };
 
   if (!mounted) {
