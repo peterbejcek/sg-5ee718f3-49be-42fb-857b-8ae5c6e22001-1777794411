@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import Script from 'next/script'
 import type { AppProps } from "next/app";
+// @ts-expect-error missing types for next-i18next
 import { appWithTranslation } from "next-i18next";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { CookieConsent } from "@/components/CookieConsent";
