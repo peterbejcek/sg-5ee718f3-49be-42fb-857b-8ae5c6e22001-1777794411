@@ -117,53 +117,61 @@ export function SensetBookingForm() {
           display: block !important;
         }
 
-        /* 
-          1. "Odoslať" submit button
-          Fix "skiservis" look and text overflow 
-        */
+        /* "Odoslať" submit button */
         #senset-form button[type="submit"],
         #senset-form input[type="submit"],
-        #senset-form .btn-primary,
-        #senset-form .submit-btn {
-          font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
-          font-weight: 600 !important;
-          font-size: 16px !important;
-          padding: 16px 24px !important;
-          background: hsl(248 62% 27%) !important;
-          color: white !important;
+        #senset-form .submit-button {
+          background-color: hsl(var(--primary)) !important;
+          color: hsl(var(--primary-foreground)) !important;
           border: none !important;
           border-radius: 8px !important;
+          padding: 14px 32px !important;
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
           cursor: pointer !important;
-          transition: all 0.2s !important;
-          min-height: 54px !important;
-          height: auto !important;
+          transition: all 0.2s ease !important;
           width: 100% !important;
-          margin-top: 16px !important;
+          min-height: 54px !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
           text-align: center !important;
-          white-space: normal !important; /* Allow text to wrap if needed */
-          word-break: break-word !important;
-          box-sizing: border-box !important;
-          /* Remove any weird background images or gradients from original styling */
-          background-image: none !important;
+          white-space: normal !important;
+          word-wrap: break-word !important;
+          line-height: 1.3 !important;
+          margin-top: 8px !important;
           box-shadow: none !important;
-          line-height: 1.4 !important;
+        }
+
+        /* Remove yellow background from submit button wrapper/container */
+        #senset-form button[type="submit"]:before,
+        #senset-form button[type="submit"]:after,
+        #senset-form .submit-wrapper,
+        #senset-form .submit-container,
+        #senset-form form > div:last-child,
+        #senset-form > div:has(button[type="submit"]),
+        #senset-form div:has(> button[type="submit"]) {
+          background-color: transparent !important;
+          background: transparent !important;
+          background-image: none !important;
+          padding: 0 !important;
+        }
+
+        /* Force transparent background on all parent elements of submit button */
+        #senset-form *:has(> button[type="submit"]),
+        #senset-form *:has(> input[type="submit"]) {
+          background-color: transparent !important;
+          background: transparent !important;
+          background-image: none !important;
         }
 
         #senset-form button[type="submit"]:hover,
         #senset-form input[type="submit"]:hover,
-        #senset-form .btn-primary:hover {
-          background: hsl(248 62% 22%) !important;
+        #senset-form .submit-button:hover {
+          background-color: hsl(var(--primary) / 0.9) !important;
           transform: translateY(-1px) !important;
-          box-shadow: 0 4px 12px hsla(248 62% 27% / 0.3) !important;
-        }
-
-        #senset-form button[type="submit"]:active,
-        #senset-form input[type="submit"]:active {
-          transform: translateY(0) !important;
-          box-shadow: none !important;
+          box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
         }
 
         /* 
