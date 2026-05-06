@@ -1,35 +1,23 @@
 import Head from "next/head";
 
-export interface SEOProps {
+interface SEOProps {
   title?: string;
   description?: string;
   image?: string;
   url?: string;
   type?: string;
-  keywords?: string;
+  locale?: string;
+  siteName?: string;
 }
 
-export function SEOElements() {
-  return (
-    <>
-      <meta name="robots" content="index, follow" />
-      <meta name="language" content="Slovak" />
-      <meta name="author" content="E-TAXI Košice" />
-      
-      {/* Geo Tags */}
-      <meta name="geo.region" content="SK-KI" />
-      <meta name="geo.placename" content="Košice" />
-      <meta name="geo.position" content="48.7164;21.2611" />
-      <meta name="ICBM" content="48.7164, 21.2611" />
-    </>
-  );
-}
-
-export function SEO({ 
-  title = "E-TAXI Košice | Taxislužba 24/7 | Transfery na letisko Budapešť, Krakov, Viedeň",
-  description = "Profesionálna taxislužba v Košiciach ✓ Dispečing 24/7 ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Online objednávka ✓ Moderné vozidlá ✓ Expresné transfery na letiská",
+export function SEO({
+  title = "E-TAXI Košice | Profesionálna taxislužba 24/7",
+  description = "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery Budapešť, Krakov, Viedeň. Online objednávka, moderné vozidlá. Dispečing +421 911 606 206",
   image = "https://etaxi-kosice.sk/og-image.png",
-  url = "https://etaxi-kosice.sk"
+  url = "https://etaxi-kosice.sk",
+  type = "website",
+  locale = "sk_SK",
+  siteName = "E-TAXI Košice"
 }: SEOProps) {
   return (
     <Head>
@@ -37,36 +25,67 @@ export function SEO({
       <title>{title}</title>
       <meta name="title" content={title} />
       <meta name="description" content={description} />
-      <meta name="keywords" content="taxi Košice, taxislužba Košice, taxi služba Košice, transfer letisko Budapešť, transfer Budapešť Košice, letiskový transfer Budapešť, transfer Krakov, transfer Viedeň, taxi na letisko, letiskové transfery, taxi 24/7 Košice, dispečing taxi Košice, objednať taxi Košice, expresný transfer letisko, medzinárodné transfery Košice" />
+      <meta name="keywords" content="taxi košice, taxislužba košice, letiskový transfer, taxi budapešť, taxi krakov, taxi viedeň, e-taxi, online objednávka taxi, firemný transfer" />
       <meta name="robots" content="index, follow" />
       <meta name="language" content="Slovak" />
       <meta name="author" content="E-TAXI Košice" />
-      
-      {/* Geo Tags */}
+      <link rel="canonical" href={url} />
+
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content={type} />
+      <meta property="og:url" content={url} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content={locale} />
+
+      {/* Twitter */}
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content={url} />
+      <meta property="twitter:title" content={title} />
+      <meta property="twitter:description" content={description} />
+      <meta property="twitter:image" content={image} />
+
+      {/* Additional Meta Tags */}
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="geo.region" content="SK-KI" />
       <meta name="geo.placename" content="Košice" />
       <meta name="geo.position" content="48.7164;21.2611" />
       <meta name="ICBM" content="48.7164, 21.2611" />
+      
+      {/* Favicon */}
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    </Head>
+  );
+}
 
-      {/* Open Graph / Facebook */}
+// Export for _document.tsx static SEO
+export function SEOElements({
+  title = "E-TAXI Košice | Profesionálna taxislužba 24/7",
+  description = "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery Budapešť, Krakov, Viedeň. Online objednávka, moderné vozidlá. Dispečing +421 911 606 206",
+  image = "https://etaxi-kosice.sk/og-image.png",
+  url = "https://etaxi-kosice.sk"
+}: SEOProps) {
+  return (
+    <>
+      <meta name="title" content={title} />
+      <meta name="description" content={description} />
+      <meta name="keywords" content="taxi košice, taxislužba košice, letiskový transfer, taxi budapešť, taxi krakov, taxi viedeň, e-taxi, online objednávka taxi" />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
-      <meta property="og:locale" content="sk_SK" />
-      <meta property="og:site_name" content="E-TAXI Košice" />
-
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={url} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
-
-      {/* Additional SEO */}
-      <link rel="canonical" href={url} />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    </Head>
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content={url} />
+      <meta property="twitter:title" content={title} />
+      <meta property="twitter:description" content={description} />
+      <meta property="twitter:image" content={image} />
+    </>
   );
 }

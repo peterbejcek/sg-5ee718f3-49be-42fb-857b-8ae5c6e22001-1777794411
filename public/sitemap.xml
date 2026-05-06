@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage -->
   <url>
     <loc>https://etaxi-kosice.sk/</loc>
-    <lastmod>2026-05-01</lastmod>
+    <lastmod>2026-05-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="sk" href="https://etaxi-kosice.sk/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://etaxi-kosice.sk/en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://etaxi-kosice.sk/de"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://etaxi-kosice.sk/ru"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://etaxi-kosice.sk/uk"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://etaxi-kosice.sk/he"/>
+    <xhtml:link rel="alternate" hreflang="hu" href="https://etaxi-kosice.sk/hu"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://etaxi-kosice.sk/ar"/>
   </url>
+
+  <!-- Cenník -->
   <url>
     <loc>https://etaxi-kosice.sk/cennik</loc>
-    <lastmod>2026-05-01</lastmod>
+    <lastmod>2026-05-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://etaxi-kosice.sk/prepravny-poriadok</loc>
-    <lastmod>2026-05-01</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
+
+  <!-- Ochrana osobných údajov -->
   <url>
     <loc>https://etaxi-kosice.sk/ochrana-osobnych-udajov</loc>
-    <lastmod>2026-05-01</lastmod>
+    <lastmod>2026-05-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <!-- Prepravný poriadok -->
+  <url>
+    <loc>https://etaxi-kosice.sk/prepravny-poriadok</loc>
+    <lastmod>2026-05-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>

@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { Html, Head, Main, NextScript } from "next/document";
 import { SEOElements } from "@/components/SEO";
 
@@ -7,36 +6,40 @@ export default function Document() {
     <Html lang="sk">
       <Head>
         <SEOElements />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-32x32.png" />
-        <link rel="shortcut icon" href="/favicon-32x32.png" />
-        {/*
-          CRITICAL: DO NOT REMOVE THIS SCRIPT
-          The Softgen AI monitoring script is essential for core app functionality.
-          The application will not function without it.
-        */}
-        <script
-          src="https://cdn.softgen.ai/script.js"
-          async
-          data-softgen-monitoring="true"
-        />
+        
+        {/* Preconnect to important domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        
+        {/* DNS Prefetch */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        
+        {/* Additional SEO */}
+        <meta name="format-detection" content="telephone=yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="E-TAXI Košice" />
+        
+        {/* Theme color */}
+        <meta name="theme-color" content="#282462" />
+        <meta name="msapplication-TileColor" content="#282462" />
+        
+        {/* Alternate languages */}
+        <link rel="alternate" hrefLang="sk" href="https://etaxi-kosice.sk/" />
+        <link rel="alternate" hrefLang="en" href="https://etaxi-kosice.sk/en" />
+        <link rel="alternate" hrefLang="de" href="https://etaxi-kosice.sk/de" />
+        <link rel="alternate" hrefLang="ru" href="https://etaxi-kosice.sk/ru" />
+        <link rel="alternate" hrefLang="uk" href="https://etaxi-kosice.sk/uk" />
+        <link rel="alternate" hrefLang="he" href="https://etaxi-kosice.sk/he" />
+        <link rel="alternate" hrefLang="hu" href="https://etaxi-kosice.sk/hu" />
+        <link rel="alternate" hrefLang="ar" href="https://etaxi-kosice.sk/ar" />
+        <link rel="alternate" hrefLang="x-default" href="https://etaxi-kosice.sk/" />
       </Head>
-      <body
-        className={cn(
-          "min-h-screen w-full scroll-smooth bg-background text-foreground antialiased"
-        )}
-      >
+      <body className="antialiased">
         <Main />
         <NextScript />
-
-        {/* Visual Editor Script */}
-        {process.env.NODE_ENV === "development" && (
-          <script
-            src="https://cdn.softgen.dev/visual-editor.min.js"
-            async
-            data-softgen-visual-editor="true"
-          />
-        )}
       </body>
     </Html>
   );

@@ -65,10 +65,10 @@ export default function PrepravnyPoriadok() {
   return (
     <>
       <SEO
-        title="Prepravný poriadok | Podmienky prepravy | E-TAXI Košice"
-        description="Prepravný poriadok E-TAXI Košice. Práva a povinnosti cestujúcich, podmienky prepravy, pravidlá zrušenia objednávky a reklamačný poriadok taxislužby v Košiciach."
-        keywords="prepravný poriadok taxi, podmienky prepravy taxi Košice, pravidlá taxi Košice, práva cestujúcich, reklamácia taxi, zrušenie objednávky taxi"
+        title="Prepravný poriadok | E-TAXI Košice"
+        description="Prepravný poriadok E-TAXI Košice - pravidlá prepravy, podmienky objednávky, práva a povinnosti cestujúcich a vodiča."
         url="https://etaxi-kosice.sk/prepravny-poriadok"
+        type="article"
       />
       <Header />
       
