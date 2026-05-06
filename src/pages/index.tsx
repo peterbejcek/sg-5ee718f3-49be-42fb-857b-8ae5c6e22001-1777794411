@@ -13,22 +13,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
 import { useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { GetStaticProps } from "next";
 
 export default function Home() {
+  const { t } = useTranslation("common");
+
   useEffect(() => {
-    // Zabezpečí, že stránka zostane na vrchu pri načítaní
     if (typeof window !== "undefined" && !window.location.hash) {
-      // Okamžite scrolluj na vrch
       window.scrollTo(0, 0);
       
-      // Zabráň scrollovaniu aj po načítaní formulára (asynchrónne)
       const preventScroll = () => {
         if (!window.location.hash) {
           window.scrollTo(0, 0);
         }
       };
       
-      // Zabráň scrollovaniu počas prvých 2 sekúnd (kým sa formulár načíta)
       const timeoutId = setTimeout(() => {
         window.removeEventListener("scroll", preventScroll);
       }, 2000);
@@ -263,7 +264,7 @@ export default function Home() {
                       className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
                     >
                       <Calendar className="w-5 h-5 mr-2" />
-                      Objednať teraz
+                      {t("buttons.orderNow")}
                     </Button>
                   </a>
                   <a href="tel:+421911606206">
@@ -272,7 +273,7 @@ export default function Home() {
                       className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
                     >
                       <Phone className="w-5 h-5 mr-2" />
-                      <span className="tabular-nums">+421 911 606 206</span>
+                      <span className="tabular-nums">{t("contact.phone")}</span>
                     </Button>
                   </a>
                 </div>
@@ -356,7 +357,7 @@ export default function Home() {
                   className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
-                  Objednať jazdu teraz
+                  {t("buttons.bookRide")}
                 </Button>
               </a>
               <a href="tel:+421911606206">
@@ -365,7 +366,7 @@ export default function Home() {
                   className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold"
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  Zavolať +421 911 606 206
+                  {t("buttons.callNow")} {t("contact.phone")}
                 </Button>
               </a>
             </div>
@@ -394,7 +395,7 @@ export default function Home() {
               <p className="text-center text-muted-foreground mb-8">
                 Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na{" "}
                 <a href="tel:+421911606206" className="text-accent font-semibold hover:underline">
-                  +421 911 606 206
+                  {t("contact.phone")}
                 </a>
               </p>
               <SensetBookingForm />
@@ -406,3 +407,11 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? "sk", ["common"])),
+    },
+  };
+};

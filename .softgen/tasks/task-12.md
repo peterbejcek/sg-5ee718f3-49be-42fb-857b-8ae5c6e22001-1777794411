@@ -1,6 +1,6 @@
 ---
 title: Implement Language Switcher in Header
-status: todo
+status: done
 priority: high
 type: feature
 tags: [i18n, ui, header]
@@ -10,15 +10,15 @@ position: 12
 ---
 
 ## Notes
-Pridať dropdown s vlajkami pre výber jazyka do Header komponenty. Použiť emoji vlajky alebo SVG ikony. Prepínanie pomocou Next.js router.push s locale parametrom.
+Pridať dropdown s vlajkami pre výber jazyka do Header komponenty. Použiť emoji vlajky. Prepínanie pomocou Next.js router.push s locale parametrom.
 
 ## Checklist
-- [ ] Vytvoriť LanguageSwitcher komponent s dropdown menu
-- [ ] Pridať vlajky pre všetky 8 jazyky (emoji alebo SVG)
-- [ ] Implementovať prepínanie cez Next.js router
-- [ ] Integrovať do Header komponenty na pravej strane
-- [ ] Pridať hover efekty a responzívny dizajn pre mobil
-- [ ] Uložiť preferovaný jazyk do localStorage
+- [x] Vytvoriť LanguageSwitcher komponent s dropdown menu
+- [x] Pridať vlajky pre všetky 8 jazyky (emoji)
+- [x] Implementovať prepínanie cez Next.js router
+- [x] Integrovať do Header komponenty na pravej strane
+- [x] Pridať hover efekty a responzívny dizajn pre mobil
+- [x] Uložiť preferovaný jazyk do localStorage
 
 ## Acceptance
 1. V hlavičke je viditeľný jazykový prepínač s vlajkami

@@ -4,14 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Phone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "next-i18next";
 
 export function Header() {
+  const { t } = useTranslation("common");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Header becomes white after scrolling past hero (approximately 100vh)
       setIsScrolled(window.scrollY > window.innerHeight * 0.5);
     };
 
@@ -20,12 +22,12 @@ export function Header() {
   }, []);
 
   const menuItems = [
-    { label: "Služby", href: "#sluzby" },
-    { label: "Vozový park", href: "#vozovy-park" },
-    { label: "O nás", href: "#o-nas" },
-    { label: "Recenzie", href: "#recenzie" },
-    { label: "FAQ", href: "#faq" },
-    { label: "Cenník", href: "/cennik" }
+    { label: t("nav.services"), href: "#sluzby" },
+    { label: t("nav.fleet"), href: "#vozovy-park" },
+    { label: t("nav.about"), href: "#o-nas" },
+    { label: t("nav.reviews"), href: "#recenzie" },
+    { label: t("nav.faq"), href: "#faq" },
+    { label: t("nav.pricing"), href: "/cennik" }
   ];
 
   return (
@@ -68,8 +70,12 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Call Button - Desktop */}
+          {/* Right Side: Language Switcher + Call Button */}
           <div className="hidden md:flex items-center gap-3">
+            <div className={isScrolled ? "" : "text-white"}>
+              <LanguageSwitcher />
+            </div>
+            
             <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="bg-accent rounded-full p-3">
                 <Phone className="h-5 w-5 text-white" />
@@ -78,12 +84,12 @@ export function Header() {
                 <span className={`text-xs font-medium ${
                   isScrolled ? "text-muted-foreground" : "text-white/80"
                 }`}>
-                  Dispečing 24/7
+                  {t("contact.dispatch247")}
                 </span>
                 <span className={`font-bold tabular-nums ${
                   isScrolled ? "text-[#282462]" : "text-white"
                 }`}>
-                  +421 911 606 206
+                  {t("contact.phone")}
                 </span>
               </div>
             </Link>
@@ -125,7 +131,7 @@ export function Header() {
               <div className={`border-t pt-4 mt-4 px-4 ${
                 isScrolled ? "border-border" : "border-white/20"
               }`}>
-                <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity mb-4">
                   <div className="bg-accent rounded-full p-3">
                     <Phone className="h-5 w-5 text-white" />
                   </div>
@@ -133,15 +139,17 @@ export function Header() {
                     <span className={`text-xs font-medium ${
                       isScrolled ? "text-muted-foreground" : "text-white/80"
                     }`}>
-                      Dispečing 24/7
+                      {t("contact.dispatch247")}
                     </span>
                     <span className={`font-bold tabular-nums ${
                       isScrolled ? "text-[#282462]" : "text-white"
                     }`}>
-                      +421 911 606 206
+                      {t("contact.phone")}
                     </span>
                   </div>
                 </Link>
+                
+                <LanguageSwitcher variant="mobile" />
               </div>
             </nav>
           </div>
