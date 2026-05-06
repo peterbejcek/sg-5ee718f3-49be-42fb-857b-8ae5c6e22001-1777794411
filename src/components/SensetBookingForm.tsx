@@ -166,6 +166,26 @@ export function SensetBookingForm() {
           background-image: none !important;
         }
 
+        /* Additional aggressive rules to remove any background around submit button */
+        #senset-form form > *:last-child,
+        #senset-form form > div:last-of-type,
+        #senset-form div[class*="submit"],
+        #senset-form div[id*="submit"],
+        #senset-form button[type="submit"]::before,
+        #senset-form button[type="submit"]::after {
+          background-color: transparent !important;
+          background: none !important;
+          background-image: none !important;
+          box-shadow: none !important;
+        }
+
+        /* Remove background from all ancestor divs of submit button */
+        #senset-form form div,
+        #senset-form form > div {
+          background-color: transparent !important;
+          background: transparent !important;
+        }
+
         #senset-form button[type="submit"]:hover,
         #senset-form input[type="submit"]:hover,
         #senset-form .submit-button:hover {
