@@ -58,21 +58,17 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Desktop Phone Button (with label and icon) */}
-          <a
-            href="tel:+421911606206"
-            className="hidden sm:flex flex-col items-start bg-accent hover:bg-accent/90 text-accent-foreground px-5 py-2.5 rounded-lg font-display transition-all hover:scale-105"
-          >
-            <span className="text-xs font-medium opacity-90 mb-0.5">
-              Dispečing 24/7
-            </span>
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              <span className="font-bold text-base tabular-nums">
-                +421 911 606 206
-              </span>
-            </div>
-          </a>
+          {/* Phone Button (Always Visible) */}
+          <div className="flex items-center gap-3">
+            <a href="tel:+421911606206" className="shrink-0">
+              <Button
+                size="sm"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-10 sm:h-11 px-3 sm:px-5"
+              >
+                <Phone className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">+421 911 606 206</span>
+              </Button>
+            </a>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -83,6 +79,7 @@ export function Header() {
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
+        </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
