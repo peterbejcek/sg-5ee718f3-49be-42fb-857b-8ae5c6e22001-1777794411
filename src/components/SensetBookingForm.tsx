@@ -64,6 +64,11 @@ export function SensetBookingForm() {
           margin: 0 auto;
         }
 
+        /* Zabráň automatickému scrollovaniu na formulár pri focuse */
+        #senset-form * {
+          scroll-margin-top: 0 !important;
+        }
+
         #senset-form,
         #senset-form form {
           font-family: 'Inter', system-ui, sans-serif !important;

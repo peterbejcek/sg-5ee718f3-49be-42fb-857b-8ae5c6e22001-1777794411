@@ -18,7 +18,27 @@ export default function Home() {
   useEffect(() => {
     // Zabezpečí, že stránka zostane na vrchu pri načítaní
     if (typeof window !== "undefined" && !window.location.hash) {
+      // Okamžite scrolluj na vrch
       window.scrollTo(0, 0);
+      
+      // Zabráň scrollovaniu aj po načítaní formulára (asynchrónne)
+      const preventScroll = () => {
+        if (!window.location.hash) {
+          window.scrollTo(0, 0);
+        }
+      };
+      
+      // Zabráň scrollovaniu počas prvých 2 sekúnd (kým sa formulár načíta)
+      const timeoutId = setTimeout(() => {
+        window.removeEventListener("scroll", preventScroll);
+      }, 2000);
+      
+      window.addEventListener("scroll", preventScroll);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener("scroll", preventScroll);
+      };
     }
   }, []);
 
