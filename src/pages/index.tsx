@@ -14,8 +14,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-// @ts-expect-error missing types for next-i18next
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import type { GetStaticProps } from "next";
 
 export default function Home() {
@@ -409,10 +407,8 @@ export default function Home() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async () => {
   return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "sk", ["common"])),
-    },
+    props: {},
   };
 };
