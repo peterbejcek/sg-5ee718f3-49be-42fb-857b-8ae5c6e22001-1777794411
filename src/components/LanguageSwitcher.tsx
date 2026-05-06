@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,7 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = "default", isScrolled = false }: LanguageSwitcherProps) {
   const router = useRouter();
+  const { i18n } = useTranslation();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -36,10 +38,15 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
 
   const currentLanguage = languages.find((lang) => lang.code === router.locale) || languages[0];
 
-  const changeLanguage = (locale: string) => {
+  const changeLanguage = async (locale: string) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("preferredLanguage", locale);
     }
+    
+    // First change i18next language
+    await i18n.changeLanguage(locale);
+    
+    // Then change router locale
     router.push(router.pathname, router.asPath, { locale });
   };
 
