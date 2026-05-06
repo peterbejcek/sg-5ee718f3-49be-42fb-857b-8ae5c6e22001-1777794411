@@ -244,6 +244,171 @@ export function SensetBookingForm() {
           margin-top: 4px !important;
         }
       `}</style>
+      <style>{`
+        /* Container styling */
+        #senset-form {
+          font-family: 'Inter', system-ui, sans-serif !important;
+        }
+
+        /* Inputs */
+        #senset-form input[type="text"],
+        #senset-form input[type="tel"],
+        #senset-form input[type="email"],
+        #senset-form input[type="number"],
+        #senset-form input[type="date"],
+        #senset-form input[type="time"],
+        #senset-form select,
+        #senset-form textarea {
+          width: 100% !important;
+          min-height: 48px !important;
+          padding: 12px 16px !important;
+          border: 1px solid hsl(var(--border)) !important;
+          border-radius: 8px !important;
+          font-size: 16px !important;
+          font-family: 'Inter', system-ui, sans-serif !important;
+          background-color: hsl(var(--background)) !important;
+          color: hsl(var(--foreground)) !important;
+          transition: all 0.2s ease !important;
+        }
+
+        #senset-form input:focus,
+        #senset-form select:focus,
+        #senset-form textarea:focus {
+          outline: none !important;
+          border-color: hsl(var(--primary)) !important;
+          box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1) !important;
+        }
+
+        /* Labels */
+        #senset-form label {
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          color: hsl(var(--foreground)) !important;
+          margin-bottom: 6px !important;
+          display: block !important;
+          font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+        }
+
+        /* "Pridať ďalšiu zastávku" button */
+        #senset-form button[type="button"],
+        #senset-form .add-stop-button,
+        #senset-form button:not([type="submit"]) {
+          background-color: hsl(var(--muted)) !important;
+          color: hsl(var(--foreground)) !important;
+          border: 1px solid hsl(var(--border)) !important;
+          border-radius: 8px !important;
+          padding: 10px 20px !important;
+          font-size: 15px !important;
+          font-weight: 600 !important;
+          font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+          cursor: pointer !important;
+          transition: all 0.2s ease !important;
+          min-height: 44px !important;
+          width: auto !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+
+        #senset-form button[type="button"]:hover,
+        #senset-form .add-stop-button:hover,
+        #senset-form button:not([type="submit"]):hover {
+          background-color: hsl(var(--muted) / 0.8) !important;
+          border-color: hsl(var(--primary)) !important;
+        }
+
+        /* "Odoslať" submit button */
+        #senset-form button[type="submit"],
+        #senset-form input[type="submit"],
+        #senset-form .submit-button {
+          background-color: hsl(var(--primary)) !important;
+          color: hsl(var(--primary-foreground)) !important;
+          border: none !important;
+          border-radius: 8px !important;
+          padding: 14px 32px !important;
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          font-family: 'IBM Plex Sans', system-ui, sans-serif !important;
+          cursor: pointer !important;
+          transition: all 0.2s ease !important;
+          width: 100% !important;
+          min-height: 52px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-align: center !important;
+          white-space: normal !important;
+          word-wrap: break-word !important;
+          line-height: 1.3 !important;
+          margin-top: 8px !important;
+        }
+
+        #senset-form button[type="submit"]:hover,
+        #senset-form input[type="submit"]:hover,
+        #senset-form .submit-button:hover {
+          background-color: hsl(var(--primary) / 0.9) !important;
+          transform: translateY(-1px) !important;
+          box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+        }
+
+        #senset-form button[type="submit"]:active,
+        #senset-form input[type="submit"]:active,
+        #senset-form .submit-button:active {
+          transform: translateY(0) !important;
+        }
+
+        /* Fix text overflow in all buttons */
+        #senset-form button,
+        #senset-form input[type="submit"] {
+          box-sizing: border-box !important;
+          max-width: 100% !important;
+        }
+
+        /* Form groups spacing */
+        #senset-form .form-group,
+        #senset-form > div {
+          margin-bottom: 16px !important;
+        }
+
+        /* Error messages */
+        #senset-form .error-message,
+        #senset-form .error {
+          color: hsl(var(--destructive)) !important;
+          font-size: 14px !important;
+          margin-top: 4px !important;
+        }
+
+        /* Success messages */
+        #senset-form .success-message,
+        #senset-form .success {
+          color: #10b981 !important;
+          font-size: 14px !important;
+          padding: 12px !important;
+          background-color: #10b981 / 0.1 !important;
+          border-radius: 8px !important;
+          margin-top: 8px !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+          #senset-form button[type="submit"],
+          #senset-form input[type="submit"] {
+            font-size: 15px !important;
+            padding: 12px 24px !important;
+            min-height: 48px !important;
+          }
+
+          #senset-form button[type="button"],
+          #senset-form button:not([type="submit"]) {
+            font-size: 14px !important;
+            padding: 8px 16px !important;
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
