@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Plane, Check } from "lucide-react";
 import Head from "next/head";
-import type { GetStaticProps } from "next";
+import type { GetStaticProps, GetStaticPaths } from "next";
 
 const airportRoutes = [
   {
@@ -176,6 +176,22 @@ export default function Cennik() {
     </>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [
+      { params: {}, locale: "sk" },
+      { params: {}, locale: "en" },
+      { params: {}, locale: "de" },
+      { params: {}, locale: "ru" },
+      { params: {}, locale: "uk" },
+      { params: {}, locale: "he" },
+      { params: {}, locale: "hu" },
+      { params: {}, locale: "ar" },
+    ],
+    fallback: false,
+  };
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   return {

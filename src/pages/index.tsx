@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import type { GetStaticProps } from "next";
+import type { GetStaticProps, GetStaticPaths } from "next";
 
 export default function Home() {
   const { t } = useTranslation("common");
@@ -407,6 +407,22 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [
+      { params: {}, locale: "sk" },
+      { params: {}, locale: "en" },
+      { params: {}, locale: "de" },
+      { params: {}, locale: "ru" },
+      { params: {}, locale: "uk" },
+      { params: {}, locale: "he" },
+      { params: {}, locale: "hu" },
+      { params: {}, locale: "ar" },
+    ],
+    fallback: false,
+  };
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   return {
