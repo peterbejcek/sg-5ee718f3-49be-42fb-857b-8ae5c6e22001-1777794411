@@ -1,16 +1,9 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Phone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const navItems = [
-  { label: "Vozový park", href: "#vozovy-park" },
-  { label: "O nás", href: "#o-nas" },
-  { label: "Cenník", href: "#cennik" },
-  { label: "Recenzie", href: "#recenzie" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Blog", href: "#blog" },
-];
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -18,84 +11,140 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Header becomes white after scrolling past hero (approximately 100vh)
+      setIsScrolled(window.scrollY > window.innerHeight * 0.5);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNavClick = (href: string) => {
-    setIsMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const menuItems = [
+    { label: "Služby", href: "#sluzby" },
+    { label: "Vozový park", href: "#vozovy-park" },
+    { label: "O nás", href: "#o-nas" },
+    { label: "Recenzie", href: "#recenzie" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Cenník", href: "/cennik" }
+  ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-background/80 backdrop-blur-sm"
+        isScrolled 
+          ? "bg-white shadow-md" 
+          : "bg-[#282462]"
       }`}
     >
       <div className="container">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img src="/etaxi_logo_svg.svg" alt="E-TAXI Košice" className="h-10 sm:h-12 w-auto" />
+          <Link href="/" className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg transition-colors ${
+              isScrolled ? "" : "bg-white"
+            }`}>
+              <img
+                src="/etaxi_logo_svg.svg"
+                alt="E-TAXI Košice"
+                className="h-12 w-auto"
+              />
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
-              <button
+            {menuItems.map((item) => (
+              <Link
                 key={item.href}
-                onClick={() => handleNavClick(item.href)}
-                className="text-foreground/80 hover:text-primary font-display font-medium transition-colors text-sm"
+                href={item.href}
+                className={`font-medium transition-colors ${
+                  isScrolled
+                    ? "text-[#282462] hover:text-accent"
+                    : "text-white hover:text-accent"
+                }`}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </nav>
 
-          {/* Phone Button (Always Visible) */}
-          <div className="flex items-center gap-3">
-            <a href="tel:+421911606206" className="shrink-0">
-              <Button
-                size="sm"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-10 sm:h-11 px-3 sm:px-5"
-              >
-                <Phone className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">+421 911 606 206</span>
-              </Button>
-            </a>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+          {/* Call Button - Desktop */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <div className="bg-accent rounded-full p-3">
+                <Phone className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-xs font-medium ${
+                  isScrolled ? "text-muted-foreground" : "text-white/80"
+                }`}>
+                  Dispečing 24/7
+                </span>
+                <span className={`font-bold tabular-nums ${
+                  isScrolled ? "text-[#282462]" : "text-white"
+                }`}>
+                  +421 911 606 206
+                </span>
+              </div>
+            </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`lg:hidden p-2 transition-colors ${
+              isScrolled ? "text-[#282462]" : "text-white"
+            }`}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden py-4 border-t border-border bg-background/95 backdrop-blur-md">
-            <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <button
+          <div className={`lg:hidden border-t ${
+            isScrolled ? "border-border bg-white" : "border-white/20 bg-[#282462]"
+          }`}>
+            <nav className="py-4 space-y-1">
+              {menuItems.map((item) => (
+                <Link
                   key={item.href}
-                  onClick={() => handleNavClick(item.href)}
-                  className="text-left px-4 py-3 text-foreground/80 hover:text-primary hover:bg-muted/50 font-display font-medium transition-colors rounded-lg"
+                  href={item.href}
+                  className={`block px-4 py-3 font-medium transition-colors ${
+                    isScrolled
+                      ? "text-[#282462] hover:bg-muted"
+                      : "text-white hover:bg-white/10"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
-                </button>
+                </Link>
               ))}
-            </div>
-          </nav>
+              
+              <div className={`border-t pt-4 mt-4 px-4 ${
+                isScrolled ? "border-border" : "border-white/20"
+              }`}>
+                <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                  <div className="bg-accent rounded-full p-3">
+                    <Phone className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={`text-xs font-medium ${
+                      isScrolled ? "text-muted-foreground" : "text-white/80"
+                    }`}>
+                      Dispečing 24/7
+                    </span>
+                    <span className={`font-bold tabular-nums ${
+                      isScrolled ? "text-[#282462]" : "text-white"
+                    }`}>
+                      +421 911 606 206
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            </nav>
+          </div>
         )}
       </div>
     </header>
