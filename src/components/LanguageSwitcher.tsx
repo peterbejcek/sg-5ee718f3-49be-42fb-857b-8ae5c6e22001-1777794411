@@ -46,8 +46,9 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
     // First change i18next language
     await i18n.changeLanguage(locale);
     
-    // Then change router locale
-    router.push(router.pathname, router.asPath, { locale });
+    // Then navigate using window.location for hard reload
+    const currentPath = router.asPath;
+    window.location.href = `/${locale}${currentPath === "/" ? "" : currentPath}`;
   };
 
   if (!mounted) {
