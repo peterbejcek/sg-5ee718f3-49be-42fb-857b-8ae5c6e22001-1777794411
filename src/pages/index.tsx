@@ -12,8 +12,16 @@ import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    // Zabezpečí, že stránka zostane na vrchu pri načítaní
+    if (typeof window !== "undefined" && !window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
