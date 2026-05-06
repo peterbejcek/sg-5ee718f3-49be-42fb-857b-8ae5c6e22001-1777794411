@@ -1,10 +1,11 @@
 import "@/styles/globals.css";
 import Script from 'next/script'
 import type { AppProps } from "next/app";
+import { appWithTranslation } from "next-i18next";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { CookieConsent } from "@/components/CookieConsent";
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider>
       {/* Google Tag Manager */}
@@ -27,3 +28,5 @@ height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe>
     </ThemeProvider>
   );
 }
+
+export default appWithTranslation(App);
