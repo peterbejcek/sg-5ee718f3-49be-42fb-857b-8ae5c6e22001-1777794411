@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import type { GetStaticProps } from "next";
+import type { GetStaticProps, GetStaticPaths } from "next";
 
 export default function Home() {
   const { t } = useTranslation("common");
@@ -247,15 +247,12 @@ export default function Home() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
               <div>
-                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
-                  E-TAXI Košice –<br />
-                  <span className="text-yellow-400">rýchlo</span>, spoľahlivo,<br />
-                  <span className="text-yellow-400">pohodlne</span>
+                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4" suppressHydrationWarning>
+                  {t("hero.title")}<br />
+                  <span className="text-yellow-400">{t("hero.fast")}</span>, {t("hero.reliable")},<br />
+                  <span className="text-yellow-400">{t("hero.comfortable")}</span>
                 </h1>
-                <p className="text-lg sm:text-xl text-white/90 mb-8">
-                  Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút.<br />
-                  Letiská, dlhé trasy, firemné transfery – vždy načas.
-                </p>
+                <p className="text-lg sm:text-xl text-white/90 mb-8" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: t("hero.description") }} />
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a href="#objednavka">
                     <Button
@@ -286,18 +283,18 @@ export default function Home() {
         {/* Services Section */}
         <section id="sluzby" className="py-16 sm:py-20 bg-background">
           <div className="container mx-auto px-4">
-            <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-12">
-              Naše služby
+            <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-12" suppressHydrationWarning>
+              {t("services.title")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <Zap className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="font-display font-semibold text-xl mb-3">
-                    Okamžitá preprava
+                  <h3 className="font-display font-semibold text-xl mb-3" suppressHydrationWarning>
+                    {t("services.instant.title")}
                   </h3>
-                  <p className="text-muted-foreground">
-                    Zavolajte nám a taxík je u vás do niekoľkých minút. Dostupní 24/7.
+                  <p className="text-muted-foreground" suppressHydrationWarning>
+                    {t("services.instant.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -305,11 +302,11 @@ export default function Home() {
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <Clock className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="font-display font-semibold text-xl mb-3">
-                    Časové objednávky
+                  <h3 className="font-display font-semibold text-xl mb-3" suppressHydrationWarning>
+                    {t("services.scheduled.title")}
                   </h3>
-                  <p className="text-muted-foreground">
-                    Naplánujte si cestu vopred. 0€ príplatok za včasnú objednávku.
+                  <p className="text-muted-foreground" suppressHydrationWarning>
+                    {t("services.scheduled.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -317,11 +314,11 @@ export default function Home() {
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <Wine className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="font-display font-semibold text-xl mb-3">
-                    Drink Taxi
+                  <h3 className="font-display font-semibold text-xl mb-3" suppressHydrationWarning>
+                    {t("services.drink.title")}
                   </h3>
-                  <p className="text-muted-foreground">
-                    Bezpečná cesta domov po oslave. Váš vodič aj váš alkohol v bezpečí.
+                  <p className="text-muted-foreground" suppressHydrationWarning>
+                    {t("services.drink.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -329,11 +326,11 @@ export default function Home() {
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <Plane className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="font-display font-semibold text-xl mb-3">
-                    Letisková preprava
+                  <h3 className="font-display font-semibold text-xl mb-3" suppressHydrationWarning>
+                    {t("services.airport.title")}
                   </h3>
-                  <p className="text-muted-foreground">
-                    Budapest, Krakov, Debrecín, Bratislava, Viedeň, Katowice - pohodlne a za férové ceny.
+                  <p className="text-muted-foreground" suppressHydrationWarning>
+                    {t("services.airport.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -341,11 +338,11 @@ export default function Home() {
               <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <CreditCard className="w-12 h-12 text-accent mb-4" />
-                  <h3 className="font-display font-semibold text-xl mb-3">
-                    Platba kartou
+                  <h3 className="font-display font-semibold text-xl mb-3" suppressHydrationWarning>
+                    {t("services.card.title")}
                   </h3>
-                  <p className="text-muted-foreground">
-                    V každom našom vozidle môžete platiť kartou. Žiadne starosti s hotovosťou.
+                  <p className="text-muted-foreground" suppressHydrationWarning>
+                    {t("services.card.description")}
                   </p>
                 </CardContent>
               </Card>
@@ -392,11 +389,11 @@ export default function Home() {
         <section id="objednavka" className="py-16 sm:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
-              <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4">
-                Objednať prepravu
+              <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4" suppressHydrationWarning>
+                {t("booking.title")}
               </h2>
               <p className="text-center text-muted-foreground mb-8" suppressHydrationWarning>
-                Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na{" "}
+                {t("booking.description")}{" "}
                 <a href="tel:+421911606206" className="text-accent font-semibold hover:underline">
                   {t("contact.phone")}
                 </a>
@@ -410,6 +407,18 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const locales = ["sk", "en", "de", "ru", "uk", "he", "hu", "ar"];
+  
+  return {
+    paths: locales.map((locale) => ({
+      params: {},
+      locale,
+    })),
+    fallback: false,
+  };
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   return {

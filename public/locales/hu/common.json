@@ -3,19 +3,64 @@
     "services": "Szolgáltatások",
     "fleet": "Flotta",
     "about": "Rólunk",
-    "reviews": "Vélemények",
+    "reviews": "Értékelések",
     "faq": "GYIK",
     "pricing": "Árak"
   },
   "buttons": {
     "orderNow": "Rendelés most",
-    "callNow": "Hívjon most",
     "bookRide": "Fuvar foglalása",
-    "sendBooking": "Foglalás küldése"
+    "callNow": "Hívás most"
   },
   "contact": {
     "dispatch247": "Diszpécser 24/7",
     "phone": "+421 911 606 206",
     "email": "dispecing@e-taxike.sk"
+  },
+  "hero": {
+    "title": "E-TAXI Košice –",
+    "fast": "gyorsan",
+    "reliable": "megbízhatóan",
+    "comfortable": "kényelmesen",
+    "description": "Hívja a <strong>+421 911 606 206</strong> számot és az autó 10 percen belül Önnél lesz.<br />Repülőterek, hosszú útvonalak, céges transzferek – mindig időben."
+  },
+  "services": {
+    "title": "Szolgáltatásaink",
+    "instant": {
+      "title": "Azonnali szállítás",
+      "description": "Hívjon minket és a taxi percek alatt Önnél lesz. Elérhető 24/7."
+    },
+    "scheduled": {
+      "title": "Időzített rendelések",
+      "description": "Tervezze meg útját előre. 0€ pótdíj előzetes foglalásért."
+    },
+    "drink": {
+      "title": "Drink Taxi",
+      "description": "Biztonságos hazautazás ünneplés után. Az Ön sofőrje és alkohola biztonságban."
+    },
+    "airport": {
+      "title": "Repülőtéri transzfer",
+      "description": "Budapest, Krakkó, Debrecen, Pozsony, Bécs, Katowice - kényelmesen és tisztességes áron."
+    },
+    "card": {
+      "title": "Kártyás fizetés",
+      "description": "Minden járműben fizethet kártyával. Nincs gond a készpénzzel."
+    }
+  },
+  "booking": {
+    "title": "Szállítás rendelése",
+    "description": "Töltse ki az űrlapot és visszahívjuk. Vagy hívjon minket közvetlenül a",
+    "formLabels": {
+      "name": "Név",
+      "phone": "Telefon",
+      "email": "Email",
+      "from": "Honnan",
+      "to": "Hova",
+      "date": "Dátum",
+      "time": "Idő",
+      "passengers": "Utasok",
+      "notes": "További megjegyzések"
+    },
+    "submit": "Kérés küldése"
   }
 }
