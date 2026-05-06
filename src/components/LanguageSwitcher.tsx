@@ -51,11 +51,16 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
       // Remove existing locale prefix if present
       const pathWithoutLocale = currentPath.replace(/^\/(sk|en|de|ru|uk|he|hu|ar)(\/|$)/, '/');
       
-      // Build new URL with locale prefix
-      const newPath = locale === 'sk' ? pathWithoutLocale : `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
+      // Build new path with locale prefix (sk is default, no prefix needed)
+      let newPath;
+      if (locale === 'sk') {
+        newPath = pathWithoutLocale;
+      } else {
+        newPath = `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
+      }
       
-      // Use window.location.href for guaranteed navigation
-      window.location.href = newPath;
+      // Navigate using absolute URL
+      window.location.href = `${window.location.origin}${newPath}`;
     }
   };
 
