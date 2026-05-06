@@ -10,14 +10,6 @@ import he from "../../public/locales/he/common.json";
 import hu from "../../public/locales/hu/common.json";
 import ar from "../../public/locales/ar/common.json";
 
-// Get preferred language from localStorage or default to "sk"
-const getInitialLanguage = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("preferredLanguage") || "sk";
-  }
-  return "sk";
-};
-
 i18n
   .use(initReactI18next)
   .init({
@@ -31,7 +23,7 @@ i18n
       hu: { common: hu },
       ar: { common: ar },
     },
-    lng: getInitialLanguage(),
+    lng: "sk",
     fallbackLng: "sk",
     ns: ["common"],
     defaultNS: "common",

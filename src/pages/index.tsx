@@ -261,6 +261,7 @@ export default function Home() {
                     <Button
                       size="lg"
                       className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
+                      suppressHydrationWarning
                     >
                       <Calendar className="w-5 h-5 mr-2" />
                       {t("buttons.orderNow")}
@@ -270,6 +271,7 @@ export default function Home() {
                     <Button
                       size="lg"
                       className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
+                      suppressHydrationWarning
                     >
                       <Phone className="w-5 h-5 mr-2" />
                       <span className="tabular-nums">{t("contact.phone")}</span>
@@ -354,6 +356,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
+                  suppressHydrationWarning
                 >
                   <Calendar className="w-5 h-5 mr-2" />
                   {t("buttons.bookRide")}
@@ -363,6 +366,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold"
+                  suppressHydrationWarning
                 >
                   <Phone className="w-5 h-5 mr-2" />
                   {t("buttons.callNow")} {t("contact.phone")}
@@ -391,7 +395,7 @@ export default function Home() {
               <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-4">
                 Objednať prepravu
               </h2>
-              <p className="text-center text-muted-foreground mb-8">
+              <p className="text-center text-muted-foreground mb-8" suppressHydrationWarning>
                 Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na{" "}
                 <a href="tel:+421911606206" className="text-accent font-semibold hover:underline">
                   {t("contact.phone")}

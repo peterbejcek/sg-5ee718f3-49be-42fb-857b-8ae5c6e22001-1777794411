@@ -13,8 +13,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    if (router.locale && i18n.language !== router.locale) {
-      i18n.changeLanguage(router.locale);
+    const locale = router.locale || "sk";
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
     }
   }, [router.locale, i18n]);
 
@@ -35,7 +36,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W2XG84SD"
       height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
       {/* End Google Tag Manager */}
-      <Component {...pageProps} />
+      <div suppressHydrationWarning>
+        <Component {...pageProps} />
+      </div>
       <CookieConsent />
     </ThemeProvider>
   );

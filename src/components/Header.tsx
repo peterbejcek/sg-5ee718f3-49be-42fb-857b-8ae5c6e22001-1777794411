@@ -64,6 +64,7 @@ export function Header() {
                     ? "text-[#282462] hover:text-accent"
                     : "text-white hover:text-accent"
                 }`}
+                suppressHydrationWarning
               >
                 {item.label}
               </Link>
@@ -81,12 +82,12 @@ export function Header() {
               <div className="flex flex-col">
                 <span className={`text-xs font-medium ${
                   isScrolled ? "text-muted-foreground" : "text-white/80"
-                }`}>
+                }`} suppressHydrationWarning>
                   {t("contact.dispatch247")}
                 </span>
                 <span className={`font-bold tabular-nums ${
                   isScrolled ? "text-[#282462]" : "text-white"
-                }`}>
+                }`} suppressHydrationWarning>
                   {t("contact.phone")}
                 </span>
               </div>
@@ -121,6 +122,7 @@ export function Header() {
                       : "text-white hover:bg-white/10"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
+                  suppressHydrationWarning
                 >
                   {item.label}
                 </Link>
@@ -136,12 +138,12 @@ export function Header() {
                   <div className="flex flex-col">
                     <span className={`text-xs font-medium ${
                       isScrolled ? "text-muted-foreground" : "text-white/80"
-                    }`}>
+                    }`} suppressHydrationWarning>
                       {t("contact.dispatch247")}
                     </span>
                     <span className={`font-bold tabular-nums ${
                       isScrolled ? "text-[#282462]" : "text-white"
-                    }`}>
+                    }`} suppressHydrationWarning>
                       {t("contact.phone")}
                     </span>
                   </div>
