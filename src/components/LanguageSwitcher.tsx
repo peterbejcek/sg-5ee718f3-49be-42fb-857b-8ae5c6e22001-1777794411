@@ -38,16 +38,25 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
 
   const currentLanguage = languages.find((lang) => lang.code === router.locale) || languages[0];
 
-  const changeLanguage = async (locale: string) => {
+  const changeLanguage = (locale: string) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("preferredLanguage", locale);
+      
+      // Change i18next language
+      i18n.changeLanguage(locale);
+      
+      // Get current path
+      const currentPath = router.asPath;
+      
+      // Remove existing locale prefix if present
+      const pathWithoutLocale = currentPath.replace(/^\/(sk|en|de|ru|uk|he|hu|ar)(\/|$)/, '/');
+      
+      // Build new URL with locale prefix
+      const newPath = locale === 'sk' ? pathWithoutLocale : `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
+      
+      // Use window.location.href for guaranteed navigation
+      window.location.href = newPath;
     }
-    
-    // Change i18next language
-    await i18n.changeLanguage(locale);
-    
-    // Navigate to new locale
-    router.push(router.pathname, router.asPath, { locale });
   };
 
   if (!mounted) {
