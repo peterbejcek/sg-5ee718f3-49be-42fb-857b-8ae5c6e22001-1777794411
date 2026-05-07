@@ -45,19 +45,12 @@ export function LanguageSwitcher({ variant = "default", isScrolled = false }: La
       // Change i18next language
       i18n.changeLanguage(locale);
       
-      // Get current path
+      // Get current path without locale
       const currentPath = router.asPath;
-      
-      // Remove existing locale prefix if present
       const pathWithoutLocale = currentPath.replace(/^\/(sk|en|de|ru|uk|he|hu|ar)(\/|$)/, '/');
       
-      // Build new path with locale prefix (sk is default, no prefix needed)
-      let newPath;
-      if (locale === 'sk') {
-        newPath = pathWithoutLocale;
-      } else {
-        newPath = `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
-      }
+      // Build new path
+      const newPath = `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
       
       // Navigate using absolute URL
       window.location.href = `${window.location.origin}${newPath}`;
