@@ -1,21 +1,6 @@
-# E-TAXI Košice - robots.txt
-
+# E-TAXI Košice - Robots.txt
 User-agent: *
 Allow: /
 Disallow: /api/
 
-# Sitemap
 Sitemap: https://etaxi-kosice.sk/sitemap.xml
-
-# Crawl-delay
-Crawl-delay: 0
-
-# Specific bot rules
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /

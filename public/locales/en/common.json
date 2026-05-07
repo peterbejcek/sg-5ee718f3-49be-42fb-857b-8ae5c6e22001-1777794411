@@ -9,58 +9,13 @@
   },
   "buttons": {
     "orderNow": "Order Now",
+    "callNow": "Call Now",
     "bookRide": "Book a Ride",
-    "callNow": "Call Now"
+    "sendBooking": "Send Booking"
   },
   "contact": {
     "dispatch247": "Dispatch 24/7",
     "phone": "+421 911 606 206",
     "email": "dispecing@e-taxike.sk"
-  },
-  "hero": {
-    "title": "E-TAXI Košice –",
-    "fast": "fast",
-    "reliable": "reliable",
-    "comfortable": "comfortable",
-    "description": "Call <strong>+421 911 606 206</strong> and the car will be with you in 10 minutes.<br />Airports, long routes, corporate transfers – always on time."
-  },
-  "services": {
-    "title": "Our Services",
-    "instant": {
-      "title": "Instant Transport",
-      "description": "Call us and the taxi is with you in minutes. Available 24/7."
-    },
-    "scheduled": {
-      "title": "Scheduled Orders",
-      "description": "Plan your trip in advance. €0 extra fee for advance booking."
-    },
-    "drink": {
-      "title": "Drink Taxi",
-      "description": "Safe ride home after celebration. Your driver and your alcohol safe."
-    },
-    "airport": {
-      "title": "Airport Transport",
-      "description": "Budapest, Krakow, Debrecen, Bratislava, Vienna, Katowice - comfortable and fair prices."
-    },
-    "card": {
-      "title": "Card Payment",
-      "description": "You can pay by card in every vehicle. No worries about cash."
-    }
-  },
-  "booking": {
-    "title": "Book Transport",
-    "description": "Fill out the form and we'll contact you. Or call us directly at",
-    "formLabels": {
-      "name": "Name",
-      "phone": "Phone",
-      "email": "Email",
-      "from": "From",
-      "to": "To",
-      "date": "Date",
-      "time": "Time",
-      "passengers": "Passengers",
-      "notes": "Additional Notes"
-    },
-    "submit": "Send Request"
   }
 }

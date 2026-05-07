@@ -1,184 +1,100 @@
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { pricingData } from "@/data/pricing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Plane, Check } from "lucide-react";
-import Head from "next/head";
-import type { GetStaticProps } from "next";
+import { Plane, Car, Info } from "lucide-react";
 
-const airportRoutes = [
-  {
-    destination: "Letisko Budapešť (BUD)",
-    distance: "250 km",
-    duration: "2.5 - 3 hodiny",
-    price: "250 €",
-    includes: [
-      "Čakanie na letisku zadarmo",
-      "Pomoc so zavazadlami",
-      "Platba kartou",
-      "Detské sedačky na požiadanie"
-    ]
-  },
-  {
-    destination: "Letisko Krakov (KRK)",
-    distance: "280 km",
-    duration: "3 - 3.5 hodiny",
-    price: "290 €",
-    includes: [
-      "Čakanie na letisku zadarmo",
-      "Pomoc so zavazadlami",
-      "Platba kartou",
-      "Detské sedačky na požiadanie"
-    ]
-  },
-  {
-    destination: "Letisko Viedeň (VIE)",
-    distance: "400 km",
-    duration: "4 - 4.5 hodiny",
-    price: "450 €",
-    includes: [
-      "Čakanie na letisku zadarmo",
-      "Pomoc so zavazadlami",
-      "Platba kartou",
-      "Detské sedačky na požiadanie"
-    ]
-  },
-  {
-    destination: "Letisko Debrecín (DEB)",
-    distance: "180 km",
-    duration: "2 hodiny",
-    price: "200 €",
-    includes: [
-      "Čakanie na letisku zadarmo",
-      "Pomoc so zavazadlami",
-      "Platba kartou",
-      "Detské sedačky na požiadanie"
-    ]
-  },
-  {
-    destination: "Letisko Katowice (KTW)",
-    distance: "220 km",
-    duration: "2.5 hodiny",
-    price: "240 €",
-    includes: [
-      "Čakanie na letisku zadarmo",
-      "Pomoc so zavazadlami",
-      "Platba kartou",
-      "Detské sedačky na požiadanie"
-    ]
-  }
-];
-
-export default function Cennik() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "PriceSpecification",
-    "name": "Cenník letiškových transferov E-TAXI Košice",
-    "description": "Cenník transferov z Košíc na európske letiská",
-    "priceCurrency": "EUR",
-    "offers": airportRoutes.map(route => ({
-      "@type": "Offer",
-      "itemOffered": {
-        "@type": "Service",
-        "name": `Transfer ${route.destination}`,
-        "description": `${route.distance}, ${route.duration}`,
-        "provider": {
-          "@type": "LocalBusiness",
-          "name": "E-TAXI Košice"
-        }
-      },
-      "price": route.price.replace(" €", ""),
-      "priceCurrency": "EUR"
-    }))
-  };
-
+export default function CennikPage() {
   return (
     <>
       <SEO 
-        title="Cenník - Letiskové transfery | E-TAXI Košice"
-        description="Cenník letiškových transferov z Košíc: Budapešť 250€, Krakov 290€, Viedeň 450€, Debrecín 200€, Katowice 240€. Firemné zľavy dostupné."
+        title="Cenník taxislužby | E-TAXI Košice | Ceny za km a transfery na letisko"
+        description="Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 1,10€/km ✓ Transfer Budapešť 250€ ✓ Transfer Krakov 290€ ✓ Transfer Viedeň 450€ ✓ Transparentné ceny bez skrytých poplatkov"
         url="https://etaxi-kosice.sk/cennik"
-        type="website"
       />
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </Head>
+      
       <Header />
-      <main className="pt-20 min-h-screen bg-background">
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="font-display font-bold text-4xl sm:text-5xl text-center mb-4">
-                Cenník letiškových transferov
+      
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-4 mt-8">
+              <Car className="w-10 h-10 text-[#282462]" />
+              <h1 className="font-display font-bold text-4xl sm:text-5xl text-[#282462]">
+                {pricingData.title}
               </h1>
-              <p className="text-center text-muted-foreground text-lg mb-12">
-                Transparentné ceny bez skrytých poplatkov. Cena zahŕňa čakanie na letisku, pomoc so zavazadlami a platbu kartou.
-              </p>
-
-              <div className="grid gap-6">
-                {airportRoutes.map((route, index) => (
-                  <Card key={index} className="border-2 hover:border-primary/50 transition-colors">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-2xl font-display mb-2 flex items-center gap-2">
-                            <Plane className="w-6 h-6 text-primary" />
-                            {route.destination}
-                          </CardTitle>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {route.distance}
-                            </span>
-                            <span>•</span>
-                            <span>{route.duration}</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold text-primary">{route.price}</div>
-                          <div className="text-sm text-muted-foreground">pevná cena</div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2">
-                        {route.includes.map((item, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
-                            <span className="text-sm">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="mt-12 p-6 bg-muted rounded-lg">
-                <h2 className="font-display font-semibold text-xl mb-4">Dôležité informácie</h2>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>• Ceny platia pre štandardné vozidlo (1-4 osoby + batožina)</li>
-                  <li>• Pre väčšie vozidlá (5-8 osôb) kontaktujte dispečing</li>
-                  <li>• Firemné zľavy pre pravidelné objednávky</li>
-                  <li>• Ceny sú konečné - bez skrytých poplatkov</li>
-                  <li>• Platba v hotovosti alebo kartou</li>
-                  <li>• Rezervácia: +421 911 606 206 alebo online formulár</li>
-                </ul>
-              </div>
             </div>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
-  );
-}
+            
+            <p className="text-lg text-muted-foreground mb-12">Transparentné ceny bez skrytých poplatkov. Nie sme platci DPH. Konkrétnu cenu určuje aplikácia vopred.
 
-export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-  };
-};
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {/* Základný cenník */}
+              <Card className="shadow-lg border-primary/10">
+                <CardHeader className="bg-[#282462] text-white rounded-t-lg">
+                  <CardTitle className="font-display flex items-center gap-2">
+                    <Car className="w-5 h-5 text-accent" />
+                    Základný cenník
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <ul className="space-y-4">
+                    {pricingData.basicPricing.map((item, index) =>
+                    <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                        <span className="text-foreground">{item.label}</span>
+                        <span className="font-semibold text-[#282462] tabular-nums">
+                          {item.price}
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Transfery */}
+              <Card className="shadow-lg border-primary/10">
+                <CardHeader className="bg-[#282462] text-white rounded-t-lg">
+                  <CardTitle className="font-display flex items-center gap-2">
+                    <Plane className="w-5 h-5 text-accent" />
+                    Letiskové transfery
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <ul className="space-y-4">
+                    {pricingData.transfers.map((item, index) =>
+                    <li key={index} className="flex justify-between items-center border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                        <span className="text-foreground">{item.destination}</span>
+                        <span className="font-semibold text-[#282462] tabular-nums">
+                          {item.price}
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-yellow-400/10 border-yellow-400">
+              <CardContent className="p-6">
+                <h3 className="font-display font-semibold text-lg mb-3 flex items-center gap-2">
+                  <Info className="w-5 h-5 text-yellow-600" />
+                  Dôležité informácie
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li>• Ceny sú orientačné a môžu sa líšiť podľa aktuálnej dopravnej situácie</li>
+                  <li>• Pri dlhších trasách možnosť dohodnutia paušálnej ceny vopred</li>
+                  <li>• Pre firmy vystavujeme faktúry s platbou prevodom</li>
+                  
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </>);
+
+}

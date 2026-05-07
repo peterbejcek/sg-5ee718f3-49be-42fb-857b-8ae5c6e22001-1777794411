@@ -64,7 +64,6 @@ export function Header() {
                     ? "text-[#282462] hover:text-accent"
                     : "text-white hover:text-accent"
                 }`}
-                suppressHydrationWarning
               >
                 {item.label}
               </Link>
@@ -73,7 +72,9 @@ export function Header() {
 
           {/* Right Side: Language Switcher + Call Button */}
           <div className="hidden md:flex items-center gap-3">
-            <LanguageSwitcher isScrolled={isScrolled} />
+            <div className={isScrolled ? "" : "text-white"}>
+              <LanguageSwitcher />
+            </div>
             
             <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="bg-accent rounded-full p-3">
@@ -82,12 +83,12 @@ export function Header() {
               <div className="flex flex-col">
                 <span className={`text-xs font-medium ${
                   isScrolled ? "text-muted-foreground" : "text-white/80"
-                }`} suppressHydrationWarning>
+                }`}>
                   {t("contact.dispatch247")}
                 </span>
                 <span className={`font-bold tabular-nums ${
                   isScrolled ? "text-[#282462]" : "text-white"
-                }`} suppressHydrationWarning>
+                }`}>
                   {t("contact.phone")}
                 </span>
               </div>
@@ -122,7 +123,6 @@ export function Header() {
                       : "text-white hover:bg-white/10"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  suppressHydrationWarning
                 >
                   {item.label}
                 </Link>
@@ -138,12 +138,12 @@ export function Header() {
                   <div className="flex flex-col">
                     <span className={`text-xs font-medium ${
                       isScrolled ? "text-muted-foreground" : "text-white/80"
-                    }`} suppressHydrationWarning>
+                    }`}>
                       {t("contact.dispatch247")}
                     </span>
                     <span className={`font-bold tabular-nums ${
                       isScrolled ? "text-[#282462]" : "text-white"
-                    }`} suppressHydrationWarning>
+                    }`}>
                       {t("contact.phone")}
                     </span>
                   </div>
