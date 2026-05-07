@@ -5,19 +5,32 @@ import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { CookieConsent } from "@/components/CookieConsent";
 import "@/lib/i18n";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { i18n } = useTranslation();
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const locale = router.locale || "sk";
-    if (i18n.language !== locale) {
-      i18n.changeLanguage(locale);
+    // Get locale from URL params or router
+    const localeFromUrl = router.query.locale as string || router.locale || "sk";
+    
+    // Change i18n language immediately
+    if (i18n.language !== localeFromUrl) {
+      i18n.changeLanguage(localeFromUrl).then(() => {
+        setIsReady(true);
+      });
+    } else {
+      setIsReady(true);
     }
-  }, [router.locale, i18n]);
+  }, [router.query.locale, router.locale, i18n]);
+
+  // Don't render until language is set
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <ThemeProvider>

@@ -4,6 +4,9 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Plane, Check } from "lucide-react";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
 const airportRoutes = [
@@ -70,6 +73,17 @@ const airportRoutes = [
 ];
 
 export default function Cennik() {
+  const { i18n } = useTranslation("common");
+  const router = useRouter();
+
+  useEffect(() => {
+    // Force language change based on URL locale parameter
+    const locale = router.query.locale as string || "sk";
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
+  }, [router.query.locale, i18n]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "PriceSpecification",

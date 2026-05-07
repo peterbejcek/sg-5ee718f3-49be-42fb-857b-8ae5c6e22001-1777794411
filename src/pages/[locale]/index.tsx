@@ -18,8 +18,16 @@ import type { GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
 
 export default function Home() {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const router = useRouter();
+
+  useEffect(() => {
+    // Force language change based on URL locale parameter
+    const locale = router.query.locale as string || "sk";
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
+  }, [router.query.locale, i18n]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && !window.location.hash) {
