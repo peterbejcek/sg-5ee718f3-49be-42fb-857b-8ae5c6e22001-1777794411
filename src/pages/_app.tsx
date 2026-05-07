@@ -7,8 +7,9 @@ import "@/lib/i18n";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { appWithTranslation } from 'next-i18next';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { i18n } = useTranslation();
 
@@ -43,3 +44,5 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </ThemeProvider>
   );
 }
+
+export default appWithTranslation(App);
