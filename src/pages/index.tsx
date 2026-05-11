@@ -1,6 +1,6 @@
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
-import { SensetBookingForm } from "@/components/SensetBookingForm";
+import { BookingForm } from "@/components/BookingForm";
 import { FleetSection } from "@/components/FleetSection";
 import { PricingSection } from "@/components/PricingSection";
 import { Footer } from "@/components/Footer";
@@ -12,36 +12,8 @@ import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditC
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import type { GetStaticProps } from "next";
 
 export default function Home() {
-  const { t } = useTranslation("common");
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && !window.location.hash) {
-      window.scrollTo(0, 0);
-      
-      const preventScroll = () => {
-        if (!window.location.hash) {
-          window.scrollTo(0, 0);
-        }
-      };
-      
-      const timeoutId = setTimeout(() => {
-        window.removeEventListener("scroll", preventScroll);
-      }, 2000);
-      
-      window.addEventListener("scroll", preventScroll);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        window.removeEventListener("scroll", preventScroll);
-      };
-    }
-  }, []);
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -263,7 +235,7 @@ export default function Home() {
                       className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
                     >
                       <Calendar className="w-5 h-5 mr-2" />
-                      {t("buttons.orderNow")}
+                      Objednať teraz
                     </Button>
                   </a>
                   <a href="tel:+421911606206">
@@ -272,7 +244,7 @@ export default function Home() {
                       className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
                     >
                       <Phone className="w-5 h-5 mr-2" />
-                      <span className="tabular-nums">{t("contact.phone")}</span>
+                      <span className="tabular-nums">+421 911 606 206</span>
                     </Button>
                   </a>
                 </div>
@@ -356,7 +328,7 @@ export default function Home() {
                   className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
-                  {t("buttons.bookRide")}
+                  Objednať jazdu teraz
                 </Button>
               </a>
               <a href="tel:+421911606206">
@@ -365,7 +337,7 @@ export default function Home() {
                   className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold"
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  {t("buttons.callNow")} {t("contact.phone")}
+                  Zavolať +421 911 606 206
                 </Button>
               </a>
             </div>
@@ -394,10 +366,10 @@ export default function Home() {
               <p className="text-center text-muted-foreground mb-8">
                 Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na{" "}
                 <a href="tel:+421911606206" className="text-accent font-semibold hover:underline">
-                  {t("contact.phone")}
+                  +421 911 606 206
                 </a>
               </p>
-              <SensetBookingForm />
+              <BookingForm />
             </div>
           </div>
         </section>
@@ -406,9 +378,3 @@ export default function Home() {
     </>
   );
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-  };
-};
