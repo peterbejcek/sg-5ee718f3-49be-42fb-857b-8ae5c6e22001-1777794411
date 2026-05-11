@@ -11,7 +11,6 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Header becomes white after scrolling past hero (approximately 100vh)
       setIsScrolled(window.scrollY > window.innerHeight * 0.5);
     };
 
@@ -68,7 +67,7 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Call Button - Desktop */}
+          {/* Right Side: Call Button */}
           <div className="hidden md:flex items-center gap-3">
             <Link href="tel:+421911606206" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="bg-accent rounded-full p-3">
