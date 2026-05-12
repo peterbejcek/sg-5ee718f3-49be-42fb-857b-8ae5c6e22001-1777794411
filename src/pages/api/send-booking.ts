@@ -7,6 +7,7 @@ type BookingData = {
   datetime: string;
   passengers: number;
   phone?: string;
+  email?: string;
   priceEstimateOnly?: boolean;
 };
 
@@ -19,10 +20,10 @@ export default async function handler(
   }
 
   try {
-    const { pickup, destination, datetime, passengers, phone, priceEstimateOnly }: BookingData = req.body;
+    const { pickup, destination, datetime, passengers, phone, email, priceEstimateOnly }: BookingData = req.body;
 
     // Validate required fields
-    if (!pickup || !destination || !datetime || !passengers) {
+    if (!pickup || !destination || !datetime || !passengers || !phone || !email) {
       return res.status(400).json({ message: "Chýbajú povinné polia" });
     }
 
@@ -41,7 +42,8 @@ To: ${process.env.SMTP_USER || "dispecing@e-taxike.sk"}
 📍 Cieľ: ${destination}
 🕐 Dátum a čas: ${new Date(datetime).toLocaleString("sk-SK")}
 👥 Počet pasažierov: ${passengers}
-${phone ? `📞 Telefón: ${phone}` : ""}
+📞 Telefón: ${phone}
+📧 Email: ${email}
 ${priceEstimateOnly ? "💰 Iba cenová kalkulácia (bez objednávky)" : ""}
 ────────────────────────────────────────
       `.trim();
@@ -82,7 +84,8 @@ DETAILY OBJEDNÁVKY
 📍 Cieľ: ${destination}
 🕐 Dátum a čas: ${new Date(datetime).toLocaleString("sk-SK")}
 👥 Počet pasažierov: ${passengers}
-${phone ? `📞 Telefón: ${phone}` : "📞 Telefón: Nezadané"}
+📞 Telefón: ${phone}
+📧 Email: ${email}
 
 ${priceEstimateOnly ? "💰 TYP: Iba cenová kalkulácia (zákazník nežiada objednávku)" : "✅ TYP: Objednávka taxíka"}
 
@@ -137,12 +140,15 @@ Z webu: https://etaxi-kosice.sk
         ${passengers}
       </div>
       
-      ${phone ? `
       <div class="detail">
         <span class="label">📞 Telefón:</span><br>
         <a href="tel:${phone}">${phone}</a>
       </div>
-      ` : '<div class="detail"><span class="label">📞 Telefón:</span><br>Nezadané</div>'}
+
+      <div class="detail">
+        <span class="label">📧 Email:</span><br>
+        <a href="mailto:${email}">${email}</a>
+      </div>
     </div>
     
     <div class="footer">
@@ -154,7 +160,7 @@ Z webu: https://etaxi-kosice.sk
 </html>
     `.trim();
 
-    // Send email
+    // Send email to company
     await transporter.sendMail({
       from: `"E-TAXI Košice - Web Objednávky" <${process.env.SMTP_USER}>`,
       to: "dispecing@e-taxike.sk, letiskokosicetaxi@gmail.com",
@@ -165,10 +171,114 @@ Z webu: https://etaxi-kosice.sk
 
     console.log("✅ Email sent successfully to dispecing@e-taxike.sk and letiskokosicetaxi@gmail.com");
 
+    // Send confirmation email to customer
+    const customerEmailText = `
+Dobrý deň,
+
+Vaša objednávka taxíka bola prijatá. O jej spracovaní Vás budeme informovať.
+
+────────────────────────────────────────
+DETAILY OBJEDNÁVKY
+────────────────────────────────────────
+
+📍 Z: ${pickup}
+📍 Do: ${destination}
+🕐 Kedy: ${new Date(datetime).toLocaleString("sk-SK")}
+👥 Počet osôb: ${passengers}
+
+${priceEstimateOnly ? "💰 Typ: Cenová kalkulácia" : "✅ Typ: Potvrdená objednávka"}
+
+────────────────────────────────────────
+
+Ak potrebujete urobiť zmeny alebo máte otázky, kontaktujte nás:
+📞 +421 911 606 206
+📧 dispecing@e-taxike.sk
+
+S pozdravom,
+E-TAXI Košice tím
+    `.trim();
+
+    const customerEmailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #282462; color: white; padding: 20px; text-align: center; }
+    .content { background: #f9f9f9; padding: 20px; margin: 20px 0; }
+    .detail { margin: 10px 0; padding: 10px; background: white; border-left: 4px solid #ff9500; }
+    .label { font-weight: bold; color: #282462; }
+    .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px; }
+    .contact { background: #282462; color: white; padding: 15px; text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>🚕 E-TAXI Košice</h2>
+      <p>Potvrdenie objednávky</p>
+    </div>
+    
+    <div style="padding: 20px; text-align: center;">
+      <h3 style="color: #282462;">Vaša objednávka bola prijatá</h3>
+      <p>O jej spracovaní Vás budeme informovať.</p>
+    </div>
+    
+    <div class="content">
+      <h4 style="color: #282462; margin-bottom: 15px;">Detaily objednávky:</h4>
+      
+      <div class="detail">
+        <span class="label">📍 Z:</span><br>
+        ${pickup}
+      </div>
+      
+      <div class="detail">
+        <span class="label">📍 Do:</span><br>
+        ${destination}
+      </div>
+      
+      <div class="detail">
+        <span class="label">🕐 Kedy:</span><br>
+        ${new Date(datetime).toLocaleString("sk-SK")}
+      </div>
+      
+      <div class="detail">
+        <span class="label">👥 Počet osôb:</span><br>
+        ${passengers}
+      </div>
+      
+      ${priceEstimateOnly ? '<div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-left: 4px solid #ff9500;">💰 Typ: Cenová kalkulácia</div>' : '<div style="background: #d4edda; padding: 10px; margin: 10px 0; border-left: 4px solid #28a745;">✅ Typ: Potvrdená objednávka</div>'}
+    </div>
+    
+    <div class="contact">
+      <p style="margin: 5px 0;"><strong>Ak potrebujete urobiť zmeny alebo máte otázky:</strong></p>
+      <p style="margin: 5px 0;">📞 <a href="tel:+421911606206" style="color: white;">+421 911 606 206</a></p>
+      <p style="margin: 5px 0;">📧 <a href="mailto:dispecing@e-taxike.sk" style="color: white;">dispecing@e-taxike.sk</a></p>
+    </div>
+    
+    <div class="footer">
+      <p>Ďakujeme, že ste si vybrali E-TAXI Košice</p>
+      <p><a href="https://etaxi-kosice.sk">etaxi-kosice.sk</a></p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+
+    await transporter.sendMail({
+      from: `"E-TAXI Košice" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: "Potvrdenie objednávky - E-TAXI Košice",
+      text: customerEmailText,
+      html: customerEmailHtml,
+    });
+
+    console.log(`✅ Confirmation email sent to customer: ${email}`);
+
     return res.status(200).json({ 
-      message: priceEstimateOnly 
-        ? "Žiadosť o cenovú kalkuláciu bola odoslaná. Budeme vás kontaktovať s presnou cenou."
-        : "Objednávka bola úspešne odoslaná! Čoskoro vás budeme kontaktovať.",
+      message: "Vaša objednávka bola prijatá. O jej spracovaní Vás budeme informovať",
       success: true 
     });
 

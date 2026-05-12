@@ -13,12 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin, Navigation, Calendar, Users, Phone, Briefcase, Plane } from "lucide-react";
+import { MapPin, Navigation, Calendar, Users, Phone, Briefcase, Plane, Mail } from "lucide-react";
 
 const bookingSchema = z.object({
   pickup: z.string().min(3, "Zadajte odberné miesto (min. 3 znaky)"),
   destination: z.string().min(3, "Zadajte cieľ (min. 3 znaky)"),
   datetime: z.string().min(1, "Vyberte dátum a čas"),
+  phone: z.string().min(10, "Zadajte platné telefónne číslo"),
+  email: z.string().email("Zadajte platnú emailovú adresu"),
   passengers: z.string().optional(),
   luggage: z.string().optional(),
   flightNumber: z.string().optional(),
@@ -59,7 +61,7 @@ export function BookingForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("✅ Objednávka bola úspešne odoslaná! Čoskoro vás budeme kontaktovať.");
+        alert("Vaša objednávka bola prijatá. O jej spracovaní Vás budeme informovať");
         reset();
       } else {
         alert(`⚠️ ${result.message || "Chyba pri odosielaní objednávky. Zavolajte na +421 911 606 206"}`);
@@ -130,6 +132,44 @@ export function BookingForm() {
           {errors.datetime && (
             <p className="text-sm text-destructive mt-1">
               {errors.datetime.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
+            <Phone className="w-4 h-4 text-primary" />
+            Telefón <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            {...register("phone")}
+            placeholder="+421 XXX XXX XXX"
+            className="h-12 text-base"
+          />
+          {errors.phone && (
+            <p className="text-sm text-destructive mt-1">
+              {errors.phone.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+            <Mail className="w-4 h-4 text-primary" />
+            Email <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            {...register("email")}
+            placeholder="vas@email.sk"
+            className="h-12 text-base"
+          />
+          {errors.email && (
+            <p className="text-sm text-destructive mt-1">
+              {errors.email.message}
             </p>
           )}
         </div>
@@ -213,15 +253,15 @@ export function BookingForm() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col sm:flex-row gap-3">
+      <div className="mt-6 flex flex-col gap-3">
         <Button
           type="submit"
           size="lg"
-          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold h-14"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display font-semibold h-14"
         >
           {priceEstimateOnly ? "Získať cenovú ponuku" : "Objednať taxík"}
         </Button>
-        <a href="tel:+421911606206" className="flex-1">
+        <a href="tel:+421911606206" className="w-full">
           <Button
             type="button"
             size="lg"
