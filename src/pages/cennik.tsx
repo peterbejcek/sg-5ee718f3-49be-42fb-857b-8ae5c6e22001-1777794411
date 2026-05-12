@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { pricingData } from "@/data/pricing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plane, Car, Info, Phone } from "lucide-react";
+import Link from "next/link";
 
 export default function CennikPage() {
   return (
@@ -100,7 +101,7 @@ export default function CennikPage() {
                   Zavolajte nám alebo objednajte online
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a href="tel:+421911606206">
+                  <Link href="tel:+421911606206">
                     <Button 
                       size="lg" 
                       className="w-full sm:w-auto bg-[#ff9500] hover:bg-[#ff9500]/90 text-white font-display font-semibold h-14"
@@ -108,8 +109,8 @@ export default function CennikPage() {
                       <Phone className="w-5 h-5 mr-2" />
                       Zavolať +421 911 606 206
                     </Button>
-                  </a>
-                  <a href="/#objednavka">
+                  </Link>
+                  <Link href="/#objednavka">
                     <Button 
                       size="lg" 
                       variant="outline"
@@ -117,7 +118,7 @@ export default function CennikPage() {
                     >
                       Objednať jazdu teraz
                     </Button>
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

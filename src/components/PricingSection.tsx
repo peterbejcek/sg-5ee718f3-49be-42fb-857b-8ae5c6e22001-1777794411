@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plane, Car, Info, Phone } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export function PricingSection() {
   return (
@@ -123,7 +124,7 @@ export function PricingSection() {
                     Zavolať +421 911 606 206
                   </Button>
                 </a>
-                <a href="/#objednavka">
+                <Link href="/#objednavka">
                   <Button 
                     size="lg" 
                     variant="outline"
@@ -131,7 +132,7 @@ export function PricingSection() {
                   >
                     Objednať jazdu teraz
                   </Button>
-                </a>
+                </Link>
               </div>
             </CardContent>
           </Card>
