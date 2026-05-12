@@ -1,6 +1,7 @@
 import { pricingData } from "@/data/pricing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plane, Car, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Plane, Car, Info, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function PricingSection() {
@@ -95,6 +96,45 @@ export function PricingSection() {
               </CardContent>
             </Card>
           </motion.div>
+        </motion.div>
+
+        <motion.div 
+          className="mt-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <Card className="bg-primary text-primary-foreground max-w-2xl mx-auto">
+            <CardContent className="p-8">
+              <h3 className="font-display font-bold text-2xl mb-4">
+                Chcete si objednať jazdu?
+              </h3>
+              <p className="mb-6 text-primary-foreground/90">
+                Kontaktujte nás telefonicky alebo vyplňte online formulár
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tel:+421911606206">
+                  <Button 
+                    size="lg" 
+                    className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-14"
+                  >
+                    <Phone className="w-5 h-5 mr-2" />
+                    Zavolať +421 911 606 206
+                  </Button>
+                </a>
+                <a href="/#objednavka">
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary font-display font-semibold h-14"
+                  >
+                    Objednať jazdu teraz
+                  </Button>
+                </a>
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
       </div>
     </motion.section>

@@ -2,6 +2,7 @@ import { aboutData } from "@/data/about";
 import { Shield, Leaf, ShieldCheck, Eye, Phone, Mail, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 const iconMap = {
@@ -98,38 +99,34 @@ export function AboutSection() {
         </motion.div>
 
         <Card className="bg-primary text-primary-foreground">
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
+          <CardContent className="p-8 text-center">
+            <h3 className="font-display font-bold text-2xl mb-4">
+              Potrebujete taxík práve teraz?
+            </h3>
+            <p className="mb-6 text-primary-foreground/90">
+              Zavolajte nám alebo objednajte online
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="tel:+421911606206">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold h-14"
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  Zavolať +421 911 606 206
+                </Button>
+              </a>
+              <a href="#objednavka">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary font-display font-semibold h-14"
+                >
+                  Objednať jazdu teraz
+                </Button>
+              </a>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </section>);

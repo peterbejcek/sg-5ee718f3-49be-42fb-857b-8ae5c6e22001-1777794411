@@ -157,13 +157,13 @@ Z webu: https://etaxi-kosice.sk
     // Send email
     await transporter.sendMail({
       from: `"E-TAXI Košice - Web Objednávky" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER, // Send to same email (dispatching)
+      to: "dispecing@e-taxike.sk, letiskokosicetaxi@gmail.com",
       subject: emailSubject,
       text: emailText,
       html: emailHtml,
     });
 
-    console.log(`✅ Email sent successfully to ${process.env.SMTP_USER}`);
+    console.log("✅ Email sent successfully to dispecing@e-taxike.sk and letiskokosicetaxi@gmail.com");
 
     return res.status(200).json({ 
       message: priceEstimateOnly 
