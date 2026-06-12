@@ -14,7 +14,7 @@ export const pricingData = {
     { label: "Časová objednávka", price: "zdarma" }
   ],
   transfers: [
-    { destination: "Košice - Letisko Košice", price: "od 18 EUR" },
+    { destination: "Košice - Letisko Košice", price: "od 15 EUR" },
     { destination: "Košice - Letisko Budapešť", price: "250 EUR" },
     { destination: "Košice - Letisko Krakov", price: "290 EUR" },
     { destination: "Košice - Bratislava", price: "390 EUR" },
