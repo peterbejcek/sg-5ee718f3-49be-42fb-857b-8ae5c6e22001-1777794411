@@ -1,17 +1,44 @@
+import dynamic from "next/dynamic";
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
-import { BookingForm } from "@/components/BookingForm";
-import { FleetSection } from "@/components/FleetSection";
-import { PricingSection } from "@/components/PricingSection";
-import { Footer } from "@/components/Footer";
-import { AboutSection } from "@/components/AboutSection";
-import { BlogSection } from "@/components/BlogSection";
-import { ReviewsSection } from "@/components/ReviewsSection";
-import { FAQSection } from "@/components/FAQSection";
-import { Phone, Calendar, Shield, Clock, Zap, CheckCircle2, Wine, Plane, CreditCard } from "lucide-react";
+import { Phone, Calendar, Clock, Zap, CheckCircle2, Wine, Plane, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head";
+import Image from "next/image";
+
+// Lazy load below-the-fold sections
+const BookingForm = dynamic(() => import("@/components/BookingForm").then(mod => ({ default: mod.BookingForm })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
+const FleetSection = dynamic(() => import("@/components/FleetSection").then(mod => ({ default: mod.FleetSection })), {
+  loading: () => <div className="min-h-[600px] animate-pulse bg-muted/30" />
+});
+
+const PricingSection = dynamic(() => import("@/components/PricingSection").then(mod => ({ default: mod.PricingSection })), {
+  loading: () => <div className="min-h-[500px] animate-pulse bg-muted/30" />
+});
+
+const AboutSection = dynamic(() => import("@/components/AboutSection").then(mod => ({ default: mod.AboutSection })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
+const BlogSection = dynamic(() => import("@/components/BlogSection").then(mod => ({ default: mod.BlogSection })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
+const ReviewsSection = dynamic(() => import("@/components/ReviewsSection").then(mod => ({ default: mod.ReviewsSection })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
+const FAQSection = dynamic(() => import("@/components/FAQSection").then(mod => ({ default: mod.FAQSection })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
+const Footer = dynamic(() => import("@/components/Footer").then(mod => ({ default: mod.Footer })), {
+  loading: () => <div className="min-h-[300px] animate-pulse bg-primary/10" />
+});
 
 export default function Home() {
   const jsonLd = {
@@ -19,66 +46,95 @@ export default function Home() {
     "@type": "LocalBusiness",
     "@id": "https://etaxi-kosice.sk",
     "name": "E-TAXI Košice",
+    "alternateName": "E-TAXI Košice - Taxislužba",
+    "description": "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery Budapešť, Krakov, Viedeň. Online objednávka a okamžité potvrdenie.",
     "image": "https://etaxi-kosice.sk/og-image.png",
-    "description": "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery, firemné objednávky, moderný vozový park.",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Košice",
-      "addressCountry": "SK"
-    },
+    "logo": "https://etaxi-kosice.sk/etaxi_logo_svg.svg",
     "telephone": "+421911606206",
     "email": "dispecing@e-taxike.sk",
     "url": "https://etaxi-kosice.sk",
     "priceRange": "€€",
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Košice",
+      "addressRegion": "Košický kraj",
+      "addressCountry": "SK"
     },
     "geo": {
       "@type": "GeoCoordinates",
       "latitude": "48.7164",
       "longitude": "21.2611"
     },
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": {
-        "@type": "GeoCoordinates",
-        "latitude": "48.7164",
-        "longitude": "21.2611"
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Košice"
       },
-      "geoRadius": "100000"
+      {
+        "@type": "City",
+        "name": "Prešov"
+      },
+      {
+        "@type": "AdministrativeArea",
+        "name": "Košický kraj"
+      }
+    ],
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "00:00",
+      "closes": "23:59"
     },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Taxislužby",
+      "name": "Taxislužby a transfery",
       "itemListElement": [
         {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Mestská taxislužba",
-            "description": "Taxislužba v rámci mesta Košice"
+            "name": "Mestská taxislužba Košice",
+            "description": "Rýchla a spoľahlivá taxislužba v Košiciach a okolí dostupná 24/7"
           }
         },
         {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Letiskové transfery",
-            "description": "Transfer na letisko Košice, Budapešť, Krakov, Viedeň"
+            "name": "Transfer na letisko Budapešť",
+            "description": "Expresný transfer z Košíc na letisko Budapešť za 250 EUR"
           }
         },
         {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Firemné transfery",
-            "description": "Pravidelné firemné objednávky a transfery"
+            "name": "Transfer na letisko Krakov",
+            "description": "Pohodlný transfer z Košíc na letisko Krakov za 290 EUR"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Transfer na letisko Viedeň",
+            "description": "Profesionálny transfer z Košíc na letisko Viedeň za 450 EUR"
           }
         }
       ]
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "127"
     }
   };
 
@@ -89,131 +145,30 @@ export default function Home() {
         description="Profesionálna taxislužba v Košiciach dostupná 24/7 ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Online objednávka ✓ Moderné vozidlá ✓ Dispečing +421 911 606 206"
         url="https://etaxi-kosice.sk"
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": "https://etaxi-kosice.sk",
-            "name": "E-TAXI Košice",
-            "alternateName": "E-TAXI Košice - Taxislužba",
-            "description": "Profesionálna taxislužba v Košiciach dostupná 24/7. Letiskové transfery Budapešť, Krakov, Viedeň. Online objednávka a okamžité potvrdenie.",
-            "image": "https://etaxi-kosice.sk/og-image.png",
-            "logo": "https://etaxi-kosice.sk/etaxi_logo_svg.svg",
-            "telephone": "+421911606206",
-            "email": "dispecing@e-taxike.sk",
-            "url": "https://etaxi-kosice.sk",
-            "priceRange": "€€",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Košice",
-              "addressRegion": "Košický kraj",
-              "addressCountry": "SK"
-            },
-            "geo": {
-              "@type": "GeoCoordinates",
-              "latitude": "48.7164",
-              "longitude": "21.2611"
-            },
-            "areaServed": [
-              {
-                "@type": "City",
-                "name": "Košice"
-              },
-              {
-                "@type": "City",
-                "name": "Prešov"
-              },
-              {
-                "@type": "AdministrativeArea",
-                "name": "Košický kraj"
-              }
-            ],
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday"
-              ],
-              "opens": "00:00",
-              "closes": "23:59"
-            },
-            "hasOfferCatalog": {
-              "@type": "OfferCatalog",
-              "name": "Taxislužby a transfery",
-              "itemListElement": [
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Mestská taxislužba Košice",
-                    "description": "Rýchla a spoľahlivá taxislužba v Košiciach a okolí dostupná 24/7"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Transfer na letisko Budapešť",
-                    "description": "Expresný transfer z Košíc na letisko Budapešť za 250 EUR"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Transfer na letisko Krakov",
-                    "description": "Pohodlný transfer z Košíc na letisko Krakov za 290 EUR"
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Transfer na letisko Viedeň",
-                    "description": "Profesionálny transfer z Košíc na letisko Viedeň za 450 EUR"
-                  }
-                }
-              ]
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "reviewCount": "127"
-            }
-          })
-        }}
-      />
       <Head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <link rel="preload" href="/hero-bg3.png" as="image" />
       </Head>
       <Header />
       <main className="pt-16">
-        {/* Hero Section */}
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
-            <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            <Image
+              src="/hero-bg3.png"
+              alt="E-TAXI Košice"
+              fill
+              priority
+              quality={85}
+              className="object-cover"
               style={{ 
-                backgroundImage: "url('/hero-bg3.png')",
                 filter: "brightness(1.15) saturate(1.1) sepia(0.15)"
               }}
             />
-            {/* Warm Golden Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-primary/20" />
-            {/* Dark Overlay for Text Readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/70" />
-            {/* Bottom Fade Transition */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
           </div>
           <div className="container mx-auto px-4 relative z-10">
@@ -253,7 +208,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Services Section */}
         <section id="sluzby" className="py-16 sm:py-20 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="font-display font-bold text-3xl sm:text-4xl text-center mb-12">
@@ -356,7 +310,6 @@ export default function Home() {
 
         <FAQSection />
 
-        {/* Booking Form Section */}
         <section id="objednavka" className="py-16 sm:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto">
