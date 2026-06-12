@@ -1,11 +1,28 @@
-import { motion } from "framer-motion";
-import { blogPosts } from "@/data/blog";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Calendar, ArrowRight, User } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export function BlogSection() {
+  useEffect(() => {
+    // Clean up any existing script to avoid duplicates
+    const existingScript = document.querySelector('script[src*="trysoro.com"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    // Create and append the Soro blog script
+    const script = document.createElement("script");
+    script.src = "https://app.trysoro.com/api/embed/72e345cc-26ab-4fa7-90c3-2a16001d07d4";
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // Cleanup on unmount
+    return () => {
+      const soroScript = document.querySelector('script[src*="trysoro.com"]');
+      if (soroScript) {
+        soroScript.remove();
+      }
+    };
+  }, []);
+
   return (
     <section id="blog" className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -18,71 +35,7 @@ export function BlogSection() {
           </p>
         </div>
 
-        <motion.div 
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.15
-              }
-            }
-          }}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-        >
-          {blogPosts.slice(0, 3).map((post) => (
-            <motion.div
-              key={post.id}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                show: { opacity: 1, y: 0 }
-              }}
-            >
-              <Card className="shadow-lg hover:shadow-xl transition-shadow h-full flex flex-col">
-                {post.image && (
-                  <div className="h-48 bg-muted overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                )}
-                <CardHeader className="flex-grow">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(post.date).toLocaleDateString('sk-SK')}
-                    </span>
-                  </div>
-                  <h3 className="font-display font-semibold text-xl mb-2 line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                </CardHeader>
-                <CardContent className="pt-0 mt-auto">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {post.author}
-                    </span>
-                    <Link href={`/blog/${post.id}`}>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
-                        Čítať viac
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        <div id="soro-blog"></div>
       </div>
     </section>
   );
