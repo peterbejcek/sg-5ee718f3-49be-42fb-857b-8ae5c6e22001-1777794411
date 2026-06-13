@@ -161,7 +161,7 @@ export function Footer() {
               <p className="text-xs font-medium text-primary-foreground/70 mb-2">Stiahnuť aplikáciu</p>
               <div className="flex gap-2">
                 <a 
-                  href="https://tinyurl.com/etaxiapple" 
+                  href="https://tinyurl.com/e-taxiapple" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex-1 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-lg px-3 py-2 flex items-center justify-center gap-2 transition-colors text-xs font-medium"

@@ -222,7 +222,7 @@ export default function Home() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                     <a
-                      href="https://tinyurl.com/etaxiapple"
+                      href="https://tinyurl.com/e-taxiapple"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-3 font-medium transition-colors">
