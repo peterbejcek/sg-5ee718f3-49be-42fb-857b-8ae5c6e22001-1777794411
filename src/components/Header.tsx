@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Phone, Menu, X } from "lucide-react";
+import { Phone, Menu, X, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -65,6 +65,17 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="#aplikacia"
+              className={`font-medium transition-colors flex items-center gap-2 ${
+                isScrolled
+                  ? "text-[#282462] hover:text-accent"
+                  : "text-white hover:text-accent"
+              }`}
+            >
+              <Smartphone className="h-4 w-4" />
+              Aplikácia
+            </Link>
           </nav>
 
           {/* Right Side: Call Button */}
@@ -120,6 +131,18 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href="#aplikacia"
+                className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors ${
+                  isScrolled
+                    ? "text-[#282462] hover:bg-muted"
+                    : "text-white hover:bg-white/10"
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Smartphone className="h-4 w-4" />
+                Stiahnuť aplikáciu
+              </Link>
               
               <div className={`border-t pt-4 mt-4 px-4 ${
                 isScrolled ? "border-border" : "border-white/20"

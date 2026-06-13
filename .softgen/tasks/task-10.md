@@ -18,9 +18,9 @@ Použiť lucide-react ikony: Smartphone, Download
 Alternatívne: vložiť oficiálne App Store/Google Play badge SVG.
 
 ## Checklist
-- [ ] Hero sekcia: CTA blok "Rýchlejšie cez aplikáciu" s App Store a Google Play tlačidlami pod booking formom
-- [ ] Header: pridať "Stiahnuť aplikáciu" tlačidlo do navigácie (mobile hamburger + desktop menu)
-- [ ] Footer: sekcia "Mobilná aplikácia" s oboma odkazmi v kontaktnej oblasti
+- [x] Hero sekcia: CTA blok "Rýchlejšie cez aplikáciu" s App Store a Google Play tlačidlami pod booking formom
+- [x] Header: pridať "Stiahnuť aplikáciu" tlačidlo do navigácie (mobile hamburger + desktop menu)
+- [x] Footer: sekcia "Mobilná aplikácia" s oboma odkazmi v kontaktnej oblasti
 
 ## Acceptance
 - Používateľ vidí app download linky na hlavnej stránke v hero sekcii
