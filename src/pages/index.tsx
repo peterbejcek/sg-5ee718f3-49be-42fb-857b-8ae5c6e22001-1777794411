@@ -8,35 +8,35 @@ import Head from "next/head";
 import Image from "next/image";
 
 // Lazy load below-the-fold sections
-const BookingForm = dynamic(() => import("@/components/BookingForm").then(mod => ({ default: mod.BookingForm })), {
+const BookingForm = dynamic(() => import("@/components/BookingForm").then((mod) => ({ default: mod.BookingForm })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
-const FleetSection = dynamic(() => import("@/components/FleetSection").then(mod => ({ default: mod.FleetSection })), {
+const FleetSection = dynamic(() => import("@/components/FleetSection").then((mod) => ({ default: mod.FleetSection })), {
   loading: () => <div className="min-h-[600px] animate-pulse bg-muted/30" />
 });
 
-const PricingSection = dynamic(() => import("@/components/PricingSection").then(mod => ({ default: mod.PricingSection })), {
+const PricingSection = dynamic(() => import("@/components/PricingSection").then((mod) => ({ default: mod.PricingSection })), {
   loading: () => <div className="min-h-[500px] animate-pulse bg-muted/30" />
 });
 
-const AboutSection = dynamic(() => import("@/components/AboutSection").then(mod => ({ default: mod.AboutSection })), {
+const AboutSection = dynamic(() => import("@/components/AboutSection").then((mod) => ({ default: mod.AboutSection })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
-const BlogSection = dynamic(() => import("@/components/BlogSection").then(mod => ({ default: mod.BlogSection })), {
+const BlogSection = dynamic(() => import("@/components/BlogSection").then((mod) => ({ default: mod.BlogSection })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
-const ReviewsSection = dynamic(() => import("@/components/ReviewsSection").then(mod => ({ default: mod.ReviewsSection })), {
+const ReviewsSection = dynamic(() => import("@/components/ReviewsSection").then((mod) => ({ default: mod.ReviewsSection })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
-const FAQSection = dynamic(() => import("@/components/FAQSection").then(mod => ({ default: mod.FAQSection })), {
+const FAQSection = dynamic(() => import("@/components/FAQSection").then((mod) => ({ default: mod.FAQSection })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
-const Footer = dynamic(() => import("@/components/Footer").then(mod => ({ default: mod.Footer })), {
+const Footer = dynamic(() => import("@/components/Footer").then((mod) => ({ default: mod.Footer })), {
   loading: () => <div className="min-h-[300px] animate-pulse bg-primary/10" />
 });
 
@@ -66,30 +66,30 @@ export default function Home() {
       "longitude": "21.2611"
     },
     "areaServed": [
-      {
-        "@type": "City",
-        "name": "Košice"
-      },
-      {
-        "@type": "City",
-        "name": "Prešov"
-      },
-      {
-        "@type": "AdministrativeArea",
-        "name": "Košický kraj"
-      }
-    ],
+    {
+      "@type": "City",
+      "name": "Košice"
+    },
+    {
+      "@type": "City",
+      "name": "Prešov"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Košický kraj"
+    }],
+
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"],
+
       "opens": "00:00",
       "closes": "23:59"
     },
@@ -97,39 +97,39 @@ export default function Home() {
       "@type": "OfferCatalog",
       "name": "Taxislužby a transfery",
       "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Mestská taxislužba Košice",
-            "description": "Rýchla a spoľahlivá taxislužba v Košiciach a okolí dostupná 24/7"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Transfer na letisko Budapešť",
-            "description": "Expresný transfer z Košíc na letisko Budapešť za 250 EUR"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Transfer na letisko Krakov",
-            "description": "Pohodlný transfer z Košíc na letisko Krakov za 290 EUR"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Transfer na letisko Viedeň",
-            "description": "Profesionálny transfer z Košíc na letisko Viedeň za 450 EUR"
-          }
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Mestská taxislužba Košice",
+          "description": "Rýchla a spoľahlivá taxislužba v Košiciach a okolí dostupná 24/7"
         }
-      ]
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Transfer na letisko Budapešť",
+          "description": "Expresný transfer z Košíc na letisko Budapešť za 250 EUR"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Transfer na letisko Krakov",
+          "description": "Pohodlný transfer z Košíc na letisko Krakov za 290 EUR"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Transfer na letisko Viedeň",
+          "description": "Profesionálny transfer z Košíc na letisko Viedeň za 450 EUR"
+        }
+      }]
+
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -140,16 +140,16 @@ export default function Home() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title="E-TAXI Košice | Taxislužba 24/7 | Transfery Budapešť, Krakov, Viedeň"
         description="Profesionálna taxislužba v Košiciach dostupná 24/7 ✓ Letiskové transfery Budapešť, Krakov, Viedeň ✓ Online objednávka ✓ Moderné vozidlá ✓ Dispečing +421 911 606 206"
-        url="https://etaxi-kosice.sk"
-      />
+        url="https://etaxi-kosice.sk" />
+      
       <Head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        
         <link rel="preload" href="/hero-bg3.png" as="image" />
       </Head>
       <Header />
@@ -163,10 +163,10 @@ export default function Home() {
               priority
               quality={85}
               className="object-cover"
-              style={{ 
+              style={{
                 filter: "brightness(1.15) saturate(1.1) sepia(0.15)"
-              }}
-            />
+              }} />
+            
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-primary/20" />
             <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/70" />
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
@@ -187,8 +187,8 @@ export default function Home() {
                   <a href="#objednavka">
                     <Button
                       size="lg"
-                      className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg"
-                    >
+                      className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold shadow-lg">
+                      
                       <Calendar className="w-5 h-5 mr-2" />
                       Objednať teraz
                     </Button>
@@ -196,8 +196,8 @@ export default function Home() {
                   <a href="tel:+421911606206">
                     <Button
                       size="lg"
-                      className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg"
-                    >
+                      className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary font-display font-semibold shadow-lg">
+                      
                       <Phone className="w-5 h-5 mr-2" />
                       <span className="tabular-nums">+421 911 606 206</span>
                     </Button>
@@ -216,33 +216,33 @@ export default function Home() {
                   <h2 className="font-display font-bold text-2xl sm:text-3xl mb-3">
                     Rýchlejšie cez aplikáciu
                   </h2>
-                  <p className="text-muted-foreground mb-6">
-                    Stiahnite si našu mobilnú aplikáciu a objednávajte taxík ešte jednoduchšie. 
-                    Sledujte polohu vodiča v reálnom čase a plaťte priamo v aplikácii.
+                  <p className="text-muted-foreground mb-6">Stiahnite si našu mobilnú aplikáciu a objednávajte taxík ešte jednoduchšie. Sledujte polohu vodiča v reálnom čase a cenu vidíte ešte pred objednávkou.
+
+
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                    <a 
-                      href="https://tinyurl.com/etaxiapple" 
-                      target="_blank" 
+                    <a
+                      href="https://tinyurl.com/etaxiapple"
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-3 font-medium transition-colors"
-                    >
+                      className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-3 font-medium transition-colors">
+                      
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
                       </svg>
                       <div className="text-left">
                         <div className="text-xs opacity-90">Stiahnuť na</div>
                         <div className="font-semibold">App Store</div>
                       </div>
                     </a>
-                    <a 
-                      href="https://tinyurl.com/etaxiandroid" 
-                      target="_blank" 
+                    <a
+                      href="https://tinyurl.com/etaxiandroid"
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-3 font-medium transition-colors"
-                    >
+                      className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 py-3 font-medium transition-colors">
+                      
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
+                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
                       </svg>
                       <div className="text-left">
                         <div className="text-xs opacity-90">Dostupné na</div>
@@ -332,8 +332,8 @@ export default function Home() {
               <a href="#objednavka">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold"
-                >
+                  className="w-full sm:w-auto h-14 px-8 bg-yellow-400 hover:bg-yellow-500 text-primary font-display font-semibold">
+                  
                   <Calendar className="w-5 h-5 mr-2" />
                   Objednať jazdu teraz
                 </Button>
@@ -341,8 +341,8 @@ export default function Home() {
               <a href="tel:+421911606206">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold"
-                >
+                  className="w-full sm:w-auto h-14 px-8 bg-white hover:bg-white/90 text-primary border-2 border-primary font-display font-semibold">
+                  
                   <Phone className="w-5 h-5 mr-2" />
                   Zavolať +421 911 606 206
                 </Button>
@@ -381,6 +381,6 @@ export default function Home() {
         </section>
       </main>
       <Footer />
-    </>
-  );
+    </>);
+
 }
