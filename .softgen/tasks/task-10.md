@@ -1,6 +1,6 @@
 ---
 title: Mobilná aplikácia - download linky
-status: todo
+status: done
 priority: high
 type: feature
 tags: [app-links, mobile, cta]
