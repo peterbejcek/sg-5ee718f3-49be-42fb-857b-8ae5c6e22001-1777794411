@@ -3,7 +3,7 @@ import { Users, Wind, Zap, Phone, Calendar, Baby, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import Image from "next/image";
 
 export function FleetSection() {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -95,21 +95,13 @@ export function FleetSection() {
   });
 
   return (
-    <motion.section 
+    <section 
       id="vozovy-park"
       className="py-24 bg-muted/30"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
     >
       
       <div className="container">
-        <motion.div
-          className="text-center max-w-3xl mx-auto mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}>
+        <div className="text-center max-w-3xl mx-auto mb-12">
           
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4 text-foreground">
             Náš vozový park
@@ -117,7 +109,7 @@ export function FleetSection() {
           <p className="text-lg text-muted-foreground text-balance">
             Moderné a udržiavané vozidlá pre váš komfort a bezpečnosť
           </p>
-        </motion.div>
+        </div>
 
         <div className="flex justify-center gap-3 mb-12 flex-wrap">
           <Button
@@ -137,35 +129,20 @@ export function FleetSection() {
           </Button>
         </div>
 
-        <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.15
-              }
-            }
-          }}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           
           {filteredVehicles.map((vehicle) =>
-          <motion.div
-            key={vehicle.id}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              show: { opacity: 1, y: 0 }
-            }}>
+          <div key={vehicle.id}>
             
               <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
                 <div className="relative h-48 bg-muted">
-                  <img
-                  src={vehicle.image}
-                  alt={vehicle.name}
-                  className="w-full h-full object-cover" />
+                  <Image
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    fill
+                    loading="lazy"
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                 
                   {vehicle.isEco &&
                 <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
@@ -203,9 +180,9 @@ export function FleetSection() {
                 }
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <a href="#objednavka">
@@ -222,6 +199,6 @@ export function FleetSection() {
           </a>
         </div>
       </div>
-    </motion.section>);
+    </section>);
 
 }

@@ -6,17 +6,6 @@ export default function Document() {
   return (
     <Html lang="sk">
       <Head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X6TG110M6V"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-X6TG110M6V');
-            `,
-          }}
-        />
         <SEOElements />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-32x32.png" />

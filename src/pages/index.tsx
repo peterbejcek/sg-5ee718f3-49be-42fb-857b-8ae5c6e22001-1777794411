@@ -149,8 +149,6 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        
-        <link rel="preload" href="/hero-bg3.png" as="image" />
       </Head>
       <Header />
       <main className="pt-16">
@@ -161,11 +159,9 @@ export default function Home() {
               alt="E-TAXI Košice"
               fill
               priority
-              quality={85}
+              quality={75}
               className="object-cover"
-              style={{
-                filter: "brightness(1.15) saturate(1.1) sepia(0.15)"
-              }} />
+              sizes="100vw" />
             
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-primary/20" />
             <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/70" />
