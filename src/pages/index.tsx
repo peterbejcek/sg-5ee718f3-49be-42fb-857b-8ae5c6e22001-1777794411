@@ -155,27 +155,27 @@ export default function Home() {
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
-              src="/hero-bg3.png"
-              alt="E-TAXI Košice"
+              src="/hero-bg.png"
+              alt="E-TAXI Košice - Nočná jazda mestom"
               fill
               priority
-              quality={75}
+              quality={85}
               className="object-cover"
               sizes="100vw" />
             
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-primary/20" />
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/70" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-primary/10" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/50 via-primary/30 to-primary/60" />
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
           </div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
               <div>
-                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4">
+                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-4 drop-shadow-2xl">
                   E-TAXI Košice –<br />
                   <span className="text-yellow-400">rýchlo</span>, spoľahlivo,<br />
                   <span className="text-yellow-400">pohodlne</span>
                 </h1>
-                <p className="text-lg sm:text-xl text-white/90 mb-8">
+                <p className="text-lg sm:text-xl text-white/95 mb-8 drop-shadow-lg">
                   Zavolajte na <strong className="font-bold">+421 911 606 206</strong> a auto bude pri vás do 10 minút.<br />
                   Letiská, dlhé trasy, firemné transfery – vždy načas.
                 </p>
