@@ -11,7 +11,8 @@ export const pricingData = {
     { label: "Znečistenie zvratkami", price: "150 €" },
     { label: "Príplatok za domáce zviera", price: "2 €" },
     { label: "Platba kartou", price: "zdarma" },
-    { label: "Časová objednávka", price: "zdarma" }
+    { label: "Časová objednávka", price: "zdarma" },
+    { label: "DRINK Taxi", price: "2x jazdné, min. 20€" }
   ],
   transfers: [
     { destination: "Košice - Letisko Košice", price: "od 15 EUR" },
