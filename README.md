@@ -39,7 +39,7 @@ Pre funkčnosť odosielania objednávok cez formulár je potrebné nakonfigurova
 
 - **NIKDY** necommitujte `.env.local` do git repository
 - `.env.local` je automaticky ignorovaný v `.gitignore`
-- Pre production (Vercel) pridajte environment variables v dashboard
+- Pre production nastavte environment premenné v cPanel (pozri [DEPLOY.md](DEPLOY.md))
 
 ### 🔧 SMTP Nastavenia:
 
@@ -71,4 +71,5 @@ npm run start
 
 ## 🌐 Deployment
 
-Projekt je optimalizovaný pre Vercel deployment. Pri deployment nezabudnite pridať environment variables.
+Web je nasadený na hostingu **Polar55** ako Node.js aplikácia (cPanel Setup Node.js App,
+štartovací súbor `server.js`). Kompletný postup nasadenia je v [DEPLOY.md](DEPLOY.md).
