@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { faqData, faqItems } from "@/data/faq";
 import {
   Accordion,
   AccordionContent,
@@ -8,8 +7,11 @@ import {
 } from "@/components/ui/accordion";
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function FAQSection() {
+  const { t } = useTranslation();
+
   return (
     <motion.section
       id="faq"
@@ -22,16 +24,16 @@ export function FAQSection() {
       <div className="container">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
-            {faqData.title}
+            {t.faq.title}
           </h2>
           <p className="text-lg text-muted-foreground">
-            {faqData.subtitle}
+            {t.faq.subtitle}
           </p>
         </div>
 
         <div className="max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="space-y-4">
-            {faqItems.map((item) => (
+            {t.faq.items.map((item) => (
               <AccordionItem
                 key={item.id}
                 value={item.id}
@@ -49,15 +51,15 @@ export function FAQSection() {
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4">
-              Nenašli ste odpoveď na vašu otázku?
+              {t.faq.noAnswer}
             </p>
-            <a href="tel:+421911606206">
+            <a href={t.common.phoneHref}>
               <Button
                 size="lg"
                 className="bg-accent hover:bg-accent/90 text-accent-foreground font-display font-semibold"
               >
                 <Phone className="w-5 h-5 mr-2" />
-                Zavolajte nám +421 911 606 206
+                {t.faq.callUs}
               </Button>
             </a>
           </div>

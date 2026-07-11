@@ -1,6 +1,9 @@
 import { useEffect } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function BlogSection() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     // Clean up any existing script to avoid duplicates
     const existingScript = document.querySelector('script[src*="trysoro.com"]');
@@ -28,10 +31,10 @@ export function BlogSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-display font-bold text-3xl sm:text-4xl mb-4">
-            Blog a novinky
+            {t.blogSection.title}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Aktuality, tipy a zaujímavosti zo sveta taxislužieb a mobility
+            {t.blogSection.subtitle}
           </p>
         </div>
 

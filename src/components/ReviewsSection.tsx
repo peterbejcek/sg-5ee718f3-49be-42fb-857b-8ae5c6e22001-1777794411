@@ -1,10 +1,16 @@
 import { motion } from "framer-motion";
-import { reviewsData, reviews } from "@/data/reviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink, Quote } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
+
+const GOOGLE_PROFILE_URL = "https://share.google/h2KnVsH1yOKwyTuH4";
+const AVERAGE_RATING = 4.8;
+const TOTAL_REVIEWS = 250;
 
 export function ReviewsSection() {
+  const { t } = useTranslation();
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -21,31 +27,31 @@ export function ReviewsSection() {
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl mb-4">
-            {reviewsData.title}
+            {t.reviews.title}
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
-            {reviewsData.subtitle}
+            {t.reviews.subtitle}
           </p>
-          
+
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="flex items-center gap-2">
-              <div className="flex">{renderStars(Math.round(reviewsData.averageRating))}</div>
+              <div className="flex">{renderStars(Math.round(AVERAGE_RATING))}</div>
               <span className="font-display font-bold text-2xl">
-                {reviewsData.averageRating}
+                {AVERAGE_RATING}
               </span>
             </div>
             <div className="text-muted-foreground">
-              {reviewsData.totalReviews}+ recenzií
+              {TOTAL_REVIEWS}+ {t.reviews.countSuffix}
             </div>
           </div>
 
-          <a href={reviewsData.googleProfileUrl} target="_blank" rel="noopener noreferrer">
+          <a href={GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               size="lg"
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
-              Zobraziť všetky recenzie na Google
+              {t.reviews.seeAllOnGoogle}
               <ExternalLink className="w-4 h-4 ml-2" />
             </Button>
           </a>
@@ -66,7 +72,7 @@ export function ReviewsSection() {
           whileInView="show"
           viewport={{ once: true }}
         >
-          {reviews.slice(0, 3).map((review, index) => (
+          {t.reviews.items.slice(0, 3).map((review, index) => (
             <motion.div
               key={index}
               className="bg-card border border-border rounded-lg p-6 shadow-lg relative"
@@ -116,7 +122,7 @@ export function ReviewsSection() {
           transition={{ duration: 0.5, delay: 0.5 }}
         >
           <p className="text-sm text-muted-foreground mt-3">
-            Prečítajte si {reviewsData.totalReviews}+ recenzií od našich spokojných zákazníkov
+            {t.reviews.readAllPrefix} {TOTAL_REVIEWS}+ {t.reviews.readAllSuffix}
           </p>
         </motion.div>
       </div>

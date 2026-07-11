@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  i18n: {
+    // Nový jazyk: pridajte kód sem a vytvorte slovník v src/locales (pozri src/locales/index.ts).
+    locales: ["sk", "en"],
+    defaultLocale: "sk",
+    localeDetection: false,
+  },
   images: {
     remotePatterns: [
       {

@@ -11,6 +11,26 @@ Profesionálna taxislužba v Košiciach s online objednávkovým systémom.
 - Framer Motion
 - shadcn/ui
 
+## 🌍 Jazykové verzie
+
+Web je viacjazyčný (vstavaný i18n routing Next.js):
+
+- **Slovenčina** (hlavný jazyk): `https://etaxi-kosice.sk/`
+- **Angličtina**: `https://etaxi-kosice.sk/en`
+
+Všetky texty sú v slovníkoch `src/locales/sk.ts` a `src/locales/en.ts`.
+Slovenský slovník definuje typ `Dictionary` — TypeScript ustráži, že žiadny
+jazyk nemá chýbajúce texty.
+
+### Pridanie nového jazyka (napr. nemčina)
+
+1. Skopírujte `src/locales/en.ts` do `src/locales/de.ts` a preložte texty.
+2. Zaregistrujte jazyk v `src/locales/index.ts` (`dictionaries = { sk, en, de }`).
+3. Pridajte `"de"` do `i18n.locales` v `next.config.mjs`.
+4. Doplňte `/de` URL do `public/sitemap.xml`.
+
+Prepínač jazykov v hlavičke aj hreflang/canonical meta tagy sa vygenerujú automaticky.
+
 ## 📧 Nastavenie emailov (SMTP)
 
 Pre funkčnosť odosielania objednávok cez formulár je potrebné nakonfigurovať SMTP server:

@@ -1,10 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Html, Head, Main, NextScript } from "next/document";
+import { Html, Head, Main, NextScript, type DocumentProps } from "next/document";
 import { SEOElements } from "@/components/SEO";
 
-export default function Document() {
+export default function Document(props: DocumentProps) {
+  const locale = props.__NEXT_DATA__.locale || "sk";
+
   return (
-    <Html lang="sk">
+    <Html lang={locale}>
       <Head>
         <SEOElements />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
