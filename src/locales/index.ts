@@ -15,7 +15,7 @@ export type Locale = keyof typeof dictionaries;
 export const locales = Object.keys(dictionaries) as Locale[];
 export const defaultLocale: Locale = "sk";
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://etaxi-kosice.sk";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://e-taxike.sk";
 
 export function getDictionary(locale?: string): Dictionary {
   if (locale && locale in dictionaries) {

@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://etaxi-kosice.sk/sitemap.xml
+Sitemap: https://e-taxike.sk/sitemap.xml

@@ -11,7 +11,7 @@ Web beží ako Node.js aplikácia cez cPanel funkciu **Setup Node.js App** (Phus
    - **Node.js version:** 20 alebo novšia (Next.js 15 vyžaduje minimálne Node 18.18)
    - **Application mode:** Production
    - **Application root:** adresár s kódom webu (napr. `etaxi-web`)
-   - **Application URL:** doména `etaxi-kosice.sk`
+   - **Application URL:** doména `e-taxike.sk`
    - **Application startup file:** `server.js`
 
 ## 2. Nahranie kódu
@@ -50,7 +50,7 @@ V **Setup Node.js App** → sekcia **Environment variables** pridajte:
 | `SMTP_PORT` | `465` |
 | `SMTP_USER` | `dispecing@e-taxike.sk` |
 | `SMTP_PASS` | heslo k e-mailovej schránke |
-| `NEXT_PUBLIC_SITE_URL` | `https://etaxi-kosice.sk` |
+| `NEXT_PUBLIC_SITE_URL` | `https://e-taxike.sk` |
 
 > **Pozor:** premenné `NEXT_PUBLIC_*` sa zapekajú do kódu počas `npm run build`.
 > Ak ich zmeníte, treba spustiť build znova.
@@ -70,7 +70,7 @@ V **Setup Node.js App** → sekcia **Environment variables** pridajte:
 - **Odchádzajúce SMTP:** overte si u podpory Polar55, že server neblokuje
   odchádzajúce spojenia na port 465 (potrebné pre odosielanie objednávok cez
   smtp.m1.websupport.sk). Po nasadení formulár reálne otestujte.
-- **DNS domény etaxi-kosice.sk:** nasmerujte A záznam na server Polar55
+- **DNS domény e-taxike.sk:** nasmerujte A záznam na server Polar55
   (prípadne presuňte DNS správu k Polar55). SSL certifikát vydá cPanel
   automaticky (AutoSSL/Let's Encrypt).
 - Bez nastavených SMTP premenných web funguje, ale objednávky sa iba logujú do

@@ -15,8 +15,8 @@ Profesionálna taxislužba v Košiciach s online objednávkovým systémom.
 
 Web je viacjazyčný (vstavaný i18n routing Next.js):
 
-- **Slovenčina** (hlavný jazyk): `https://etaxi-kosice.sk/`
-- **Angličtina**: `https://etaxi-kosice.sk/en`
+- **Slovenčina** (hlavný jazyk): `https://e-taxike.sk/`
+- **Angličtina**: `https://e-taxike.sk/en`
 
 Všetky texty sú v slovníkoch `src/locales/sk.ts` a `src/locales/en.ts`.
 Slovenský slovník definuje typ `Dictionary` — TypeScript ustráži, že žiadny
