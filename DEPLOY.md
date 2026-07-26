@@ -117,13 +117,26 @@ Portál je súčasťou tej istej Next.js aplikácie (cesty `/prihlasenie` a `/po
 
 ## C. Inštalácia, migrácia DB a seed (cez SSH)
 
+> **Dôležité:** cPanel Node.js app beží v režime **Production** (`NODE_ENV=production`),
+> takže samotné `npm install` **vynechá devDependencies** (napr. TypeScript), ktoré
+> `next build` potrebuje. Preto pri inštalácii použite `--include=dev`.
+>
+> `prisma` aj `tsx` sú zámerne v `dependencies` (nie devDependencies), aby
+> `prisma migrate deploy` a `npm run seed` fungovali aj bez dev balíkov a aby
+> `npx` nesťahoval nesprávnu verziu Prisma 7 (spôsobovala pád `SIGSEGV`).
+
 ```bash
 cd ~/etaxi-web
-npm install                 # spustí aj `prisma generate` (postinstall)
-npx prisma migrate deploy   # vytvorí tabuľky v databáze
-npm run seed                # tarify + konfigurácia + prvý majiteľ
+npm install --include=dev       # nainštaluje aj build nástroje; spustí `prisma generate`
+npm run prisma:migrate          # = prisma migrate deploy (vytvorí tabuľky)
+npm run seed                    # tarify + konfigurácia + prvý majiteľ
 npm run build
 ```
+
+> Používajte lokálnu Prisma cez `npm run prisma:migrate` (skript v package.json),
+> **nie** `npx prisma …` — `npx` by mohol sťahovať novšiu nekompatibilnú verziu.
+> Ak build padá na nedostatok pamäte (shared hosting), spravte `npm run build`
+> lokálne a nahrajte adresár `.next/` na server.
 
 Po builde reštartujte appku v **Setup Node.js App → Restart**.
 
@@ -142,8 +155,8 @@ Po builde reštartujte appku v **Setup Node.js App → Restart**.
 ```bash
 cd ~/etaxi-web
 git pull
-npm install
-npx prisma migrate deploy   # ak pribudli nové migrácie
+npm install --include=dev
+npm run prisma:migrate      # ak pribudli nové migrácie
 npm run build
 ```
 a **Restart** v cPanel.
