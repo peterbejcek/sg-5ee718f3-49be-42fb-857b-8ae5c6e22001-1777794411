@@ -125,18 +125,33 @@ Portál je súčasťou tej istej Next.js aplikácie (cesty `/prihlasenie` a `/po
 > `prisma migrate deploy` a `npm run seed` fungovali aj bez dev balíkov a aby
 > `npx` nesťahoval nesprávnu verziu Prisma 7 (spôsobovala pád `SIGSEGV`).
 
+> **Najprv aktivujte správny Node** z cPanel (Setup Node.js App → príkaz „Enter to
+> the virtual environment", napr. `source ~/nodevenv/etaxi-web/22/bin/activate`),
+> inak SSH použije systémový Node a Prisma preinstall padne na `SIGSEGV`.
+
+Na tomto hostingu Prisma `preinstall` skript padá (`SIGSEGV`) a build-workery
+narážajú na procesný limit. Preto použite `--ignore-scripts` a Prisma volajte
+priamo (nie cez npm/npx wrapper):
+
 ```bash
 cd ~/etaxi-web
-npm install --include=dev       # nainštaluje aj build nástroje; spustí `prisma generate`
-npm run prisma:migrate          # = prisma migrate deploy (vytvorí tabuľky)
-npm run seed                    # tarify + konfigurácia + prvý majiteľ
+npm install --include=dev --ignore-scripts          # bez padajúceho Prisma preinstall
+node node_modules/prisma/build/index.js generate     # vygeneruje Prisma klienta
+node node_modules/prisma/build/index.js migrate deploy  # vytvorí tabuľky
+npm run seed                                          # tarify + konfigurácia + majiteľ
 npm run build
 ```
 
-> Používajte lokálnu Prisma cez `npm run prisma:migrate` (skript v package.json),
-> **nie** `npx prisma …` — `npx` by mohol sťahovať novšiu nekompatibilnú verziu.
-> Ak build padá na nedostatok pamäte (shared hosting), spravte `npm run build`
-> lokálne a nahrajte adresár `.next/` na server.
+> **Seed** (`npm run seed`) používa priamy MySQL driver `mysql2`, nie Prisma engine —
+> funguje aj pod prísnym limitom procesov (CloudLinux NPROC), kde Prisma engine
+> padal na `PANIC: timer has gone away`.
+>
+> **Build**: ak `npm run build` padne na `spawn ... EAGAIN` (limit procesov účtu),
+> skúste ho spustiť znova, alebo zbuildite lokálne a nahrajte adresár `.next/`.
+>
+> **Odporúčanie:** požiadajte podporu Polar55 o zvýšenie limitu **NPROC / Entry
+> Processes** (a pamäte) pre účet — Next.js aj Prisma potrebujú spúšťať worker
+> vlákna a pri nízkom limite môže portál padať aj počas behu.
 
 Po builde reštartujte appku v **Setup Node.js App → Restart**.
 

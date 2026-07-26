@@ -1,71 +1,98 @@
 // Seed: tarifné pásma, konfigurácia (provízia, registračný poplatok) a prvý majiteľ.
+//
+// Používa priamy MySQL driver `mysql2` (čistý JavaScript) namiesto Prisma
+// query engine — na obmedzenom zdieľanom hostingu (CloudLinux, nízky NPROC)
+// Rust engine padal na "PANIC: timer has gone away". Tento seed žiadne
+// natívne vlákna nespúšťa, takže funguje aj pod prísnymi limitmi.
+//
 // Spustenie: npm run seed  (potrebuje DATABASE_URL a voliteľne INITIAL_OWNER_*).
-import { PrismaClient } from "@prisma/client";
+import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
-import { DEFAULT_FEE_TIERS, DEFAULT_PROVISION_RATE, DEFAULT_REGISTRATION_FEE } from "../src/lib/fees";
-
-const prisma = new PrismaClient();
+import {
+  DEFAULT_FEE_TIERS,
+  DEFAULT_PROVISION_RATE,
+  DEFAULT_REGISTRATION_FEE,
+} from "../src/lib/fees";
 
 async function main() {
-  // 1) Tarifné pásma (len ak tabuľka prázdna).
-  const tierCount = await prisma.feeTier.count();
-  if (tierCount === 0) {
-    await prisma.feeTier.createMany({
-      data: DEFAULT_FEE_TIERS.map((t, i) => ({
-        trzbaOd: t.trzbaOd,
-        trzbaDo: t.trzbaDo,
-        poplatok: t.poplatok,
-        poradie: i,
-      })),
-    });
-    console.log(`✅ Vytvorených ${DEFAULT_FEE_TIERS.length} tarifných pásiem.`);
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL nie je nastavený.");
   }
 
-  // 2) Konfigurácia.
-  await prisma.appSetting.upsert({
-    where: { key: "provisionRate" },
-    update: {},
-    create: { key: "provisionRate", value: String(DEFAULT_PROVISION_RATE) },
-  });
-  await prisma.appSetting.upsert({
-    where: { key: "registrationFee" },
-    update: {},
-    create: { key: "registrationFee", value: String(DEFAULT_REGISTRATION_FEE) },
-  });
-  console.log("✅ Konfigurácia (provízia, registračný poplatok) pripravená.");
-
-  // 3) Prvý majiteľ.
-  const ownerEmail = (process.env.INITIAL_OWNER_EMAIL || "").toLowerCase().trim();
-  const ownerPassword = process.env.INITIAL_OWNER_PASSWORD || "";
-  if (ownerEmail && ownerPassword) {
-    const existing = await prisma.user.findUnique({ where: { email: ownerEmail } });
-    if (!existing) {
-      await prisma.user.create({
-        data: {
-          email: ownerEmail,
-          meno: process.env.INITIAL_OWNER_MENO || "Majiteľ",
-          priezvisko: process.env.INITIAL_OWNER_PRIEZVISKO || "E-TAXI",
-          passwordHash: await bcrypt.hash(ownerPassword, 10),
-          mustSetPassword: false,
-          aktivny: true,
-          roles: { create: [{ role: "MAJITEL" }] },
-        },
-      });
-      console.log(`✅ Vytvorený majiteľ: ${ownerEmail}`);
-    } else {
-      console.log(`ℹ️  Majiteľ ${ownerEmail} už existuje — preskočené.`);
-    }
-  } else {
-    console.log(
-      "ℹ️  INITIAL_OWNER_EMAIL / INITIAL_OWNER_PASSWORD nie sú nastavené — majiteľ nevytvorený."
+  const conn = await mysql.createConnection(url);
+  try {
+    // 1) Tarifné pásma (len ak je tabuľka prázdna).
+    const [tierRows] = await conn.query<mysql.RowDataPacket[]>(
+      "SELECT COUNT(*) AS cnt FROM `FeeTier`"
     );
+    if (Number(tierRows[0].cnt) === 0) {
+      const values = DEFAULT_FEE_TIERS.map((t, i) => [t.trzbaOd, t.trzbaDo, t.poplatok, i]);
+      await conn.query(
+        "INSERT INTO `FeeTier` (`trzbaOd`,`trzbaDo`,`poplatok`,`poradie`) VALUES ?",
+        [values]
+      );
+      console.log(`✅ Vytvorených ${DEFAULT_FEE_TIERS.length} tarifných pásiem.`);
+    } else {
+      console.log("ℹ️  Tarifné pásma už existujú — preskočené.");
+    }
+
+    // 2) Konfigurácia (nechá existujúce hodnoty nezmenené).
+    await conn.query(
+      "INSERT INTO `AppSetting` (`key`,`value`) VALUES (?,?),(?,?) " +
+        "ON DUPLICATE KEY UPDATE `value` = `value`",
+      [
+        "provisionRate", String(DEFAULT_PROVISION_RATE),
+        "registrationFee", String(DEFAULT_REGISTRATION_FEE),
+      ]
+    );
+    console.log("✅ Konfigurácia (provízia, registračný poplatok) pripravená.");
+
+    // 3) Prvý majiteľ.
+    const ownerEmail = (process.env.INITIAL_OWNER_EMAIL || "").toLowerCase().trim();
+    const ownerPassword = process.env.INITIAL_OWNER_PASSWORD || "";
+    if (ownerEmail && ownerPassword) {
+      const [userRows] = await conn.query<mysql.RowDataPacket[]>(
+        "SELECT id FROM `User` WHERE `email` = ?",
+        [ownerEmail]
+      );
+      if (userRows.length === 0) {
+        const hash = await bcrypt.hash(ownerPassword, 10);
+        const [result] = await conn.query<mysql.ResultSetHeader>(
+          "INSERT INTO `User` " +
+            "(`email`,`passwordHash`,`meno`,`priezvisko`,`aktivny`,`mustSetPassword`,`registracnyPoplatokUhradeny`,`createdAt`,`updatedAt`) " +
+            "VALUES (?,?,?,?,1,0,0,NOW(3),NOW(3))",
+          [
+            ownerEmail,
+            hash,
+            process.env.INITIAL_OWNER_MENO || "Majiteľ",
+            process.env.INITIAL_OWNER_PRIEZVISKO || "E-TAXI",
+          ]
+        );
+        await conn.query(
+          "INSERT INTO `UserRole` (`userId`,`role`) VALUES (?, 'MAJITEL')",
+          [result.insertId]
+        );
+        console.log(`✅ Vytvorený majiteľ: ${ownerEmail}`);
+      } else {
+        console.log(`ℹ️  Majiteľ ${ownerEmail} už existuje — preskočené.`);
+      }
+    } else {
+      console.log(
+        "ℹ️  INITIAL_OWNER_EMAIL / INITIAL_OWNER_PASSWORD nie sú nastavené — majiteľ nevytvorený."
+      );
+    }
+  } finally {
+    await conn.end();
   }
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
+  .then(() => {
+    console.log("✅ Seed dokončený.");
+    process.exit(0);
+  })
+  .catch((e) => {
     console.error("❌ Seed zlyhal:", e);
-    await prisma.$disconnect();
     process.exit(1);
   });
