@@ -27,21 +27,25 @@ export function parseBody<S extends ZodTypeAny>(
   }
 }
 
-/** Rekurzívne prevedie Prisma.Decimal na number (Date ostáva na ISO cez JSON). */
+/** Rekurzívne prevedie Prisma.Decimal na number. Date ostáva Date (JSON ho dá na ISO). */
 export function serialize<T>(value: T): T {
   if (value === null || value === undefined) return value;
-  const anyVal = value as unknown as { constructor?: { name?: string } };
-  if (typeof value === "object" && anyVal.constructor?.name === "Decimal") {
-    return Number(value as unknown as number) as unknown as T;
-  }
-  if (Array.isArray(value)) {
-    return value.map((v) => serialize(v)) as unknown as T;
-  }
-  if (value instanceof Date) return value;
   if (typeof value === "object") {
+    const v = value as unknown as {
+      toNumber?: () => number;
+      toFixed?: () => string;
+    };
+    // Prisma.Decimal (decimal.js) — spoľahlivo cez metódy, nie cez constructor.name.
+    if (typeof v.toNumber === "function" && typeof v.toFixed === "function") {
+      return v.toNumber() as unknown as T;
+    }
+    if (value instanceof Date) return value;
+    if (Array.isArray(value)) {
+      return value.map((x) => serialize(x)) as unknown as T;
+    }
     const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      out[k] = serialize(v);
+    for (const [k, val] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = serialize(val);
     }
     return out as unknown as T;
   }

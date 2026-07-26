@@ -5,6 +5,7 @@ import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
 import { apiFetch, formatEur, DAY_NAMES } from "@/lib/portalClient";
 import { isoWeekParts, isoWeekDateRange } from "@/lib/fees";
+import { SHIFT_PATTERNS } from "@/lib/shiftPatterns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +38,7 @@ export default function SmenyPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [edit, setEdit] = useState<{ driver: Driver; datum: string; shift?: Shift } | null>(null);
+  const [genOpen, setGenOpen] = useState(false);
 
   const { dni } = isoWeekDateRange(rok, tyzden);
 
@@ -60,6 +62,7 @@ export default function SmenyPage() {
         <div><Label>Rok</Label><Input type="number" className="w-24" value={rok} onChange={(e) => setRok(Number(e.target.value))} /></div>
         <div><Label>ISO týždeň</Label><Input type="number" min={1} max={53} className="w-24" value={tyzden} onChange={(e) => setTyzden(Number(e.target.value))} /></div>
         <Badge variant="secondary" className="mb-2">Týždeň {tyzden}/{rok}</Badge>
+        <Button className="mb-2" onClick={() => setGenOpen(true)}>Generovať rozpis podľa vzoru</Button>
         <span className="text-xs text-muted-foreground mb-2">D = denná · N = nočná · V = voľno. Kliknite na bunku pre úpravu.</span>
       </div>
 
@@ -121,7 +124,136 @@ export default function SmenyPage() {
           onError={(m) => toast({ title: "Chyba", description: m, variant: "destructive" })}
         />
       )}
+
+      {genOpen && (
+        <GeneratorDialog
+          drivers={drivers}
+          vehicles={vehicles}
+          defaultStart={dni[0] ? ymd(dni[0]) : ""}
+          onClose={() => setGenOpen(false)}
+          onDone={(pocet) => {
+            setGenOpen(false);
+            load();
+            toast({ title: "Rozpis vygenerovaný", description: `Doplnených ${pocet} dní.` });
+          }}
+          onError={(m) => toast({ title: "Chyba", description: m, variant: "destructive" })}
+        />
+      )}
     </PortalLayout>
+  );
+}
+
+function GeneratorDialog({
+  drivers, vehicles, defaultStart, onClose, onDone, onError,
+}: {
+  drivers: Driver[];
+  vehicles: Vehicle[];
+  defaultStart: string;
+  onClose: () => void;
+  onDone: (pocet: number) => void;
+  onError: (m: string) => void;
+}) {
+  const [driverId, setDriverId] = useState<string>(drivers[0] ? String(drivers[0].id) : "");
+  const [patternKey, setPatternKey] = useState<string>(SHIFT_PATTERNS[0].key);
+  const [vehicleId, setVehicleId] = useState<string>("none");
+  const [startDate, setStartDate] = useState<string>(defaultStart);
+  const [weeks, setWeeks] = useState<number>(4);
+  const [overwrite, setOverwrite] = useState<boolean>(true);
+  const [busy, setBusy] = useState(false);
+
+  async function generate() {
+    if (!driverId) { onError("Vyberte vodiča."); return; }
+    setBusy(true);
+    try {
+      const r = await apiFetch<{ pocet: number }>("/api/portal/shifts/generate", {
+        method: "POST",
+        body: JSON.stringify({
+          driverId: Number(driverId),
+          patternKey,
+          startDate,
+          weeks,
+          vehicleId: vehicleId === "none" ? null : Number(vehicleId),
+          overwrite,
+        }),
+      });
+      onDone(r.pocet);
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "Generovanie zlyhalo");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const pattern = SHIFT_PATTERNS.find((p) => p.key === patternKey);
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Generovať rozpis podľa vzoru</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label>Vodič</Label>
+            <Select value={driverId} onValueChange={setDriverId}>
+              <SelectTrigger><SelectValue placeholder="Vyberte vodiča" /></SelectTrigger>
+              <SelectContent>
+                {drivers.map((d) => (
+                  <SelectItem key={d.id} value={String(d.id)}>
+                    {d.priezvisko} {d.meno}{d.volaciZnak ? ` · ${d.volaciZnak}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Vzor rotácie (kľúč)</Label>
+            <Select value={patternKey} onValueChange={setPatternKey}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {SHIFT_PATTERNS.map((p) => (
+                  <SelectItem key={p.key} value={p.key}>{p.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {pattern && (
+              <div className="text-[11px] text-muted-foreground mt-1 font-mono">
+                1. týždeň: {pattern.dni.slice(0, 7).join(" ")}
+              </div>
+            )}
+          </div>
+          <div>
+            <Label>Vozidlo (poplatok za smenu sa načíta z neho)</Label>
+            <Select value={vehicleId} onValueChange={setVehicleId}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">— žiadne —</SelectItem>
+                {vehicles.map((v) => (
+                  <SelectItem key={v.id} value={String(v.id)}>{v.nazov} ({v.spz})</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Od dátumu (pondelok)</Label>
+              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            </div>
+            <div>
+              <Label>Počet týždňov</Label>
+              <Input type="number" min={1} max={26} value={weeks} onChange={(e) => setWeeks(Number(e.target.value))} />
+            </div>
+          </div>
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <Checkbox checked={overwrite} onCheckedChange={(v) => setOverwrite(!!v)} />
+            Prepísať existujúce smeny v tomto období
+          </label>
+        </div>
+        <DialogFooter>
+          <Button onClick={generate} disabled={busy}>{busy ? "Generujem…" : "Generovať"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

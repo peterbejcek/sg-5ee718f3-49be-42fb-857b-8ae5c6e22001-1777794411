@@ -49,13 +49,14 @@ export default function PrihlaseniePage() {
             <CardTitle>E-TAXI Košice — Portál</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={submit} className="space-y-4" autoComplete="off">
               <div>
                 <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
+                  name="etaxi-email"
                   type="email"
-                  autoComplete="username"
+                  autoComplete="off"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -65,8 +66,9 @@ export default function PrihlaseniePage() {
                 <Label htmlFor="password">Heslo</Label>
                 <Input
                   id="password"
+                  name="etaxi-password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
