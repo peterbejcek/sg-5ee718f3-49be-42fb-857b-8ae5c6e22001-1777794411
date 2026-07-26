@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { PortalLayout } from "@/components/portal/PortalLayout";
+import { apiFetch, formatEur } from "@/lib/portalClient";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+
+type Vehicle = {
+  id: number; nazov: string; znacka: string; model: string; farba: string;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; aktivne: boolean;
+};
+
+const POHONY = ["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"];
+const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, aktivne: true };
+
+export default function VozidlaPage() {
+  const { toast } = useToast();
+  const [list, setList] = useState<Vehicle[]>([]);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Vehicle | null>(null);
+  const [form, setForm] = useState<typeof empty>(empty);
+
+  function load() {
+    apiFetch<{ vehicles: Vehicle[] }>("/api/portal/vehicles").then((d) => setList(d.vehicles));
+  }
+  useEffect(load, []);
+
+  function openNew() { setEditing(null); setForm(empty); setOpen(true); }
+  function openEdit(v: Vehicle) { setEditing(v); setForm({ ...v }); setOpen(true); }
+
+  async function save() {
+    try {
+      if (editing) {
+        await apiFetch(`/api/portal/vehicles/${editing.id}`, { method: "PUT", body: JSON.stringify(form) });
+      } else {
+        await apiFetch("/api/portal/vehicles", { method: "POST", body: JSON.stringify(form) });
+      }
+      setOpen(false); load();
+      toast({ title: "Uložené" });
+    } catch (e) {
+      toast({ title: "Chyba", description: e instanceof Error ? e.message : "", variant: "destructive" });
+    }
+  }
+
+  async function remove(v: Vehicle) {
+    if (!confirm(`Zmazať vozidlo ${v.nazov} (${v.spz})?`)) return;
+    try {
+      await apiFetch(`/api/portal/vehicles/${v.id}`, { method: "DELETE" });
+      load();
+    } catch (e) {
+      toast({ title: "Chyba", description: e instanceof Error ? e.message : "", variant: "destructive" });
+    }
+  }
+
+  return (
+    <PortalLayout title="Vozidlá">
+      <Head><title>Vozidlá — E-TAXI Portál</title></Head>
+
+      <div className="mb-4">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild><Button onClick={openNew}>+ Pridať vozidlo</Button></DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>{editing ? "Upraviť vozidlo" : "Nové vozidlo"}</DialogTitle></DialogHeader>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2"><Label>Názov (napr. Tesla 3)</Label><Input value={form.nazov} onChange={(e) => setForm({ ...form, nazov: e.target.value })} /></div>
+              <div><Label>Značka</Label><Input value={form.znacka} onChange={(e) => setForm({ ...form, znacka: e.target.value })} /></div>
+              <div><Label>Model</Label><Input value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} /></div>
+              <div><Label>Farba</Label><Input value={form.farba} onChange={(e) => setForm({ ...form, farba: e.target.value })} /></div>
+              <div><Label>ŠPZ</Label><Input value={form.spz} onChange={(e) => setForm({ ...form, spz: e.target.value })} /></div>
+              <div>
+                <Label>Druh pohonu</Label>
+                <Select value={form.druhPohonu} onValueChange={(v) => setForm({ ...form, druhPohonu: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{POHONY.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label>Poplatok za smenu (€)</Label><Input type="number" step="0.01" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: Number(e.target.value) })} /></div>
+            </div>
+            <DialogFooter><Button onClick={save}>Uložiť</Button></DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="bg-white rounded-md border overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Názov</TableHead><TableHead>Značka / Model</TableHead>
+              <TableHead>Farba</TableHead><TableHead>ŠPZ</TableHead>
+              <TableHead>Pohon</TableHead><TableHead>Poplatok/smena</TableHead>
+              <TableHead>Stav</TableHead><TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {list.map((v) => (
+              <TableRow key={v.id}>
+                <TableCell className="font-medium">{v.nazov}</TableCell>
+                <TableCell>{v.znacka} {v.model}</TableCell>
+                <TableCell>{v.farba}</TableCell>
+                <TableCell>{v.spz}</TableCell>
+                <TableCell>{v.druhPohonu}</TableCell>
+                <TableCell>{formatEur(v.poplatokZaSmenu)}</TableCell>
+                <TableCell>{v.aktivne ? <Badge className="bg-green-600">Aktívne</Badge> : <Badge variant="secondary">Neaktívne</Badge>}</TableCell>
+                <TableCell className="text-right whitespace-nowrap">
+                  <Button size="sm" variant="ghost" onClick={() => openEdit(v)}>Upraviť</Button>
+                  <Button size="sm" variant="ghost" className="text-red-600" onClick={() => remove(v)}>Zmazať</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {list.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">Zatiaľ žiadne vozidlá.</TableCell></TableRow>}
+          </TableBody>
+        </Table>
+      </div>
+    </PortalLayout>
+  );
+}

@@ -86,3 +86,64 @@ npm run build
 ```
 
 a v cPanel **Setup Node.js App** kliknite **Restart**.
+
+---
+
+# Portál pre vodičov / dispečerov / majiteľa (backend)
+
+Portál je súčasťou tej istej Next.js aplikácie (cesty `/prihlasenie` a `/portal/*`
++ API `/api/portal/*`). Používa databázu **MySQL/MariaDB** cez **Prisma**.
+
+## A. Databáza (cPanel → MySQL Databases)
+
+1. Vytvorte databázu (napr. `etaxi_portal`) a používateľa, priraďte mu **všetky práva**.
+2. Zostavte `DATABASE_URL`:
+   `mysql://POUZIVATEL:HESLO@localhost:3306/etaxi_portal`
+   (host býva `localhost`; ak nie, použite hodnotu od podpory Polar55).
+
+## B. Environment premenné (Setup Node.js App → Environment variables)
+
+| Premenná | Popis |
+|---|---|
+| `DATABASE_URL` | pripojenie na MySQL/MariaDB (viď vyššie) |
+| `AUTH_JWT_SECRET` | náhodný tajný kľúč (min. 32 znakov, napr. `openssl rand -hex 32`) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile — site key |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile — secret key |
+| `INITIAL_OWNER_EMAIL` / `INITIAL_OWNER_PASSWORD` | prvý majiteľ (pri seed) |
+| `INITIAL_OWNER_MENO` / `INITIAL_OWNER_PRIEZVISKO` | meno prvého majiteľa |
+
+> Cloudflare Turnstile kľúče získate zdarma na https://dash.cloudflare.com → Turnstile.
+> Bez nich portál funguje, ale overenie „že ste človek“ je vypnuté (vhodné len na test).
+
+## C. Inštalácia, migrácia DB a seed (cez SSH)
+
+```bash
+cd ~/etaxi-web
+npm install                 # spustí aj `prisma generate` (postinstall)
+npx prisma migrate deploy   # vytvorí tabuľky v databáze
+npm run seed                # tarify + konfigurácia + prvý majiteľ
+npm run build
+```
+
+Po builde reštartujte appku v **Setup Node.js App → Restart**.
+
+## D. Výpočet poplatkov
+
+- Poplatok za aplikáciu podľa týždennej tržby (pásma: 0–50→0 €, 51–100→5 €,
+  101–150→10 €, 151–250→15 €, 251+→20 €), provízia 15 %, celkový poplatok = súčet.
+- Registračný poplatok 30 € jednorazovo za vodiča (evidencia úhrady).
+- Poplatok za smenu (prenájom auta) je nastaviteľný na vozidle, prenáša sa do smien
+  a eviduje sa jeho úhrada po vodičoch.
+- Pásma, sadzbu provízie aj registračný poplatok možno meniť v tabuľkách `FeeTier`
+  a `AppSetting` (seednuté predvolenými hodnotami).
+
+## E. Ďalšie nasadenia
+
+```bash
+cd ~/etaxi-web
+git pull
+npm install
+npx prisma migrate deploy   # ak pribudli nové migrácie
+npm run build
+```
+a **Restart** v cPanel.

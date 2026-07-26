@@ -167,10 +167,13 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-primary-foreground/20">
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center gap-2">
             <p className="text-primary-foreground/70 text-sm text-center">
               © {currentYear} E-TAXI Košice. {t.footer.rights}
             </p>
+            <Link href="/prihlasenie" className="text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors text-xs">
+              Portál pre vodičov a dispečerov
+            </Link>
           </div>
         </div>
       </div>

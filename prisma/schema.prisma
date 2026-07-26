@@ -1,0 +1,156 @@
+// Prisma schéma pre backend portál E-TAXI Košice.
+// Databáza: MySQL / MariaDB (hosting Polar55, cPanel).
+// binaryTargets pokrýva vývoj (native) aj cPanel/CloudLinux (rhel-openssl-3.0.x).
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MAJITEL
+  DISPECER
+  VODIC
+}
+
+enum DruhPohonu {
+  ELEKTRO
+  HYBRID
+  BENZIN
+  DIESEL
+  LPG
+  CNG
+}
+
+enum TypSmeny {
+  DENNA // D
+  NOCNA // N
+  VOLNO // V
+}
+
+/// Prihlasovací účet aj osoba (vodič / dispečer / majiteľ).
+model User {
+  id                          Int        @id @default(autoincrement())
+  email                       String     @unique
+  passwordHash                String?
+  meno                        String
+  priezvisko                  String
+  telefon                     String?
+  volaciZnak                  String?    @unique // len vodiči, napr. "E10"
+  aktivny                     Boolean    @default(true)
+  mustSetPassword             Boolean    @default(true)
+  registracnyPoplatokUhradeny Boolean    @default(false)
+  registracnyPoplatokDna      DateTime?
+  passwordResetToken          String?    @unique
+  passwordResetExpires        DateTime?
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
+
+  roles           UserRole[]
+  shifts          Shift[]    @relation("DriverShifts")
+  createdShifts   Shift[]    @relation("ShiftCreator")
+  revenues        Revenue[]  @relation("DriverRevenues")
+  createdRevenues Revenue[]  @relation("RevenueCreator")
+
+  @@index([aktivny])
+}
+
+/// Roly používateľa (M:N cez join). Jeden používateľ môže mať viac rolí.
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  role   Role
+
+  @@unique([userId, role])
+  @@index([role])
+}
+
+/// Firemné vozidlo.
+model Vehicle {
+  id             Int        @id @default(autoincrement())
+  nazov          String // napr. "Tesla 3"
+  znacka         String
+  model          String
+  farba          String
+  spz            String     @unique
+  druhPohonu     DruhPohonu
+  poplatokZaSmenu Decimal   @db.Decimal(10, 2) @default(0.00) // predvolený poplatok za smenu na tomto vozidle
+  aktivne        Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  shifts Shift[]
+
+  @@index([aktivne])
+}
+
+/// Jedna smena vodiča v konkrétny deň (D/N/V), voliteľne na firemnom vozidle.
+model Shift {
+  id          Int      @id @default(autoincrement())
+  datum       DateTime @db.Date
+  typ         TypSmeny
+  poznamka    String?
+  // Poplatok za smenu — prednastavený z vozidla, editovateľný. Eviduje sa jeho úhrada.
+  poplatokZaSmenu     Decimal?  @db.Decimal(10, 2)
+  poplatokUhradeny    Boolean   @default(false)
+  poplatokUhradenyDna DateTime?
+  driver      User     @relation("DriverShifts", fields: [driverId], references: [id], onDelete: Cascade)
+  driverId    Int
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  vehicleId   Int?
+  createdBy   User?    @relation("ShiftCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([driverId, datum])
+  @@index([datum])
+  @@index([vehicleId, datum])
+  @@index([poplatokUhradeny])
+}
+
+/// Týždenná tržba vodiča + dopočítané poplatky.
+model Revenue {
+  id              Int      @id @default(autoincrement())
+  driver          User     @relation("DriverRevenues", fields: [driverId], references: [id], onDelete: Cascade)
+  driverId        Int
+  isoRok          Int
+  isoTyzden       Int
+  trzba           Decimal  @db.Decimal(10, 2)
+  poplatokApp     Decimal  @db.Decimal(10, 2)
+  provizia        Decimal  @db.Decimal(10, 2)
+  celkovyPoplatok Decimal  @db.Decimal(10, 2)
+  uhradene        Boolean  @default(false)
+  uhradeneDna     DateTime?
+  createdBy       User?    @relation("RevenueCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([driverId, isoRok, isoTyzden])
+  @@index([isoRok, isoTyzden])
+  @@index([uhradene])
+}
+
+/// Tarifné pásma pre poplatok za aplikáciu (editovateľné majiteľom).
+model FeeTier {
+  id       Int      @id @default(autoincrement())
+  trzbaOd  Decimal  @db.Decimal(10, 2)
+  trzbaDo  Decimal? @db.Decimal(10, 2) // null = "a viac"
+  poplatok Decimal  @db.Decimal(10, 2)
+  poradie  Int      @default(0)
+
+  @@index([poradie])
+}
+
+/// Kľúč/hodnota konfigurácia (provízia %, registračný poplatok, ...).
+model AppSetting {
+  key   String @id
+  value String
+}

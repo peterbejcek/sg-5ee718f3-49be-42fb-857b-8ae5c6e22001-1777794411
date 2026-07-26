@@ -3,6 +3,7 @@ import Script from 'next/script'
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { CookieConsent } from "@/components/CookieConsent";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -32,6 +33,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       />
       <Component {...pageProps} />
       <CookieConsent />
+      <Toaster />
     </ThemeProvider>
   );
 }

@@ -93,3 +93,26 @@ npm run start
 
 Web je nasadený na hostingu **Polar55** ako Node.js aplikácia (cPanel Setup Node.js App,
 štartovací súbor `server.js`). Kompletný postup nasadenia je v [DEPLOY.md](DEPLOY.md).
+## 🔐 Portál (backend pre vodičov, dispečerov, majiteľa)
+
+Interný portál na správu firemných vozidiel, vodičov, rozpisu smien a týždenných
+tržieb s automatickým výpočtom poplatkov. Prihlásenie je na `/prihlasenie`
+(overenie človeka cez Cloudflare Turnstile), aplikácia na `/portal`.
+
+- **Technológie:** MySQL/MariaDB + Prisma, JWT session (httpOnly cookie), Cloudflare Turnstile.
+- **Roly:** Majiteľ (všetko), Dispečer (rozpis smien + vyťaženosť), Vodič (svoje smeny a poplatky).
+  Jeden používateľ môže mať viac rolí.
+- **Poplatky:** poplatok za app podľa pásiem tržby, provízia 15 %, registračný poplatok 30 €,
+  poplatok za smenu/prenájom auta (evidencia úhrady po vodičoch).
+
+### Lokálne spustenie portálu
+
+```bash
+cp .env.example .env.local     # vyplňte DATABASE_URL, AUTH_JWT_SECRET, (Turnstile), INITIAL_OWNER_*
+npm install
+npx prisma migrate deploy      # alebo `npx prisma migrate dev` počas vývoja
+npm run seed                   # tarify, konfigurácia, prvý majiteľ
+npm run dev
+```
+
+Testy výpočtu poplatkov: `npm run test:fees`. Nasadenie na hosting: pozri `DEPLOY.md`.

@@ -1,0 +1,65 @@
+// Spoločné pomôcky pre API handlery.
+import type { NextApiRequest, NextApiResponse } from "next";
+import { ZodError, type ZodTypeAny, type z } from "zod";
+
+export function getClientIp(req: NextApiRequest): string | undefined {
+  const fwd = req.headers["x-forwarded-for"];
+  if (typeof fwd === "string") return fwd.split(",")[0].trim();
+  if (Array.isArray(fwd)) return fwd[0];
+  return req.socket?.remoteAddress;
+}
+
+/** Overí telo requestu voči zod schéme; pri chybe pošle 400 a vráti null. */
+export function parseBody<S extends ZodTypeAny>(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  schema: S
+): z.infer<S> | null {
+  try {
+    return schema.parse(req.body);
+  } catch (e) {
+    if (e instanceof ZodError) {
+      res.status(400).json({ message: "Neplatné údaje", errors: e.flatten() });
+    } else {
+      res.status(400).json({ message: "Neplatné údaje" });
+    }
+    return null;
+  }
+}
+
+/** Rekurzívne prevedie Prisma.Decimal na number (Date ostáva na ISO cez JSON). */
+export function serialize<T>(value: T): T {
+  if (value === null || value === undefined) return value;
+  const anyVal = value as unknown as { constructor?: { name?: string } };
+  if (typeof value === "object" && anyVal.constructor?.name === "Decimal") {
+    return Number(value as unknown as number) as unknown as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => serialize(v)) as unknown as T;
+  }
+  if (value instanceof Date) return value;
+  if (typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = serialize(v);
+    }
+    return out as unknown as T;
+  }
+  return value;
+}
+
+/** Zaobalí handler try/catch — 500 pri neočakávanej chybe. */
+export function withErrorHandler(
+  handler: (req: NextApiRequest, res: NextApiResponse) => unknown | Promise<unknown>
+) {
+  return async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+      return await handler(req, res);
+    } catch (err) {
+      console.error("API error:", err);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Interná chyba servera" });
+      }
+    }
+  };
+}

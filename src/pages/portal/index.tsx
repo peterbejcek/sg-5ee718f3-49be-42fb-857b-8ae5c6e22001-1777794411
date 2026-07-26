@@ -1,0 +1,173 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { PortalLayout } from "@/components/portal/PortalLayout";
+import { apiFetch, formatEur } from "@/lib/portalClient";
+import { isoWeekParts } from "@/lib/fees";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type Dashboard = {
+  obdobie: { rok: number; tyzden: number };
+  vytazenost: {
+    vozidla: { vehicleId: number; nazov: string; spz: string; obsadenychSmien: number; maxSmien: number; vytazenostPct: number }[];
+    vodici: { driverId: number; meno: string; priezvisko: string; volaciZnak: string | null; odpracovanychSmien: number; denne: number; nocne: number }[];
+  };
+  poplatkyZaSmeny: {
+    vyzbierane: number;
+    neuhradene: number;
+    podlaVodicov: { driver: { meno: string; priezvisko: string; volaciZnak: string | null }; zaplatene: number; nezaplatene: number }[];
+  };
+  tyzden?: {
+    pocetVodicov: number;
+    celkovaTrzba: number;
+    poplatokApp: number;
+    provizia: number;
+    celkovyPoplatok: number;
+    uhradene: number;
+    neuhradene: number;
+  };
+  neuhradenePoplatky?: { spolu: number; polozky: { id: number; isoRok: number; isoTyzden: number; celkovyPoplatok: number; driver: { meno: string; priezvisko: string; volaciZnak: string | null } }[] };
+  neuhradenaRegistracia?: { id: number; meno: string; priezvisko: string; volaciZnak: string | null }[];
+};
+
+function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="text-sm text-muted-foreground">{label}</div>
+        <div className="text-2xl font-bold">{value}</div>
+        {hint && <div className="text-xs text-muted-foreground mt-1">{hint}</div>}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function DashboardPage() {
+  const nowParts = isoWeekParts(new Date());
+  const [rok, setRok] = useState(nowParts.isoRok);
+  const [tyzden, setTyzden] = useState(nowParts.isoTyzden);
+  const [data, setData] = useState<Dashboard | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setError(null);
+    apiFetch<Dashboard>(`/api/portal/dashboard?rok=${rok}&tyzden=${tyzden}`)
+      .then(setData)
+      .catch((e) => setError(e.message));
+  }, [rok, tyzden]);
+
+  return (
+    <PortalLayout title="Dashboard">
+      <Head><title>Dashboard — E-TAXI Portál</title></Head>
+
+      <div className="flex flex-wrap gap-3 items-end mb-4">
+        <div>
+          <Label>Rok</Label>
+          <Input type="number" className="w-28" value={rok} onChange={(e) => setRok(Number(e.target.value))} />
+        </div>
+        <div>
+          <Label>ISO týždeň</Label>
+          <Input type="number" min={1} max={53} className="w-28" value={tyzden} onChange={(e) => setTyzden(Number(e.target.value))} />
+        </div>
+        <Badge variant="secondary" className="mb-2">Týždeň {tyzden}/{rok}</Badge>
+      </div>
+
+      {error && <p className="text-red-600">{error}</p>}
+      {!data ? (
+        <p className="text-muted-foreground">Načítavam…</p>
+      ) : (
+        <div className="space-y-6">
+          {data.tyzden && (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Stat label="Celková tržba (týž.)" value={formatEur(data.tyzden.celkovaTrzba)} hint={`${data.tyzden.pocetVodicov} vodičov`} />
+                <Stat label="Poplatky spolu (týž.)" value={formatEur(data.tyzden.celkovyPoplatok)} hint={`App ${formatEur(data.tyzden.poplatokApp)} + provízia ${formatEur(data.tyzden.provizia)}`} />
+                <Stat label="Uhradené poplatky" value={formatEur(data.tyzden.uhradene)} />
+                <Stat label="Neuhradené poplatky" value={formatEur(data.tyzden.neuhradene)} />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Stat label="Vyzbierané za smeny (prenájom)" value={formatEur(data.poplatkyZaSmeny.vyzbierane)} hint="uhradené poplatky za smeny" />
+                <Stat label="Neuhradené za smeny" value={formatEur(data.poplatkyZaSmeny.neuhradene)} />
+                <Stat label="Neuhradené poplatky (spolu)" value={formatEur(data.neuhradenePoplatky?.spolu ?? 0)} hint="všetky týždne" />
+                <Stat label="Neuhradená registrácia" value={String(data.neuhradenaRegistracia?.length ?? 0)} hint="vodičov" />
+              </div>
+            </>
+          )}
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Vyťaženosť vozidiel</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {data.vytazenost.vozidla.length === 0 && <p className="text-muted-foreground text-sm">Žiadne vozidlá.</p>}
+                {data.vytazenost.vozidla.map((v) => (
+                  <div key={v.vehicleId}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>{v.nazov} <span className="text-muted-foreground">({v.spz})</span></span>
+                      <span>{v.obsadenychSmien}/{v.maxSmien} · {v.vytazenostPct}%</span>
+                    </div>
+                    <Progress value={v.vytazenostPct} />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Vyťaženosť vodičov</CardTitle></CardHeader>
+              <CardContent>
+                {data.vytazenost.vodici.length === 0 && <p className="text-muted-foreground text-sm">Žiadni vodiči.</p>}
+                <div className="space-y-2">
+                  {data.vytazenost.vodici.map((d) => (
+                    <div key={d.driverId} className="flex justify-between text-sm">
+                      <span>{d.priezvisko} {d.meno} {d.volaciZnak ? <span className="text-muted-foreground">· {d.volaciZnak}</span> : null}</span>
+                      <span className="text-muted-foreground">{d.odpracovanychSmien} smien (D {d.denne} / N {d.nocne})</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Kto zaplatil poplatok za prenájom auta na smene */}
+          {data.poplatkyZaSmeny.podlaVodicov.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Poplatky za prenájom auta — podľa vodičov</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {data.poplatkyZaSmeny.podlaVodicov.map((p, i) => (
+                    <div key={i} className="flex justify-between text-sm items-center">
+                      <span>{p.driver.priezvisko} {p.driver.meno} {p.driver.volaciZnak ? `· ${p.driver.volaciZnak}` : ""}</span>
+                      <span className="flex gap-2">
+                        <Badge className="bg-green-600">Zaplatené {formatEur(p.zaplatene)}</Badge>
+                        {p.nezaplatene > 0 && <Badge variant="destructive">Dlží {formatEur(p.nezaplatene)}</Badge>}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {data.neuhradenaRegistracia && data.neuhradenaRegistracia.length > 0 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Neuhradený registračný poplatok</CardTitle></CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {data.neuhradenaRegistracia.map((d) => (
+                    <Badge key={d.id} variant="outline">
+                      {d.priezvisko} {d.meno} {d.volaciZnak ? `· ${d.volaciZnak}` : ""}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+    </PortalLayout>
+  );
+}
