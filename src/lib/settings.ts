@@ -1,6 +1,6 @@
 // Načítanie konfigurácie z DB (tarifné pásma, provízia, registračný poplatok)
-// s bezpečným fallbackom na predvolené hodnoty z fees.ts.
-import { prisma } from "@/lib/prisma";
+// cez mysql2, s bezpečným fallbackom na predvolené hodnoty z fees.ts.
+import { query, queryOne } from "@/lib/db";
 import {
   DEFAULT_FEE_TIERS,
   DEFAULT_PROVISION_RATE,
@@ -9,7 +9,9 @@ import {
 } from "@/lib/fees";
 
 export async function getFeeTiers(): Promise<FeeTier[]> {
-  const rows = await prisma.feeTier.findMany({ orderBy: { poradie: "asc" } });
+  const rows = await query<{ trzbaOd: number; trzbaDo: number | null; poplatok: number }>(
+    "SELECT `trzbaOd`, `trzbaDo`, `poplatok` FROM `FeeTier` ORDER BY `poradie` ASC"
+  );
   if (!rows.length) return DEFAULT_FEE_TIERS;
   return rows.map((r) => ({
     trzbaOd: Number(r.trzbaOd),
@@ -19,7 +21,10 @@ export async function getFeeTiers(): Promise<FeeTier[]> {
 }
 
 export async function getSetting(key: string): Promise<string | null> {
-  const row = await prisma.appSetting.findUnique({ where: { key } });
+  const row = await queryOne<{ value: string }>(
+    "SELECT `value` FROM `AppSetting` WHERE `key` = ?",
+    [key]
+  );
   return row?.value ?? null;
 }
 

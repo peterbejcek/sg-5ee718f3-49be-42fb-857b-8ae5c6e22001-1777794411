@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { query, execute } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { parseBody, serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
 const druhPohonu = z.enum(["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"]);
 
@@ -17,6 +17,11 @@ const updateSchema = z.object({
   aktivne: z.boolean().optional(),
 });
 
+type VehicleRow = {
+  id: number; nazov: string; znacka: string; model: string; farba: string;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; aktivne: number;
+};
+
 export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse) => {
     const id = Number(req.query.id);
@@ -25,15 +30,37 @@ export default withErrorHandler(
     if (req.method === "PUT") {
       const body = parseBody(req, res, updateSchema);
       if (!body) return;
-      const data = { ...body };
-      if (data.spz) data.spz = data.spz.toUpperCase().trim();
-      const vehicle = await prisma.vehicle.update({ where: { id }, data });
-      return res.status(200).json({ vehicle: serialize(vehicle) });
+
+      const sets: string[] = [];
+      const params: any[] = [];
+      const add = (col: string, val: unknown) => { sets.push(`\`${col}\` = ?`); params.push(val); };
+      if (body.nazov !== undefined) add("nazov", body.nazov);
+      if (body.znacka !== undefined) add("znacka", body.znacka);
+      if (body.model !== undefined) add("model", body.model);
+      if (body.farba !== undefined) add("farba", body.farba);
+      if (body.spz !== undefined) add("spz", body.spz.toUpperCase().trim());
+      if (body.druhPohonu !== undefined) add("druhPohonu", body.druhPohonu);
+      if (body.poplatokZaSmenu !== undefined) add("poplatokZaSmenu", body.poplatokZaSmenu);
+      if (body.aktivne !== undefined) add("aktivne", body.aktivne ? 1 : 0);
+
+      if (sets.length) {
+        sets.push("`updatedAt` = NOW(3)");
+        params.push(id);
+        await execute(`UPDATE \`Vehicle\` SET ${sets.join(", ")} WHERE \`id\` = ?`, params);
+      }
+      const rows = await query<VehicleRow>("SELECT * FROM `Vehicle` WHERE `id` = ?", [id]);
+      if (!rows.length) return res.status(404).json({ message: "Vozidlo neexistuje" });
+      const v = rows[0];
+      return res.status(200).json({
+        vehicle: { ...v, poplatokZaSmenu: Number(v.poplatokZaSmenu), aktivne: v.aktivne === 1 },
+      });
     }
+
     if (req.method === "DELETE") {
-      await prisma.vehicle.delete({ where: { id } });
+      await execute("DELETE FROM `Vehicle` WHERE `id` = ?", [id]);
       return res.status(200).json({ ok: true });
     }
+
     return res.status(405).json({ message: "Method not allowed" });
   })
 );

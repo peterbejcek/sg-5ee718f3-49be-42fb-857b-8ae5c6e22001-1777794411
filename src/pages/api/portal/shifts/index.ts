@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { query, queryOne, execute, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { parseBody, serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { isoWeekDateRange } from "@/lib/fees";
 
 const upsertSchema = z.object({
@@ -14,11 +14,40 @@ const upsertSchema = z.object({
   poznamka: z.string().nullable().optional(),
 });
 
-function parseDateUTC(s: string): Date {
-  return new Date(`${s.slice(0, 10)}T00:00:00.000Z`);
+const ymd = (d: Date) => d.toISOString().slice(0, 10);
+
+type ShiftJoinRow = {
+  id: number; datum: string; typ: string; poznamka: string | null;
+  poplatokZaSmenu: number | null; poplatokUhradeny: number; poplatokUhradenyDna: string | null;
+  driverId: number; vehicleId: number | null;
+  d_meno: string; d_priezvisko: string; d_volaciZnak: string | null;
+  v_nazov: string | null; v_spz: string | null; v_poplatok: number | null;
+};
+
+const SELECT_JOIN =
+  "SELECT s.`id`, s.`datum`, s.`typ`, s.`poznamka`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, s.`poplatokUhradenyDna`, " +
+  "s.`driverId`, s.`vehicleId`, d.`meno` AS d_meno, d.`priezvisko` AS d_priezvisko, d.`volaciZnak` AS d_volaciZnak, " +
+  "v.`nazov` AS v_nazov, v.`spz` AS v_spz, v.`poplatokZaSmenu` AS v_poplatok " +
+  "FROM `Shift` s JOIN `User` d ON d.`id` = s.`driverId` LEFT JOIN `Vehicle` v ON v.`id` = s.`vehicleId` ";
+
+function mapShift(s: ShiftJoinRow) {
+  return {
+    id: s.id,
+    datum: s.datum,
+    typ: s.typ,
+    poznamka: s.poznamka,
+    poplatokZaSmenu: s.poplatokZaSmenu === null ? null : Number(s.poplatokZaSmenu),
+    poplatokUhradeny: toBool(s.poplatokUhradeny),
+    poplatokUhradenyDna: s.poplatokUhradenyDna,
+    driverId: s.driverId,
+    vehicleId: s.vehicleId,
+    driver: { id: s.driverId, meno: s.d_meno, priezvisko: s.d_priezvisko, volaciZnak: s.d_volaciZnak },
+    vehicle: s.vehicleId
+      ? { id: s.vehicleId, nazov: s.v_nazov, spz: s.v_spz, poplatokZaSmenu: s.v_poplatok === null ? null : Number(s.v_poplatok) }
+      : null,
+  };
 }
 
-// MAJITEL aj DISPECER môžu čítať a editovať rozpis smien.
 export default withErrorHandler(
   withAuth(["MAJITEL", "DISPECER"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method === "GET") {
@@ -28,53 +57,46 @@ export default withErrorHandler(
         return res.status(400).json({ message: "Chýba ?rok=&tyzden=" });
       }
       const { from, to } = isoWeekDateRange(rok, tyzden);
-      const shifts = await prisma.shift.findMany({
-        where: { datum: { gte: from, lte: to } },
-        include: {
-          driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          vehicle: { select: { id: true, nazov: true, spz: true, poplatokZaSmenu: true } },
-        },
-        orderBy: { datum: "asc" },
-      });
-      return res.status(200).json({ shifts: serialize(shifts) });
+      const rows = await query<ShiftJoinRow>(
+        SELECT_JOIN + "WHERE s.`datum` BETWEEN ? AND ? ORDER BY s.`datum` ASC",
+        [ymd(from), ymd(to)]
+      );
+      return res.status(200).json({ shifts: rows.map(mapShift) });
     }
 
     if (req.method === "POST") {
       const body = parseBody(req, res, upsertSchema);
       if (!body) return;
-      const datum = parseDateUTC(body.datum);
+      const datum = body.datum.slice(0, 10);
 
-      // Ak poplatok za smenu nie je zadaný, prevezmi predvolený z vozidla.
+      // Predvolený poplatok z vozidla, ak nie je zadaný.
       let poplatok = body.poplatokZaSmenu ?? null;
       if (poplatok === null && body.vehicleId) {
-        const v = await prisma.vehicle.findUnique({ where: { id: body.vehicleId } });
+        const v = await queryOne<{ poplatokZaSmenu: number }>(
+          "SELECT `poplatokZaSmenu` FROM `Vehicle` WHERE `id` = ?",
+          [body.vehicleId]
+        );
         if (v) poplatok = Number(v.poplatokZaSmenu);
       }
 
-      const shift = await prisma.shift.upsert({
-        where: { driverId_datum: { driverId: body.driverId, datum } },
-        create: {
-          driverId: body.driverId,
-          datum,
-          typ: body.typ,
-          vehicleId: body.vehicleId ?? null,
-          poplatokZaSmenu: poplatok,
-          poznamka: body.poznamka ?? null,
-          createdById: ctx.userId,
-        },
-        update: {
-          typ: body.typ,
-          vehicleId: body.vehicleId ?? null,
-          // poplatokZaSmenu prepíš iba ak bol explicitne poslaný
-          ...(body.poplatokZaSmenu !== undefined ? { poplatokZaSmenu: body.poplatokZaSmenu } : {}),
-          poznamka: body.poznamka ?? null,
-        },
-        include: {
-          driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          vehicle: { select: { id: true, nazov: true, spz: true } },
-        },
-      });
-      return res.status(200).json({ shift: serialize(shift) });
+      // Poplatok prepíš len ak bol explicitne poslaný (inak nechaj existujúci).
+      const overwriteFee = body.poplatokZaSmenu !== undefined || poplatok !== null;
+      const updateFeeClause = overwriteFee ? "`poplatokZaSmenu` = VALUES(`poplatokZaSmenu`), " : "";
+
+      await execute(
+        "INSERT INTO `Shift` (`driverId`,`datum`,`typ`,`vehicleId`,`poplatokZaSmenu`,`poznamka`,`createdById`,`createdAt`,`updatedAt`) " +
+          "VALUES (?,?,?,?,?,?,?,NOW(3),NOW(3)) " +
+          "ON DUPLICATE KEY UPDATE `typ` = VALUES(`typ`), `vehicleId` = VALUES(`vehicleId`), " +
+          updateFeeClause +
+          "`poznamka` = VALUES(`poznamka`), `updatedAt` = NOW(3)",
+        [body.driverId, datum, body.typ, body.vehicleId ?? null, poplatok, body.poznamka ?? null, ctx.userId]
+      );
+
+      const rows = await query<ShiftJoinRow>(
+        SELECT_JOIN + "WHERE s.`driverId` = ? AND s.`datum` = ?",
+        [body.driverId, datum]
+      );
+      return res.status(200).json({ shift: rows.length ? mapShift(rows[0]) : null });
     }
 
     return res.status(405).json({ message: "Method not allowed" });

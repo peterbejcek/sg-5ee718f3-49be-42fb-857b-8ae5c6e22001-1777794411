@@ -1,24 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import { query } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { withErrorHandler } from "@/lib/apiHelpers";
 
 // Číselníky pre rozpis smien — vodiči a vozidlá. Dostupné majiteľovi aj dispečerovi.
 export default withErrorHandler(
   withAuth(["MAJITEL", "DISPECER"], async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
-    const [drivers, vehicles] = await Promise.all([
-      prisma.user.findMany({
-        where: { aktivny: true, roles: { some: { role: "VODIC" } } },
-        select: { id: true, meno: true, priezvisko: true, volaciZnak: true },
-        orderBy: [{ priezvisko: "asc" }, { meno: "asc" }],
-      }),
-      prisma.vehicle.findMany({
-        where: { aktivne: true },
-        select: { id: true, nazov: true, spz: true, poplatokZaSmenu: true },
-        orderBy: { nazov: "asc" },
-      }),
-    ]);
-    return res.status(200).json({ drivers: serialize(drivers), vehicles: serialize(vehicles) });
+
+    const drivers = await query<{ id: number; meno: string; priezvisko: string; volaciZnak: string | null }>(
+      "SELECT u.`id`, u.`meno`, u.`priezvisko`, u.`volaciZnak` " +
+        "FROM `User` u JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
+        "WHERE u.`aktivny` = 1 ORDER BY u.`priezvisko` ASC, u.`meno` ASC"
+    );
+    const vehRows = await query<{ id: number; nazov: string; spz: string; poplatokZaSmenu: number }>(
+      "SELECT `id`, `nazov`, `spz`, `poplatokZaSmenu` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
+    );
+    const vehicles = vehRows.map((v) => ({ ...v, poplatokZaSmenu: Number(v.poplatokZaSmenu) }));
+
+    return res.status(200).json({ drivers, vehicles });
   })
 );

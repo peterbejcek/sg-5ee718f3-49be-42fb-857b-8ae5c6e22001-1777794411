@@ -4,8 +4,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { serialize, parse } from "cookie";
-import { prisma } from "@/lib/prisma";
-import type { Role } from "@prisma/client";
+import { getUserWithRoles, toBool, type Role } from "@/lib/db";
+
+export type { Role };
 
 export const SESSION_COOKIE = "etaxi_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hodín
@@ -111,14 +112,11 @@ export function withAuth(
     if (!session) {
       return res.status(401).json({ message: "Neprihlásený" });
     }
-    const user = await prisma.user.findUnique({
-      where: { id: session.uid },
-      include: { roles: true },
-    });
-    if (!user || !user.aktivny) {
+    const user = await getUserWithRoles(session.uid);
+    if (!user || !toBool(user.aktivny)) {
       return res.status(401).json({ message: "Účet neexistuje alebo je neaktívny" });
     }
-    const currentRoles = user.roles.map((r) => r.role);
+    const currentRoles = user.roles;
     const freshSession: SessionPayload = { uid: user.id, email: user.email, roles: currentRoles };
     if (roles && !currentRoles.some((r) => roles.includes(r))) {
       return res.status(403).json({ message: "Nedostatočné oprávnenie" });

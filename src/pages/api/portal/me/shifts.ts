@@ -1,25 +1,46 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import { query, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { withErrorHandler } from "@/lib/apiHelpers";
 import { isoWeekDateRange } from "@/lib/fees";
+
+const ymd = (d: Date) => d.toISOString().slice(0, 10);
+
+type Row = {
+  id: number; datum: string; typ: string;
+  poplatokZaSmenu: number | null; poplatokUhradeny: number; vehicleId: number | null;
+  v_nazov: string | null; v_spz: string | null;
+};
 
 // Vodič vidí len svoje smeny.
 export default withErrorHandler(
   withAuth(["VODIC", "DISPECER", "MAJITEL"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
 
-    const where: Record<string, unknown> = { driverId: ctx.userId };
+    const where: string[] = ["s.`driverId` = ?"];
+    const params: any[] = [ctx.userId];
     if (req.query.rok && req.query.tyzden) {
       const { from, to } = isoWeekDateRange(Number(req.query.rok), Number(req.query.tyzden));
-      where.datum = { gte: from, lte: to };
+      where.push("s.`datum` BETWEEN ? AND ?");
+      params.push(ymd(from), ymd(to));
     }
 
-    const shifts = await prisma.shift.findMany({
-      where,
-      include: { vehicle: { select: { id: true, nazov: true, spz: true } } },
-      orderBy: { datum: "asc" },
-    });
-    return res.status(200).json({ shifts: serialize(shifts) });
+    const rows = await query<Row>(
+      "SELECT s.`id`, s.`datum`, s.`typ`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, s.`vehicleId`, " +
+        "v.`nazov` AS v_nazov, v.`spz` AS v_spz " +
+        "FROM `Shift` s LEFT JOIN `Vehicle` v ON v.`id` = s.`vehicleId` " +
+        "WHERE " + where.join(" AND ") + " ORDER BY s.`datum` ASC",
+      params
+    );
+
+    const shifts = rows.map((s) => ({
+      id: s.id,
+      datum: s.datum,
+      typ: s.typ,
+      poplatokZaSmenu: s.poplatokZaSmenu === null ? null : Number(s.poplatokZaSmenu),
+      poplatokUhradeny: toBool(s.poplatokUhradeny),
+      vehicle: s.vehicleId ? { nazov: s.v_nazov, spz: s.v_spz } : null,
+    }));
+    return res.status(200).json({ shifts });
   })
 );

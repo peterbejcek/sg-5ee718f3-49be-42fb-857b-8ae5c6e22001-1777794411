@@ -1,7 +1,7 @@
 // Nastavenie hesla cez pozývací/reset token (nový vodič alebo reset).
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { queryOne, execute } from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { parseBody, getClientIp, withErrorHandler } from "@/lib/apiHelpers";
@@ -21,23 +21,17 @@ export default withErrorHandler(async (req: NextApiRequest, res: NextApiResponse
   const human = await verifyTurnstile(body.turnstileToken, getClientIp(req));
   if (!human) return res.status(400).json({ message: "Overenie, že ste človek, zlyhalo." });
 
-  const user = await prisma.user.findFirst({
-    where: {
-      passwordResetToken: body.token,
-      passwordResetExpires: { gt: new Date() },
-    },
-  });
+  const user = await queryOne<{ id: number }>(
+    "SELECT `id` FROM `User` WHERE `passwordResetToken` = ? AND `passwordResetExpires` > NOW()",
+    [body.token]
+  );
   if (!user) return res.status(400).json({ message: "Neplatný alebo expirovaný odkaz." });
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      passwordHash: await hashPassword(body.password),
-      mustSetPassword: false,
-      passwordResetToken: null,
-      passwordResetExpires: null,
-    },
-  });
+  await execute(
+    "UPDATE `User` SET `passwordHash` = ?, `mustSetPassword` = 0, " +
+      "`passwordResetToken` = NULL, `passwordResetExpires` = NULL WHERE `id` = ?",
+    [await hashPassword(body.password), user.id]
+  );
 
   return res.status(200).json({ ok: true });
 });

@@ -7,10 +7,9 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "seed": "tsx prisma/seed.ts",
     "test:fees": "node --test --import tsx tests/fees.test.ts"
@@ -20,13 +19,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@prisma/client": "^6.19.3",
     "bcryptjs": "^2.4.3",
     "cookie": "^0.7.2",
     "jose": "^5.9.6",
     "mysql2": "^3.11.5",
-    "prisma": "^6.19.3",
-    "tsx": "^4.19.2",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.5",
     "@radix-ui/react-aspect-ratio": "^1.1.1",
@@ -88,7 +84,9 @@
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.2.8",
     "postcss": "^8",
+    "prisma": "^6.19.3",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }

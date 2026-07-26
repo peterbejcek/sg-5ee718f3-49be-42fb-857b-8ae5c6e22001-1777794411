@@ -1,17 +1,42 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { query, execute, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { parseBody, serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
 const updateSchema = z.object({
   typ: z.enum(["DENNA", "NOCNA", "VOLNO"]).optional(),
   vehicleId: z.coerce.number().int().nullable().optional(),
   poplatokZaSmenu: z.coerce.number().min(0).nullable().optional(),
-  // Evidencia úhrady poplatku za smenu (prenájom auta):
   poplatokUhradeny: z.boolean().optional(),
   poznamka: z.string().nullable().optional(),
 });
+
+type ShiftJoinRow = {
+  id: number; datum: string; typ: string; poznamka: string | null;
+  poplatokZaSmenu: number | null; poplatokUhradeny: number; poplatokUhradenyDna: string | null;
+  driverId: number; vehicleId: number | null;
+  d_meno: string; d_priezvisko: string; d_volaciZnak: string | null;
+  v_nazov: string | null; v_spz: string | null;
+};
+
+const SELECT_JOIN =
+  "SELECT s.`id`, s.`datum`, s.`typ`, s.`poznamka`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, s.`poplatokUhradenyDna`, " +
+  "s.`driverId`, s.`vehicleId`, d.`meno` AS d_meno, d.`priezvisko` AS d_priezvisko, d.`volaciZnak` AS d_volaciZnak, " +
+  "v.`nazov` AS v_nazov, v.`spz` AS v_spz " +
+  "FROM `Shift` s JOIN `User` d ON d.`id` = s.`driverId` LEFT JOIN `Vehicle` v ON v.`id` = s.`vehicleId` ";
+
+function mapShift(s: ShiftJoinRow) {
+  return {
+    id: s.id, datum: s.datum, typ: s.typ, poznamka: s.poznamka,
+    poplatokZaSmenu: s.poplatokZaSmenu === null ? null : Number(s.poplatokZaSmenu),
+    poplatokUhradeny: toBool(s.poplatokUhradeny),
+    poplatokUhradenyDna: s.poplatokUhradenyDna,
+    driverId: s.driverId, vehicleId: s.vehicleId,
+    driver: { id: s.driverId, meno: s.d_meno, priezvisko: s.d_priezvisko, volaciZnak: s.d_volaciZnak },
+    vehicle: s.vehicleId ? { id: s.vehicleId, nazov: s.v_nazov, spz: s.v_spz } : null,
+  };
+}
 
 export default withErrorHandler(
   withAuth(["MAJITEL", "DISPECER"], async (req: NextApiRequest, res: NextApiResponse) => {
@@ -22,29 +47,29 @@ export default withErrorHandler(
       const body = parseBody(req, res, updateSchema);
       if (!body) return;
 
-      const data: Record<string, unknown> = {};
-      if (body.typ !== undefined) data.typ = body.typ;
-      if (body.vehicleId !== undefined) data.vehicleId = body.vehicleId;
-      if (body.poplatokZaSmenu !== undefined) data.poplatokZaSmenu = body.poplatokZaSmenu;
-      if (body.poznamka !== undefined) data.poznamka = body.poznamka;
+      const sets: string[] = [];
+      const params: any[] = [];
+      const add = (col: string, val: unknown) => { sets.push(`\`${col}\` = ?`); params.push(val); };
+      if (body.typ !== undefined) add("typ", body.typ);
+      if (body.vehicleId !== undefined) add("vehicleId", body.vehicleId);
+      if (body.poplatokZaSmenu !== undefined) add("poplatokZaSmenu", body.poplatokZaSmenu);
+      if (body.poznamka !== undefined) add("poznamka", body.poznamka);
       if (body.poplatokUhradeny !== undefined) {
-        data.poplatokUhradeny = body.poplatokUhradeny;
-        data.poplatokUhradenyDna = body.poplatokUhradeny ? new Date() : null;
+        add("poplatokUhradeny", body.poplatokUhradeny ? 1 : 0);
+        add("poplatokUhradenyDna", body.poplatokUhradeny ? new Date() : null);
+      }
+      if (sets.length) {
+        sets.push("`updatedAt` = NOW(3)");
+        params.push(id);
+        await execute(`UPDATE \`Shift\` SET ${sets.join(", ")} WHERE \`id\` = ?`, params);
       }
 
-      const shift = await prisma.shift.update({
-        where: { id },
-        data,
-        include: {
-          driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          vehicle: { select: { id: true, nazov: true, spz: true } },
-        },
-      });
-      return res.status(200).json({ shift: serialize(shift) });
+      const rows = await query<ShiftJoinRow>(SELECT_JOIN + "WHERE s.`id` = ?", [id]);
+      return res.status(200).json({ shift: rows.length ? mapShift(rows[0]) : null });
     }
 
     if (req.method === "DELETE") {
-      await prisma.shift.delete({ where: { id } });
+      await execute("DELETE FROM `Shift` WHERE `id` = ?", [id]);
       return res.status(200).json({ ok: true });
     }
 

@@ -92,7 +92,9 @@ a v cPanel **Setup Node.js App** kliknite **Restart**.
 # Portál pre vodičov / dispečerov / majiteľa (backend)
 
 Portál je súčasťou tej istej Next.js aplikácie (cesty `/prihlasenie` a `/portal/*`
-+ API `/api/portal/*`). Používa databázu **MySQL/MariaDB** cez **Prisma**.
++ API `/api/portal/*`). Za behu pristupuje k databáze **MySQL/MariaDB** priamo cez
+driver **`mysql2`** (žiadny Prisma engine — stabilné aj pri nízkom procesnom limite
+hostingu). Prisma sa používa **iba na migrácie schémy** (vývoj/nasadenie štruktúry DB).
 
 ## A. Databáza (cPanel → MySQL Databases)
 
@@ -115,45 +117,36 @@ Portál je súčasťou tej istej Next.js aplikácie (cesty `/prihlasenie` a `/po
 > Cloudflare Turnstile kľúče získate zdarma na https://dash.cloudflare.com → Turnstile.
 > Bez nich portál funguje, ale overenie „že ste človek“ je vypnuté (vhodné len na test).
 
-## C. Inštalácia, migrácia DB a seed (cez SSH)
+## C. Prvé nasadenie (cez SSH)
 
-> **Dôležité:** cPanel Node.js app beží v režime **Production** (`NODE_ENV=production`),
-> takže samotné `npm install` **vynechá devDependencies** (napr. TypeScript), ktoré
-> `next build` potrebuje. Preto pri inštalácii použite `--include=dev`.
+> **Vždy najprv aktivujte Node z cPanel** (Setup Node.js App → „Enter to the virtual
+> environment", napr. `source ~/nodevenv/etaxi-web/22/bin/activate`) — inak SSH použije
+> systémový Node.
 >
-> `prisma` aj `tsx` sú zámerne v `dependencies` (nie devDependencies), aby
-> `prisma migrate deploy` a `npm run seed` fungovali aj bez dev balíkov a aby
-> `npx` nesťahoval nesprávnu verziu Prisma 7 (spôsobovala pád `SIGSEGV`).
+> `prisma` a `tsx` sú v **devDependencies** (potrebné len na migráciu/seed, nie za behu).
+> Runtime aplikácie závisí len od `mysql2` a spol. — **žiadny Prisma engine**.
 
-> **Najprv aktivujte správny Node** z cPanel (Setup Node.js App → príkaz „Enter to
-> the virtual environment", napr. `source ~/nodevenv/etaxi-web/22/bin/activate`),
-> inak SSH použije systémový Node a Prisma preinstall padne na `SIGSEGV`.
-
-Na tomto hostingu Prisma `preinstall` skript padá (`SIGSEGV`) a build-workery
-narážajú na procesný limit. Preto použite `--ignore-scripts` a Prisma volajte
-priamo (nie cez npm/npx wrapper):
-
+**1. Migrácia schémy a seed** (jednorazovo; potrebuje dev balíky):
 ```bash
 cd ~/etaxi-web
-npm install --include=dev --ignore-scripts          # bez padajúceho Prisma preinstall
-node node_modules/prisma/build/index.js generate     # vygeneruje Prisma klienta
-node node_modules/prisma/build/index.js migrate deploy  # vytvorí tabuľky
-npm run seed                                          # tarify + konfigurácia + majiteľ
-npm run build
+npm install --include=dev       # nainštaluje aj prisma/tsx/typescript
+npm run prisma:migrate          # vytvorí tabuľky (prisma migrate deploy)
+npm run seed                    # tarify + konfigurácia + prvý majiteľ (cez mysql2)
 ```
 
-> **Seed** (`npm run seed`) používa priamy MySQL driver `mysql2`, nie Prisma engine —
-> funguje aj pod prísnym limitom procesov (CloudLinux NPROC), kde Prisma engine
-> padal na `PANIC: timer has gone away`.
->
-> **Build**: ak `npm run build` padne na `spawn ... EAGAIN` (limit procesov účtu),
-> skúste ho spustiť znova, alebo zbuildite lokálne a nahrajte adresár `.next/`.
->
-> **Odporúčanie:** požiadajte podporu Polar55 o zvýšenie limitu **NPROC / Entry
-> Processes** (a pamäte) pre účet — Next.js aj Prisma potrebujú spúšťať worker
-> vlákna a pri nízkom limite môže portál padať aj počas behu.
+**2. Build a spustenie:**
+```bash
+npm run build                   # ak padne na EAGAIN (limit procesov), buildite lokálne
+```
+Potom **Setup Node.js App → Restart**.
 
-Po builde reštartujte appku v **Setup Node.js App → Restart**.
+> **Build lokálne (odporúčané pri nízkom NPROC):** zbuildite na svojom počítači
+> (`npm install && npm run build`) a nahrajte priečinok `.next/` na server. Po zmene
+> závislostí spustite na serveri aj `npm install` (produkčne, bez dev balíkov — je čistý,
+> Prisma sa neinštaluje, takže žiadny pád `SIGSEGV`).
+>
+> **Seed** používa priamy `mysql2`, nie Prisma engine — funguje aj pod prísnym NPROC
+> limitom (kde Prisma engine padal na `PANIC: timer has gone away`).
 
 ## D. Výpočet poplatkov
 
@@ -167,11 +160,17 @@ Po builde reštartujte appku v **Setup Node.js App → Restart**.
 
 ## E. Ďalšie nasadenia
 
+**Zmeny iba v kóde** (najčastejšie) — netreba migráciu ani seed:
 ```bash
-cd ~/etaxi-web
-git pull
-npm install --include=dev
-npm run prisma:migrate      # ak pribudli nové migrácie
-npm run build
+# lokálne
+git pull && npm install && npm run build
+# nahrať .next/ na server, potom Restart v cPanel
 ```
-a **Restart** v cPanel.
+Na serveri po zmene závislostí ešte `npm install` (produkčne, čistý beh).
+
+**Ak pribudli nové migrácie schémy** (zmena `prisma/schema.prisma`):
+```bash
+cd ~/etaxi-web            # s aktívnym virtualenv
+npm install --include=dev
+npm run prisma:migrate
+```

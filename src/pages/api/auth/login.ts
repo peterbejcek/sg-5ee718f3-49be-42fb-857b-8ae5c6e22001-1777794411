@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { queryOne, getUserRoles, toBool, type UserRow } from "@/lib/db";
 import { verifyPassword, createSessionToken, setSessionCookie } from "@/lib/auth";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { parseBody, getClientIp, withErrorHandler } from "@/lib/apiHelpers";
@@ -43,11 +43,10 @@ export default withErrorHandler(async (req: NextApiRequest, res: NextApiResponse
     return res.status(400).json({ message: "Overenie, že ste človek, zlyhalo." });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email: body.email.toLowerCase() },
-    include: { roles: true },
-  });
-  if (!user || !user.aktivny || !user.passwordHash) {
+  const user = await queryOne<UserRow>("SELECT * FROM `User` WHERE `email` = ?", [
+    body.email.toLowerCase(),
+  ]);
+  if (!user || !toBool(user.aktivny) || !user.passwordHash) {
     return res.status(401).json({ message: "Nesprávny e-mail alebo heslo." });
   }
 
@@ -56,7 +55,7 @@ export default withErrorHandler(async (req: NextApiRequest, res: NextApiResponse
     return res.status(401).json({ message: "Nesprávny e-mail alebo heslo." });
   }
 
-  const roles = user.roles.map((r) => r.role);
+  const roles = await getUserRoles(user.id);
   const token = await createSessionToken({ uid: user.id, email: user.email, roles });
   setSessionCookie(res, token);
 

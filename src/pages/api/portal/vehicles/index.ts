@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { query, execute } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { parseBody, serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
 const druhPohonu = z.enum(["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"]);
 
@@ -17,28 +17,35 @@ const createSchema = z.object({
   aktivne: z.boolean().default(true),
 });
 
+type VehicleRow = {
+  id: number; nazov: string; znacka: string; model: string; farba: string;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; aktivne: number;
+};
+
+function mapVehicle(v: VehicleRow) {
+  return { ...v, poplatokZaSmenu: Number(v.poplatokZaSmenu), aktivne: v.aktivne === 1 };
+}
+
 export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "GET") {
-      const vehicles = await prisma.vehicle.findMany({ orderBy: { nazov: "asc" } });
-      return res.status(200).json({ vehicles: serialize(vehicles) });
+      const rows = await query<VehicleRow>("SELECT * FROM `Vehicle` ORDER BY `nazov` ASC");
+      return res.status(200).json({ vehicles: rows.map(mapVehicle) });
     }
     if (req.method === "POST") {
       const body = parseBody(req, res, createSchema);
       if (!body) return;
-      const vehicle = await prisma.vehicle.create({
-        data: {
-          nazov: body.nazov,
-          znacka: body.znacka,
-          model: body.model,
-          farba: body.farba,
-          spz: body.spz.toUpperCase().trim(),
-          druhPohonu: body.druhPohonu,
-          poplatokZaSmenu: body.poplatokZaSmenu,
-          aktivne: body.aktivne,
-        },
-      });
-      return res.status(201).json({ vehicle: serialize(vehicle) });
+      const r = await execute(
+        "INSERT INTO `Vehicle` (`nazov`,`znacka`,`model`,`farba`,`spz`,`druhPohonu`,`poplatokZaSmenu`,`aktivne`,`createdAt`,`updatedAt`) " +
+          "VALUES (?,?,?,?,?,?,?,?,NOW(3),NOW(3))",
+        [
+          body.nazov, body.znacka, body.model, body.farba,
+          body.spz.toUpperCase().trim(), body.druhPohonu, body.poplatokZaSmenu,
+          body.aktivne ? 1 : 0,
+        ]
+      );
+      const rows = await query<VehicleRow>("SELECT * FROM `Vehicle` WHERE `id` = ?", [r.insertId]);
+      return res.status(201).json({ vehicle: mapVehicle(rows[0]) });
     }
     return res.status(405).json({ message: "Method not allowed" });
   })

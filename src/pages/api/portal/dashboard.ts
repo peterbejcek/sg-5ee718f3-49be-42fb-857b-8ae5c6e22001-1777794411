@@ -1,50 +1,52 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import { query } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
-import { serialize, withErrorHandler } from "@/lib/apiHelpers";
+import { withErrorHandler } from "@/lib/apiHelpers";
 import { isoWeekDateRange, isoWeekParts } from "@/lib/fees";
+
+const ymd = (d: Date) => d.toISOString().slice(0, 10);
+
+type ShiftRow = {
+  id: number; datum: string; typ: string; driverId: number; vehicleId: number | null;
+  poplatokZaSmenu: number | null; poplatokUhradeny: number;
+  d_meno: string; d_priezvisko: string; d_volaciZnak: string | null;
+};
 
 // Dashboard: finančné súhrny (len MAJITEL) + vyťaženosť (MAJITEL a DISPECER).
 export default withErrorHandler(
   withAuth(["MAJITEL", "DISPECER"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
 
-    const now = new Date();
-    const cur = isoWeekParts(now);
+    const cur = isoWeekParts(new Date());
     const rok = req.query.rok ? Number(req.query.rok) : cur.isoRok;
     const tyzden = req.query.tyzden ? Number(req.query.tyzden) : cur.isoTyzden;
     const { from, to, dni } = isoWeekDateRange(rok, tyzden);
 
     const isOwner = ctx.session.roles.includes("MAJITEL");
 
-    // ── Vyťaženosť áut a vodičov (týždeň) ─────────────────────────────────────
-    const [vehicles, drivers, shifts] = await Promise.all([
-      prisma.vehicle.findMany({ where: { aktivne: true }, orderBy: { nazov: "asc" } }),
-      prisma.user.findMany({
-        where: { aktivny: true, roles: { some: { role: "VODIC" } } },
-        select: { id: true, meno: true, priezvisko: true, volaciZnak: true },
-        orderBy: [{ priezvisko: "asc" }],
-      }),
-      prisma.shift.findMany({
-        where: { datum: { gte: from, lte: to } },
-        include: {
-          driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          vehicle: { select: { id: true, nazov: true, spz: true } },
-        },
-      }),
-    ]);
+    const vehicles = await query<{ id: number; nazov: string; spz: string }>(
+      "SELECT `id`, `nazov`, `spz` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
+    );
+    const drivers = await query<{ id: number; meno: string; priezvisko: string; volaciZnak: string | null }>(
+      "SELECT u.`id`, u.`meno`, u.`priezvisko`, u.`volaciZnak` FROM `User` u " +
+        "JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
+        "WHERE u.`aktivny` = 1 ORDER BY u.`priezvisko` ASC"
+    );
+    const shifts = await query<ShiftRow>(
+      "SELECT s.`id`, s.`datum`, s.`typ`, s.`driverId`, s.`vehicleId`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, " +
+        "d.`meno` AS d_meno, d.`priezvisko` AS d_priezvisko, d.`volaciZnak` AS d_volaciZnak " +
+        "FROM `Shift` s JOIN `User` d ON d.`id` = s.`driverId` WHERE s.`datum` BETWEEN ? AND ?",
+      [ymd(from), ymd(to)]
+    );
 
     const worked = shifts.filter((s) => s.typ !== "VOLNO");
-    const maxSlots = dni.length * 2; // deň + noc na auto/týždeň
+    const maxSlots = dni.length * 2;
 
     const vehicleUtilization = vehicles.map((v) => {
       const vShifts = worked.filter((s) => s.vehicleId === v.id);
       return {
-        vehicleId: v.id,
-        nazov: v.nazov,
-        spz: v.spz,
-        obsadenychSmien: vShifts.length,
-        maxSmien: maxSlots,
+        vehicleId: v.id, nazov: v.nazov, spz: v.spz,
+        obsadenychSmien: vShifts.length, maxSmien: maxSlots,
         vytazenostPct: maxSlots ? Math.round((vShifts.length / maxSlots) * 100) : 0,
       };
     });
@@ -52,90 +54,85 @@ export default withErrorHandler(
     const driverUtilization = drivers.map((d) => {
       const dShifts = worked.filter((s) => s.driverId === d.id);
       return {
-        driverId: d.id,
-        meno: d.meno,
-        priezvisko: d.priezvisko,
-        volaciZnak: d.volaciZnak,
+        driverId: d.id, meno: d.meno, priezvisko: d.priezvisko, volaciZnak: d.volaciZnak,
         odpracovanychSmien: dShifts.length,
         denne: dShifts.filter((s) => s.typ === "DENNA").length,
         nocne: dShifts.filter((s) => s.typ === "NOCNA").length,
       };
     });
 
-    // ── Poplatky za smeny (prenájom auta) — kto zaplatil ──────────────────────
     const shiftFeesAll = shifts.filter((s) => s.poplatokZaSmenu != null);
-    const shiftFeesCollected = shiftFeesAll
-      .filter((s) => s.poplatokUhradeny)
+    const shiftFeesCollected = shiftFeesAll.filter((s) => s.poplatokUhradeny === 1)
       .reduce((sum, s) => sum + Number(s.poplatokZaSmenu ?? 0), 0);
-    const shiftFeesOutstanding = shiftFeesAll
-      .filter((s) => !s.poplatokUhradeny)
+    const shiftFeesOutstanding = shiftFeesAll.filter((s) => s.poplatokUhradeny !== 1)
       .reduce((sum, s) => sum + Number(s.poplatokZaSmenu ?? 0), 0);
 
-    // Kto zaplatil poplatok za prenájom (po vodičoch).
-    const shiftFeeByDriver = new Map<
-      number,
-      { driver: (typeof shifts)[number]["driver"]; zaplatene: number; nezaplatene: number }
-    >();
+    const byDriver = new Map<number, { driver: { meno: string; priezvisko: string; volaciZnak: string | null }; zaplatene: number; nezaplatene: number }>();
     for (const s of shiftFeesAll) {
-      const rec =
-        shiftFeeByDriver.get(s.driverId) ??
-        { driver: s.driver, zaplatene: 0, nezaplatene: 0 };
-      if (s.poplatokUhradeny) rec.zaplatene += Number(s.poplatokZaSmenu ?? 0);
+      const rec = byDriver.get(s.driverId) ??
+        { driver: { meno: s.d_meno, priezvisko: s.d_priezvisko, volaciZnak: s.d_volaciZnak }, zaplatene: 0, nezaplatene: 0 };
+      if (s.poplatokUhradeny === 1) rec.zaplatene += Number(s.poplatokZaSmenu ?? 0);
       else rec.nezaplatene += Number(s.poplatokZaSmenu ?? 0);
-      shiftFeeByDriver.set(s.driverId, rec);
+      byDriver.set(s.driverId, rec);
     }
 
     const response: Record<string, unknown> = {
-      obdobie: { rok, tyzden, from, to },
+      obdobie: { rok, tyzden, from: ymd(from), to: ymd(to) },
       vytazenost: { vozidla: vehicleUtilization, vodici: driverUtilization },
       poplatkyZaSmeny: {
         vyzbierane: shiftFeesCollected,
         neuhradene: shiftFeesOutstanding,
-        podlaVodicov: Array.from(shiftFeeByDriver.values()),
+        podlaVodicov: Array.from(byDriver.values()),
       },
     };
 
-    // ── Finančné súhrny (len majiteľ) ─────────────────────────────────────────
     if (isOwner) {
-      const [weekRevenues, allUnpaidRevenues, driversNeuhradenaReg] = await Promise.all([
-        prisma.revenue.findMany({
-          where: { isoRok: rok, isoTyzden: tyzden },
-          include: {
-            driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          },
-        }),
-        prisma.revenue.findMany({
-          where: { uhradene: false },
-          include: {
-            driver: { select: { id: true, meno: true, priezvisko: true, volaciZnak: true } },
-          },
-          orderBy: [{ isoRok: "desc" }, { isoTyzden: "desc" }],
-        }),
-        prisma.user.findMany({
-          where: { registracnyPoplatokUhradeny: false, roles: { some: { role: "VODIC" } }, aktivny: true },
-          select: { id: true, meno: true, priezvisko: true, volaciZnak: true },
-        }),
-      ]);
-
-      const sum = (arr: typeof weekRevenues, key: "trzba" | "poplatokApp" | "provizia" | "celkovyPoplatok") =>
+      const weekRevenues = await query<{
+        celkovaTrzba: number; poplatokApp: number; provizia: number; celkovyPoplatok: number;
+        uhradene: number; celkovyPoplatokRow: number;
+      }>(
+        "SELECT `trzba` AS celkovaTrzba, `poplatokApp`, `provizia`, `celkovyPoplatok` AS celkovyPoplatokRow, `uhradene` " +
+          "FROM `Revenue` WHERE `isoRok` = ? AND `isoTyzden` = ?",
+        [rok, tyzden]
+      );
+      const sumBy = (arr: typeof weekRevenues, key: keyof (typeof weekRevenues)[number]) =>
         arr.reduce((s, r) => s + Number(r[key]), 0);
 
       response.tyzden = {
         pocetVodicov: weekRevenues.length,
-        celkovaTrzba: sum(weekRevenues, "trzba"),
-        poplatokApp: sum(weekRevenues, "poplatokApp"),
-        provizia: sum(weekRevenues, "provizia"),
-        celkovyPoplatok: sum(weekRevenues, "celkovyPoplatok"),
-        uhradene: weekRevenues.filter((r) => r.uhradene).reduce((s, r) => s + Number(r.celkovyPoplatok), 0),
-        neuhradene: weekRevenues.filter((r) => !r.uhradene).reduce((s, r) => s + Number(r.celkovyPoplatok), 0),
+        celkovaTrzba: sumBy(weekRevenues, "celkovaTrzba"),
+        poplatokApp: sumBy(weekRevenues, "poplatokApp"),
+        provizia: sumBy(weekRevenues, "provizia"),
+        celkovyPoplatok: sumBy(weekRevenues, "celkovyPoplatokRow"),
+        uhradene: weekRevenues.filter((r) => r.uhradene === 1).reduce((s, r) => s + Number(r.celkovyPoplatokRow), 0),
+        neuhradene: weekRevenues.filter((r) => r.uhradene !== 1).reduce((s, r) => s + Number(r.celkovyPoplatokRow), 0),
       };
+
+      const unpaid = await query<{
+        id: number; isoRok: number; isoTyzden: number; celkovyPoplatok: number;
+        d_meno: string; d_priezvisko: string; d_volaciZnak: string | null;
+      }>(
+        "SELECT r.`id`, r.`isoRok`, r.`isoTyzden`, r.`celkovyPoplatok`, " +
+          "d.`meno` AS d_meno, d.`priezvisko` AS d_priezvisko, d.`volaciZnak` AS d_volaciZnak " +
+          "FROM `Revenue` r JOIN `User` d ON d.`id` = r.`driverId` " +
+          "WHERE r.`uhradene` = 0 ORDER BY r.`isoRok` DESC, r.`isoTyzden` DESC",
+        []
+      );
       response.neuhradenePoplatky = {
-        spolu: allUnpaidRevenues.reduce((s, r) => s + Number(r.celkovyPoplatok), 0),
-        polozky: allUnpaidRevenues,
+        spolu: unpaid.reduce((s, r) => s + Number(r.celkovyPoplatok), 0),
+        polozky: unpaid.map((r) => ({
+          id: r.id, isoRok: r.isoRok, isoTyzden: r.isoTyzden, celkovyPoplatok: Number(r.celkovyPoplatok),
+          driver: { meno: r.d_meno, priezvisko: r.d_priezvisko, volaciZnak: r.d_volaciZnak },
+        })),
       };
-      response.neuhradenaRegistracia = driversNeuhradenaReg;
+
+      response.neuhradenaRegistracia = await query<{ id: number; meno: string; priezvisko: string; volaciZnak: string | null }>(
+        "SELECT DISTINCT u.`id`, u.`meno`, u.`priezvisko`, u.`volaciZnak` FROM `User` u " +
+          "JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
+          "WHERE u.`registracnyPoplatokUhradeny` = 0 AND u.`aktivny` = 1"
+      );
     }
 
-    return res.status(200).json(serialize(response));
+    return res.status(200).json(response);
   })
 );
