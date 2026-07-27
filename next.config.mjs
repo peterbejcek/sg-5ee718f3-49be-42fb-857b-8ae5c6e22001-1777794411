@@ -1,6 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Zabalenie ESM utility balíkov priamo do buildu. Bez tohto Next necháva v
+  // serverovom výstupe (_document.js a pod.) externé importy typu `import 'clsx'`,
+  // ktoré na hostingu Polar55 padajú na "Cannot find package 'clsx'" a zhodia
+  // CELÝ web (verejný aj portál, lebo _document je zdieľaný). Transpiláciou sa
+  // tieto balíky stanú súčasťou výstupných chunkov — žiadny runtime import.
+  transpilePackages: [
+    "clsx",
+    "tailwind-merge",
+    "class-variance-authority",
+    "lucide-react",
+    "tailwindcss-animate",
+  ],
   // Obmedzenie počtu worker procesov pri builde — nutné na zdieľanom hostingu
   // (CloudLinux NPROC limit), inak `next build` padá s chybou spawn EAGAIN.
   experimental: {
