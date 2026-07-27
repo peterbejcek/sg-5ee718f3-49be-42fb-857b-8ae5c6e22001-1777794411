@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur, DAY_NAMES } from "@/lib/portalClient";
+import { apiFetch, formatPoplatok, DAY_NAMES } from "@/lib/portalClient";
 import { isoWeekParts, isoWeekDateRange } from "@/lib/fees";
 import { SHIFT_PATTERNS } from "@/lib/shiftPatterns";
 import { Button } from "@/components/ui/button";
@@ -342,7 +342,7 @@ function ShiftEditor({
               </div>
               <label className="flex items-center gap-2 text-sm cursor-pointer">
                 <Checkbox checked={uhradeny} onCheckedChange={(v) => setUhradeny(!!v)} />
-                Poplatok uhradený {poplatok && `(${formatEur(Number(poplatok))})`}
+                Poplatok uhradený {poplatok && `(${formatPoplatok(Number(poplatok))})`}
               </label>
             </>
           )}

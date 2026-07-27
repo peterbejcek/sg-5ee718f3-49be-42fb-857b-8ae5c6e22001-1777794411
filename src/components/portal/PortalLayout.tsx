@@ -10,6 +10,7 @@ import {
   type CurrentUser,
   type Role,
 } from "@/lib/portalClient";
+import { isoWeekParts } from "@/lib/fees";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -69,6 +70,15 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
 
   const items = NAV.filter((n) => n.roles.some((r) => user.roles.includes(r)));
 
+  const dnes = new Date();
+  const dnesParts = isoWeekParts(dnes);
+  const datumText = dnes.toLocaleDateString("sk-SK", {
+    weekday: "short",
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  });
+
   return (
     <div className="min-h-screen bg-muted/30">
       <header className="bg-[#282462] text-white sticky top-0 z-30">
@@ -82,6 +92,9 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
             </Link>
           </div>
           <div className="flex items-center gap-3 text-sm">
+            <span className="hidden md:inline whitespace-nowrap bg-white/10 rounded px-2 py-1">
+              📅 {datumText} · Týždeň {dnesParts.isoTyzden}/{dnesParts.isoRok}
+            </span>
             <span className="hidden sm:inline opacity-90">
               {user.meno} {user.priezvisko}
               {user.volaciZnak ? ` · ${user.volaciZnak}` : ""} ·{" "}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatPoplatok } from "@/lib/portalClient";
 import { isoWeekParts, vypocitajPoplatky } from "@/lib/fees";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,9 +106,9 @@ export default function TrzbyPage() {
                       onBlur={() => saveTrzba(dr.id)}
                     />
                   </TableCell>
-                  <TableCell>{formatEur(r?.poplatokApp ?? pv?.poplatokApp ?? 0)}</TableCell>
-                  <TableCell>{formatEur(r?.provizia ?? pv?.provizia ?? 0)}</TableCell>
-                  <TableCell className="font-semibold">{formatEur(r?.celkovyPoplatok ?? pv?.celkovyPoplatok ?? 0)}</TableCell>
+                  <TableCell>{formatPoplatok(r?.poplatokApp ?? pv?.poplatokApp ?? 0)}</TableCell>
+                  <TableCell>{formatPoplatok(r?.provizia ?? pv?.provizia ?? 0)}</TableCell>
+                  <TableCell className="font-semibold">{formatPoplatok(r?.celkovyPoplatok ?? pv?.celkovyPoplatok ?? 0)}</TableCell>
                   <TableCell>
                     {r ? (
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -130,9 +130,9 @@ export default function TrzbyPage() {
               <tr className="border-t bg-muted/40 font-semibold">
                 <td className="p-2">SÚČET {tyzden}/{rok} ({revenues.length} vod.)</td>
                 <td className="p-2">{formatEur(sum("trzba"))}</td>
-                <td className="p-2">{formatEur(sum("poplatokApp"))}</td>
-                <td className="p-2">{formatEur(sum("provizia"))}</td>
-                <td className="p-2">{formatEur(sum("celkovyPoplatok"))}</td>
+                <td className="p-2">{formatPoplatok(sum("poplatokApp"))}</td>
+                <td className="p-2">{formatPoplatok(sum("provizia"))}</td>
+                <td className="p-2">{formatPoplatok(sum("celkovyPoplatok"))}</td>
                 <td colSpan={2}></td>
               </tr>
             </tfoot>
