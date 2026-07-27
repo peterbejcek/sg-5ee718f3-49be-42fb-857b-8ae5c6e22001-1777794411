@@ -64,7 +64,16 @@ export type FeeBreakdown = {
   celkovyPoplatok: number;
 };
 
-/** Kompletný výpočet poplatkov pre danú týždennú tržbu. */
+/** Zaokrúhlenie na 1 desatinné miesto (round half up). */
+export function round1(n: number): number {
+  return Math.round((n + Number.EPSILON) * 10) / 10;
+}
+
+/**
+ * Kompletný výpočet poplatkov pre danú týždennú tržbu.
+ * Poplatky (app, provízia, celkový) sa zaokrúhľujú na 1 desatinné miesto.
+ * Tržba ostáva na 2 desatinné.
+ */
 export function vypocitajPoplatky(
   trzba: number,
   opts: { tiers?: FeeTier[]; provisionRate?: number } = {}
@@ -72,9 +81,9 @@ export function vypocitajPoplatky(
   const tiers = opts.tiers ?? DEFAULT_FEE_TIERS;
   const rate = opts.provisionRate ?? DEFAULT_PROVISION_RATE;
   const trzbaR = round2(trzba);
-  const poplatokApp = round2(poplatokZaApp(trzbaR, tiers));
-  const provizia = proviziaZTrzby(trzbaR, rate);
-  const celkovyPoplatok = round2(poplatokApp + provizia);
+  const poplatokApp = round1(poplatokZaApp(trzbaR, tiers));
+  const provizia = round1(proviziaZTrzby(trzbaR, rate));
+  const celkovyPoplatok = round1(poplatokApp + provizia);
   return { trzba: trzbaR, poplatokApp, provizia, celkovyPoplatok };
 }
 
@@ -131,51 +140,4 @@ export function isoWeekDateRange(isoRok: number, isoTyzden: number): { from: Dat
   const to = new Date(from);
   to.setUTCDate(from.getUTCDate() + 6);
   return { from, to, dni };
-}
-
-export type Obdobie = "tyzden" | "mesiac" | "rok";
-
-const MESIACE = [
-  "Január", "Február", "Marec", "Apríl", "Máj", "Jún",
-  "Júl", "August", "September", "Október", "November", "December",
-];
-
-/** Rozsah dátumov + počet dní + textový popis pre zvolené obdobie. */
-export function periodRange(
-  obdobie: Obdobie,
-  p: { rok: number; tyzden?: number; mesiac?: number }
-): { from: Date; to: Date; dni: number; label: string } {
-  if (obdobie === "rok") {
-    const from = new Date(Date.UTC(p.rok, 0, 1));
-    const to = new Date(Date.UTC(p.rok, 11, 31));
-    return { from, to, dni: daysBetween(from, to), label: `Rok ${p.rok}` };
-  }
-  if (obdobie === "mesiac") {
-    const m = p.mesiac ?? 1;
-    const from = new Date(Date.UTC(p.rok, m - 1, 1));
-    const to = new Date(Date.UTC(p.rok, m, 0)); // posledný deň mesiaca
-    return { from, to, dni: daysBetween(from, to), label: `${MESIACE[m - 1]} ${p.rok}` };
-  }
-  const { from, to } = isoWeekDateRange(p.rok, p.tyzden ?? 1);
-  return { from, to, dni: 7, label: `Týždeň ${p.tyzden}/${p.rok}` };
-}
-
-function daysBetween(from: Date, to: Date): number {
-  return Math.round((to.getTime() - from.getTime()) / 86400000) + 1;
-}
-
-/** ISO týždne (rok/týždeň), ktorých pondelok padne do rozsahu [from, to]. */
-export function weeksInRange(from: Date, to: Date): { isoRok: number; isoTyzden: number }[] {
-  const out: { isoRok: number; isoTyzden: number }[] = [];
-  const seen = new Set<string>();
-  const d = new Date(from);
-  while (d.getTime() <= to.getTime()) {
-    if ((d.getUTCDay() || 7) === 1) {
-      const p = isoWeekParts(d);
-      const key = `${p.isoRok}-${p.isoTyzden}`;
-      if (!seen.has(key)) { seen.add(key); out.push(p); }
-    }
-    d.setUTCDate(d.getUTCDate() + 1);
-  }
-  return out;
 }

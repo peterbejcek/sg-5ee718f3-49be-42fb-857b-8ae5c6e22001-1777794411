@@ -35,22 +35,9 @@ export async function fetchCurrentUser(): Promise<CurrentUser | null> {
   return data.user;
 }
 
-export function formatEur(
-  n: number | string | null | undefined,
-  decimals = 2
-): string {
+export function formatEur(n: number | string | null | undefined): string {
   const v = Number(n ?? 0);
-  return v.toLocaleString("sk-SK", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-}
-
-/** Poplatky zaokrúhlené/zobrazené na 1 desatinné miesto. */
-export function formatPoplatok(n: number | string | null | undefined): string {
-  return formatEur(n, 1);
+  return v.toLocaleString("sk-SK", { style: "currency", currency: "EUR" });
 }
 
 export const ROLE_LABELS: Record<Role, string> = {

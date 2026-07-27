@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatPoplatok } from "@/lib/portalClient";
+import { apiFetch, formatEur } from "@/lib/portalClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -113,7 +113,7 @@ export default function VozidlaPage() {
                 <TableCell>{v.farba}</TableCell>
                 <TableCell>{v.spz}</TableCell>
                 <TableCell>{v.druhPohonu}</TableCell>
-                <TableCell>{formatPoplatok(v.poplatokZaSmenu)}</TableCell>
+                <TableCell>{formatEur(v.poplatokZaSmenu)}</TableCell>
                 <TableCell>{v.aktivne ? <Badge className="bg-green-600">Aktívne</Badge> : <Badge variant="secondary">Neaktívne</Badge>}</TableCell>
                 <TableCell className="text-right whitespace-nowrap">
                   <Button size="sm" variant="ghost" onClick={() => openEdit(v)}>Upraviť</Button>

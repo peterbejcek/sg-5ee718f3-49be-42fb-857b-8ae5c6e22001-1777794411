@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur, formatPoplatok } from "@/lib/portalClient";
+import { apiFetch, formatEur } from "@/lib/portalClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -37,11 +37,11 @@ export default function MojePoplatkyPage() {
       {!data ? <p className="text-muted-foreground">Načítavam…</p> : (
         <div className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Stat label="Poplatky spolu" value={formatPoplatok(data.suhrn.spoluTyzdennePoplatky)} />
-            <Stat label="Neuhradené (týždenné)" value={formatPoplatok(data.suhrn.neuhradeneTyzdennePoplatky)} />
-            <Stat label="Neuhradené za smeny" value={formatPoplatok(data.suhrn.neuhradenePoplatkyZaSmeny)} />
+            <Stat label="Poplatky spolu" value={formatEur(data.suhrn.spoluTyzdennePoplatky)} />
+            <Stat label="Neuhradené (týždenné)" value={formatEur(data.suhrn.neuhradeneTyzdennePoplatky)} />
+            <Stat label="Neuhradené za smeny" value={formatEur(data.suhrn.neuhradenePoplatkyZaSmeny)} />
             <Card><CardContent className="p-4">
-              <div className="text-sm text-muted-foreground">Registračný poplatok ({formatPoplatok(data.registracia.poplatok)})</div>
+              <div className="text-sm text-muted-foreground">Registračný poplatok ({formatEur(data.registracia.poplatok)})</div>
               <div className="mt-1">
                 {data.registracia.uhradeny ? <Badge className="bg-green-600">Uhradený</Badge> : <Badge variant="destructive">Neuhradený</Badge>}
               </div>
@@ -62,9 +62,9 @@ export default function MojePoplatkyPage() {
                   <TableRow key={r.id}>
                     <TableCell>{r.isoTyzden}/{r.isoRok}</TableCell>
                     <TableCell>{formatEur(r.trzba)}</TableCell>
-                    <TableCell>{formatPoplatok(r.poplatokApp)}</TableCell>
-                    <TableCell>{formatPoplatok(r.provizia)}</TableCell>
-                    <TableCell className="font-semibold">{formatPoplatok(r.celkovyPoplatok)}</TableCell>
+                    <TableCell>{formatEur(r.poplatokApp)}</TableCell>
+                    <TableCell>{formatEur(r.provizia)}</TableCell>
+                    <TableCell className="font-semibold">{formatEur(r.celkovyPoplatok)}</TableCell>
                     <TableCell>{r.uhradene ? <Badge className="bg-green-600">Áno</Badge> : <Badge variant="destructive">Nie</Badge>}</TableCell>
                   </TableRow>
                 ))}

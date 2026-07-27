@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { query } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
-import { periodRange, weeksInRange, isoWeekParts, type Obdobie } from "@/lib/fees";
+import { isoWeekDateRange, isoWeekParts } from "@/lib/fees";
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -18,18 +18,9 @@ export default withErrorHandler(
     if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
 
     const cur = isoWeekParts(new Date());
-    const now = new Date();
-    const obdobie = (["tyzden", "mesiac", "rok"].includes(String(req.query.obdobie))
-      ? req.query.obdobie
-      : "tyzden") as Obdobie;
     const rok = req.query.rok ? Number(req.query.rok) : cur.isoRok;
     const tyzden = req.query.tyzden ? Number(req.query.tyzden) : cur.isoTyzden;
-    const mesiac = req.query.mesiac ? Number(req.query.mesiac) : now.getUTCMonth() + 1;
-
-    const range = periodRange(obdobie, { rok, tyzden, mesiac });
-    const from = range.from;
-    const to = range.to;
-    const pocetDni = range.dni;
+    const { from, to, dni } = isoWeekDateRange(rok, tyzden);
 
     const isOwner = ctx.session.roles.includes("MAJITEL");
 
@@ -49,7 +40,7 @@ export default withErrorHandler(
     );
 
     const worked = shifts.filter((s) => s.typ !== "VOLNO");
-    const maxSlots = pocetDni * 2;
+    const maxSlots = dni.length * 2;
 
     const vehicleUtilization = vehicles.map((v) => {
       const vShifts = worked.filter((s) => s.vehicleId === v.id);
@@ -86,7 +77,7 @@ export default withErrorHandler(
     }
 
     const response: Record<string, unknown> = {
-      obdobie: { typ: obdobie, rok, tyzden, mesiac, label: range.label, from: ymd(from), to: ymd(to) },
+      obdobie: { rok, tyzden, from: ymd(from), to: ymd(to) },
       vytazenost: { vozidla: vehicleUtilization, vodici: driverUtilization },
       poplatkyZaSmeny: {
         vyzbierane: shiftFeesCollected,
@@ -96,26 +87,19 @@ export default withErrorHandler(
     };
 
     if (isOwner) {
-      // Týždne (rok/týždeň), ktoré spadajú do zvoleného obdobia.
-      const weeks = weeksInRange(from, to);
-      const weekKeys = weeks.map((w) => w.isoRok * 100 + w.isoTyzden);
-      const placeholders = weekKeys.length ? weekKeys.map(() => "?").join(",") : "NULL";
-      const weekRevenues = weekKeys.length
-        ? await query<{
-            driverId: number; celkovaTrzba: number; poplatokApp: number; provizia: number;
-            uhradene: number; celkovyPoplatokRow: number;
-          }>(
-            "SELECT `driverId`, `trzba` AS celkovaTrzba, `poplatokApp`, `provizia`, `celkovyPoplatok` AS celkovyPoplatokRow, `uhradene` " +
-              `FROM \`Revenue\` WHERE (\`isoRok\` * 100 + \`isoTyzden\`) IN (${placeholders})`,
-            weekKeys
-          )
-        : [];
+      const weekRevenues = await query<{
+        celkovaTrzba: number; poplatokApp: number; provizia: number; celkovyPoplatok: number;
+        uhradene: number; celkovyPoplatokRow: number;
+      }>(
+        "SELECT `trzba` AS celkovaTrzba, `poplatokApp`, `provizia`, `celkovyPoplatok` AS celkovyPoplatokRow, `uhradene` " +
+          "FROM `Revenue` WHERE `isoRok` = ? AND `isoTyzden` = ?",
+        [rok, tyzden]
+      );
       const sumBy = (arr: typeof weekRevenues, key: keyof (typeof weekRevenues)[number]) =>
         arr.reduce((s, r) => s + Number(r[key]), 0);
-      const pocetVodicov = new Set(weekRevenues.map((r) => r.driverId)).size;
 
       response.tyzden = {
-        pocetVodicov,
+        pocetVodicov: weekRevenues.length,
         celkovaTrzba: sumBy(weekRevenues, "celkovaTrzba"),
         poplatokApp: sumBy(weekRevenues, "poplatokApp"),
         provizia: sumBy(weekRevenues, "provizia"),
