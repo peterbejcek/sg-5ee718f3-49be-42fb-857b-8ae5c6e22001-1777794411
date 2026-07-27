@@ -26,10 +26,16 @@ export function getPool(): mysql.Pool {
     user: decodeURIComponent(u.username),
     password: decodeURIComponent(u.password),
     database: u.pathname.replace(/^\//, ""),
-    // Nízky limit spojení = málo vlákien (dôležité pre NPROC limit hostingu).
-    connectionLimit: 3,
+    connectionLimit: 5,
     waitForConnections: true,
-    queueLimit: 0,
+    // queueLimit obmedzený, aby požiadavka radšej zlyhala než visela donekonečna,
+    // ak by spojenia nedokázali vzniknúť (napr. zaseknuté spojenia po páde appky).
+    queueLimit: 30,
+    connectTimeout: 10000, // 10 s na nadviazanie spojenia, potom chyba (nie hang)
+    idleTimeout: 30000, // zavri nečinné spojenia po 30 s
+    maxIdle: 2,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
     decimalNumbers: true, // DECIMAL -> number (nie string)
     dateStrings: true, // DATE/DATETIME -> string (bez posunov časových pásiem)
     charset: "utf8mb4",

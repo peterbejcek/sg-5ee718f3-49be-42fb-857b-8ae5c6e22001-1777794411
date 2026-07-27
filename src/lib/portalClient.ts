@@ -16,13 +16,27 @@ export async function apiFetch<T = unknown>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+  // Timeout, aby požiadavka nikdy nevisela donekonečna (žiadne večné "Načítavam").
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+  } catch (e) {
+    clearTimeout(timeout);
+    if (e instanceof DOMException && e.name === "AbortError") {
+      throw new Error("Časový limit požiadavky vypršal. Skúste to znova.");
+    }
+    throw e instanceof Error ? e : new Error("Chyba siete");
+  }
+  clearTimeout(timeout);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error((data as { message?: string }).message || `Chyba ${res.status}`);

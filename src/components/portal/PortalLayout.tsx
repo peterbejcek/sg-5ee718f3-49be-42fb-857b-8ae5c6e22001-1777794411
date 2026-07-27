@@ -10,6 +10,7 @@ import {
   type CurrentUser,
   type Role,
 } from "@/lib/portalClient";
+import { isoWeekParts } from "@/lib/fees";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -38,6 +39,7 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
   const router = useRouter();
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
         }
         setUser(u);
       })
+      .catch((e) => setError(e instanceof Error ? e.message : "Chyba načítania"))
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -65,9 +68,26 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
       </div>
     );
   }
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center px-4">
+        <p className="text-red-600">Nepodarilo sa načítať portál: {error}</p>
+        <Button onClick={() => window.location.reload()}>Skúsiť znova</Button>
+        <button className="text-sm text-muted-foreground underline" onClick={() => router.replace("/prihlasenie")}>
+          Späť na prihlásenie
+        </button>
+      </div>
+    );
+  }
   if (!user) return null;
 
   const items = NAV.filter((n) => n.roles.some((r) => user.roles.includes(r)));
+
+  const dnes = new Date();
+  const datumText = dnes.toLocaleDateString("sk-SK", {
+    weekday: "short", day: "numeric", month: "numeric", year: "numeric",
+  });
+  const wk = isoWeekParts(dnes);
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -82,6 +102,9 @@ export function PortalLayout({ children, title }: { children: ReactNode; title?:
             </Link>
           </div>
           <div className="flex items-center gap-3 text-sm">
+            <span className="hidden lg:inline whitespace-nowrap bg-white/10 rounded px-2 py-1">
+              📅 {datumText} · Týždeň {wk.isoTyzden}/{wk.isoRok}
+            </span>
             <span className="hidden sm:inline opacity-90">
               {user.meno} {user.priezvisko}
               {user.volaciZnak ? ` · ${user.volaciZnak}` : ""} ·{" "}

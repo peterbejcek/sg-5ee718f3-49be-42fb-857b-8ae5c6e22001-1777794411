@@ -2,17 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { PortalLayout } from "@/components/portal/PortalLayout";
+import { PortalLayout, useCurrentUser } from "@/components/portal/PortalLayout";
 import { apiFetch, formatEur } from "@/lib/portalClient";
-import { isoWeekParts } from "@/lib/fees";
+import { isoWeekParts, type Obdobie } from "@/lib/fees";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const MESIACE = [
+  "Január", "Február", "Marec", "Apríl", "Máj", "Jún",
+  "Júl", "August", "September", "Október", "November", "December",
+];
 
 type Dashboard = {
-  obdobie: { rok: number; tyzden: number };
+  obdobie: { typ?: Obdobie; rok: number; tyzden: number; mesiac?: number; label?: string };
   vytazenost: {
     vozidla: { vehicleId: number; nazov: string; spz: string; obsadenychSmien: number; maxSmien: number; vytazenostPct: number }[];
     vodici: { driverId: number; meno: string; priezvisko: string; volaciZnak: string | null; odpracovanychSmien: number; denne: number; nocne: number }[];
@@ -48,45 +54,80 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
 }
 
 export default function DashboardPage() {
+  const { user } = useCurrentUser();
+  const isOwner = user?.roles.includes("MAJITEL") ?? false;
   const nowParts = isoWeekParts(new Date());
+  const [obdobie, setObdobie] = useState<Obdobie>("tyzden");
   const [rok, setRok] = useState(nowParts.isoRok);
   const [tyzden, setTyzden] = useState(nowParts.isoTyzden);
+  const [mesiac, setMesiac] = useState(new Date().getMonth() + 1);
   const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
-    apiFetch<Dashboard>(`/api/portal/dashboard?rok=${rok}&tyzden=${tyzden}`)
+    apiFetch<Dashboard>(
+      `/api/portal/dashboard?obdobie=${obdobie}&rok=${rok}&tyzden=${tyzden}&mesiac=${mesiac}`
+    )
       .then(setData)
       .catch((e) => setError(e.message));
-  }, [rok, tyzden]);
+  }, [obdobie, rok, tyzden, mesiac]);
+
+  const suffix = obdobie === "tyzden" ? "(týž.)" : obdobie === "mesiac" ? "(mes.)" : "(rok)";
 
   return (
     <PortalLayout title="Dashboard">
       <Head><title>Dashboard — E-TAXI Portál</title></Head>
 
       <div className="flex flex-wrap gap-3 items-end mb-4">
+        {/* Prepínač obdobia je len pre majiteľa */}
+        {isOwner && (
+          <div>
+            <Label>Obdobie</Label>
+            <Select value={obdobie} onValueChange={(v) => setObdobie(v as Obdobie)}>
+              <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tyzden">Týždeň</SelectItem>
+                <SelectItem value="mesiac">Mesiac</SelectItem>
+                <SelectItem value="rok">Rok</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div>
           <Label>Rok</Label>
-          <Input type="number" className="w-28" value={rok} onChange={(e) => setRok(Number(e.target.value))} />
+          <Input type="number" className="w-24" value={rok} onChange={(e) => setRok(Number(e.target.value))} />
         </div>
-        <div>
-          <Label>ISO týždeň</Label>
-          <Input type="number" min={1} max={53} className="w-28" value={tyzden} onChange={(e) => setTyzden(Number(e.target.value))} />
-        </div>
-        <Badge variant="secondary" className="mb-2">Týždeň {tyzden}/{rok}</Badge>
+        {obdobie === "tyzden" && (
+          <div>
+            <Label>ISO týždeň</Label>
+            <Input type="number" min={1} max={53} className="w-24" value={tyzden} onChange={(e) => setTyzden(Number(e.target.value))} />
+          </div>
+        )}
+        {obdobie === "mesiac" && (
+          <div>
+            <Label>Mesiac</Label>
+            <Select value={String(mesiac)} onValueChange={(v) => setMesiac(Number(v))}>
+              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {MESIACE.map((m, i) => <SelectItem key={i} value={String(i + 1)}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        <Badge variant="secondary" className="mb-2">{data?.obdobie.label ?? `Týždeň ${tyzden}/${rok}`}</Badge>
       </div>
 
-      {error && <p className="text-red-600">{error}</p>}
-      {!data ? (
+      {error && <p className="text-red-600 mb-3">{error}</p>}
+      {!data && !error ? (
         <p className="text-muted-foreground">Načítavam…</p>
-      ) : (
+      ) : !data ? null : (
         <div className="space-y-6">
           {data.tyzden && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Stat label="Celková tržba (týž.)" value={formatEur(data.tyzden.celkovaTrzba)} hint={`${data.tyzden.pocetVodicov} vodičov`} />
-                <Stat label="Poplatky spolu (týž.)" value={formatEur(data.tyzden.celkovyPoplatok)} hint={`App ${formatEur(data.tyzden.poplatokApp)} + provízia ${formatEur(data.tyzden.provizia)}`} />
+                <Stat label={`Celková tržba ${suffix}`} value={formatEur(data.tyzden.celkovaTrzba)} hint={`${data.tyzden.pocetVodicov} vodičov`} />
+                <Stat label={`Poplatky spolu ${suffix}`} value={formatEur(data.tyzden.celkovyPoplatok)} hint={`App ${formatEur(data.tyzden.poplatokApp)} + provízia ${formatEur(data.tyzden.provizia)}`} />
                 <Stat label="Uhradené poplatky" value={formatEur(data.tyzden.uhradene)} />
                 <Stat label="Neuhradené poplatky" value={formatEur(data.tyzden.neuhradene)} />
               </div>
