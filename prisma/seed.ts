@@ -13,6 +13,7 @@ import {
   DEFAULT_PROVISION_RATE,
   DEFAULT_REGISTRATION_FEE,
 } from "../src/lib/fees";
+import { DEFAULT_EXPENSE_CATEGORIES } from "../src/lib/expenses";
 
 async function main() {
   const url = process.env.DATABASE_URL;
@@ -47,6 +48,21 @@ async function main() {
       ]
     );
     console.log("✅ Konfigurácia (provízia, registračný poplatok) pripravená.");
+
+    // 2b) Kategórie výdavkov (len ak je tabuľka prázdna).
+    const [catRows] = await conn.query<mysql.RowDataPacket[]>(
+      "SELECT COUNT(*) AS cnt FROM `ExpenseCategory`"
+    );
+    if (Number(catRows[0].cnt) === 0) {
+      const values = DEFAULT_EXPENSE_CATEGORIES.map((n, i) => [n, i]);
+      await conn.query(
+        "INSERT INTO `ExpenseCategory` (`nazov`,`poradie`) VALUES ?",
+        [values]
+      );
+      console.log(`✅ Vytvorených ${DEFAULT_EXPENSE_CATEGORIES.length} kategórií výdavkov.`);
+    } else {
+      console.log("ℹ️  Kategórie výdavkov už existujú — preskočené.");
+    }
 
     // 3) Prvý majiteľ.
     const ownerEmail = (process.env.INITIAL_OWNER_EMAIL || "").toLowerCase().trim();

@@ -3,6 +3,7 @@ import { query } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, weeksInRange, isoWeekParts, type Obdobie } from "@/lib/fees";
+import { expenseAmountInRange, type ExpenseInterval } from "@/lib/expenses";
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -144,6 +145,41 @@ export default withErrorHandler(
           "JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
           "WHERE u.`registracnyPoplatokUhradeny` = 0 AND u.`aktivny` = 1"
       );
+
+      // ── Výdavky za obdobie (pravidelné sa rozvinú na počet výskytov) ─────────
+      const expenseRows = await query<{
+        datum: string; suma: number; pravidelny: number; interval: string | null; c_nazov: string;
+      }>(
+        "SELECT e.`datum`, e.`suma`, e.`pravidelny`, e.`interval`, c.`nazov` AS c_nazov " +
+          "FROM `Expense` e JOIN `ExpenseCategory` c ON c.`id` = e.`categoryId`"
+      );
+      const byCat = new Map<string, number>();
+      let vydavkySpolu = 0;
+      for (const e of expenseRows) {
+        const amount = expenseAmountInRange(
+          { datum: e.datum, suma: Number(e.suma), pravidelny: e.pravidelny === 1, interval: (e.interval as ExpenseInterval | null) },
+          from,
+          to
+        );
+        if (amount === 0) continue;
+        vydavkySpolu += amount;
+        byCat.set(e.c_nazov, (byCat.get(e.c_nazov) ?? 0) + amount);
+      }
+      const vydavkyPodlaKategorii = Array.from(byCat.entries())
+        .map(([kategoria, suma]) => ({ kategoria, suma: Math.round(suma * 10) / 10 }))
+        .sort((a, b) => b.suma - a.suma);
+
+      // Príjem firmy = poplatky od vodičov (nie tržba): týždenné poplatky + poplatky za smeny.
+      const prijmy = sumBy(weekRevenues, "celkovyPoplatokRow") + shiftFeesCollected + shiftFeesOutstanding;
+      const vydavky = Math.round(vydavkySpolu * 10) / 10;
+      const zisk = Math.round((prijmy - vydavky) * 10) / 10;
+
+      response.financie = {
+        prijmy: Math.round(prijmy * 10) / 10,
+        vydavky,
+        zisk,
+        vydavkyPodlaKategorii,
+      };
     }
 
     return res.status(200).json(response);

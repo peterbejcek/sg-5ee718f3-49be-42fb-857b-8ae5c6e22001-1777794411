@@ -33,6 +33,14 @@ enum TypSmeny {
   VOLNO // V
 }
 
+enum ExpenseInterval {
+  TYZDENNE
+  MESACNE
+  STVRTROCNE
+  POLROCNE
+  ROCNE
+}
+
 /// Prihlasovací účet aj osoba (vodič / dispečer / majiteľ).
 model User {
   id                          Int        @id @default(autoincrement())
@@ -81,11 +89,14 @@ model Vehicle {
   spz            String     @unique
   druhPohonu     DruhPohonu
   poplatokZaSmenu Decimal   @db.Decimal(10, 2) @default(0.00) // predvolený poplatok za smenu na tomto vozidle
+  lizing         Decimal    @db.Decimal(10, 2) @default(0.00) // mesačný lízing — prenáša sa do výdavkov
+  poistenie      Decimal    @db.Decimal(10, 2) @default(0.00) // mesačné poistenie — prenáša sa do výdavkov
   aktivne        Boolean    @default(true)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  shifts Shift[]
+  shifts   Shift[]
+  expenses Expense[]
 
   @@index([aktivne])
 }
@@ -153,4 +164,42 @@ model FeeTier {
 model AppSetting {
   key   String @id
   value String
+}
+
+/// Kategórie výdavkov (editovateľný číselník).
+model ExpenseCategory {
+  id       Int       @id @default(autoincrement())
+  nazov    String    @unique
+  poradie  Int       @default(0)
+  aktivna  Boolean   @default(true)
+  expenses Expense[]
+
+  @@index([poradie])
+}
+
+/// Výdavok firmy. Môže byť jednorazový alebo pravidelný (predpis v intervale).
+/// Ak je naviazaný na vozidlo (lízing/poistenie), synchronizuje sa z vozidla.
+model Expense {
+  id           Int              @id @default(autoincrement())
+  datum        DateTime         @db.Date
+  popis        String
+  suma         Decimal          @db.Decimal(10, 2)
+  uhradene     Boolean          @default(false)
+  uhradeneDna  DateTime?
+  pravidelny   Boolean          @default(false)
+  interval     ExpenseInterval?
+  category     ExpenseCategory  @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  // Ak výdavok pochádza z vozidla (lízing/poistenie), je naviazaný sem.
+  vehicle      Vehicle?         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId    Int?
+  zdroj        String           @default("MANUAL") // MANUAL | VOZIDLO_LIZING | VOZIDLO_POISTENIE
+  createdById  Int?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([datum])
+  @@index([categoryId])
+  @@index([vehicleId])
+  @@index([pravidelny])
 }

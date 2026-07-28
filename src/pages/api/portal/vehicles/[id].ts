@@ -3,6 +3,7 @@ import { z } from "zod";
 import { query, execute } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
+import { syncVehicleExpenses } from "@/lib/vehicleExpenses";
 
 const druhPohonu = z.enum(["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"]);
 
@@ -14,13 +15,25 @@ const updateSchema = z.object({
   spz: z.string().min(1).optional(),
   druhPohonu: druhPohonu.optional(),
   poplatokZaSmenu: z.coerce.number().min(0).optional(),
+  lizing: z.coerce.number().min(0).optional(),
+  poistenie: z.coerce.number().min(0).optional(),
   aktivne: z.boolean().optional(),
 });
 
 type VehicleRow = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; aktivne: number;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; aktivne: number;
 };
+
+function mapVehicle(v: VehicleRow) {
+  return {
+    ...v,
+    poplatokZaSmenu: Number(v.poplatokZaSmenu),
+    lizing: Number(v.lizing),
+    poistenie: Number(v.poistenie),
+    aktivne: v.aktivne === 1,
+  };
+}
 
 export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse) => {
@@ -41,6 +54,8 @@ export default withErrorHandler(
       if (body.spz !== undefined) add("spz", body.spz.toUpperCase().trim());
       if (body.druhPohonu !== undefined) add("druhPohonu", body.druhPohonu);
       if (body.poplatokZaSmenu !== undefined) add("poplatokZaSmenu", body.poplatokZaSmenu);
+      if (body.lizing !== undefined) add("lizing", body.lizing);
+      if (body.poistenie !== undefined) add("poistenie", body.poistenie);
       if (body.aktivne !== undefined) add("aktivne", body.aktivne ? 1 : 0);
 
       if (sets.length) {
@@ -50,10 +65,10 @@ export default withErrorHandler(
       }
       const rows = await query<VehicleRow>("SELECT * FROM `Vehicle` WHERE `id` = ?", [id]);
       if (!rows.length) return res.status(404).json({ message: "Vozidlo neexistuje" });
-      const v = rows[0];
-      return res.status(200).json({
-        vehicle: { ...v, poplatokZaSmenu: Number(v.poplatokZaSmenu), aktivne: v.aktivne === 1 },
-      });
+      const v = mapVehicle(rows[0]);
+      // Zosynchronizuj naviazané výdavky (lízing/poistenie) podľa aktuálnych hodnôt.
+      await syncVehicleExpenses(v.id, v.nazov, v.lizing, v.poistenie);
+      return res.status(200).json({ vehicle: v });
     }
 
     if (req.method === "DELETE") {

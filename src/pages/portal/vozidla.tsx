@@ -21,11 +21,11 @@ import { useToast } from "@/hooks/use-toast";
 
 type Vehicle = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; aktivne: boolean;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; aktivne: boolean;
 };
 
 const POHONY = ["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"];
-const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, aktivne: true };
+const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, aktivne: true };
 
 export default function VozidlaPage() {
   const { toast } = useToast();
@@ -89,7 +89,10 @@ export default function VozidlaPage() {
                 </Select>
               </div>
               <div><Label>Poplatok za smenu (€)</Label><Input type="number" step="0.01" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: Number(e.target.value) })} /></div>
+              <div><Label>Lízing / mesiac (€)</Label><Input type="number" step="0.01" value={form.lizing} onChange={(e) => setForm({ ...form, lizing: Number(e.target.value) })} /></div>
+              <div><Label>Poistenie / mesiac (€)</Label><Input type="number" step="0.01" value={form.poistenie} onChange={(e) => setForm({ ...form, poistenie: Number(e.target.value) })} /></div>
             </div>
+            <p className="text-xs text-muted-foreground">Lízing a poistenie sa automaticky prenesú do mesačných výdavkov.</p>
             <DialogFooter><Button onClick={save}>Uložiť</Button></DialogFooter>
           </DialogContent>
         </Dialog>

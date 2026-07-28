@@ -18,6 +18,7 @@ import {
   Users,
   CalendarDays,
   Euro,
+  Wallet,
   LogOut,
   Menu,
   X,
@@ -31,6 +32,7 @@ const NAV: NavItem[] = [
   { href: "/portal/vodici", label: "Vodiči", icon: <Users size={18} />, roles: ["MAJITEL"] },
   { href: "/portal/smeny", label: "Rozpis smien", icon: <CalendarDays size={18} />, roles: ["MAJITEL", "DISPECER"] },
   { href: "/portal/trzby", label: "Tržby a poplatky", icon: <Euro size={18} />, roles: ["MAJITEL"] },
+  { href: "/portal/vydavky", label: "Výdavky", icon: <Wallet size={18} />, roles: ["MAJITEL"] },
   { href: "/portal/moje-smeny", label: "Moje smeny", icon: <CalendarDays size={18} />, roles: ["VODIC"] },
   { href: "/portal/moje-poplatky", label: "Moje poplatky", icon: <Euro size={18} />, roles: ["VODIC"] },
 ];
