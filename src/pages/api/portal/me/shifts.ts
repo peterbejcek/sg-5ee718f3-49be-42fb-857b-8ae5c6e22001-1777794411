@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { query, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
-import { isoWeekDateRange } from "@/lib/fees";
+import { periodRange, type Obdobie } from "@/lib/fees";
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -19,10 +19,17 @@ export default withErrorHandler(
 
     const where: string[] = ["s.`driverId` = ?"];
     const params: any[] = [ctx.userId];
-    if (req.query.rok && req.query.tyzden) {
-      const { from, to } = isoWeekDateRange(Number(req.query.rok), Number(req.query.tyzden));
+    if (req.query.rok && (req.query.tyzden || req.query.mesiac)) {
+      const obdobie = (["tyzden", "mesiac", "rok"].includes(String(req.query.obdobie))
+        ? req.query.obdobie
+        : "tyzden") as Obdobie;
+      const range = periodRange(obdobie, {
+        rok: Number(req.query.rok),
+        tyzden: req.query.tyzden ? Number(req.query.tyzden) : undefined,
+        mesiac: req.query.mesiac ? Number(req.query.mesiac) : undefined,
+      });
       where.push("s.`datum` BETWEEN ? AND ?");
-      params.push(ymd(from), ymd(to));
+      params.push(ymd(range.from), ymd(range.to));
     }
 
     const rows = await query<Row>(

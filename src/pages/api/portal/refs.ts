@@ -11,7 +11,7 @@ export default withErrorHandler(
     const drivers = await query<{ id: number; meno: string; priezvisko: string; volaciZnak: string | null }>(
       "SELECT u.`id`, u.`meno`, u.`priezvisko`, u.`volaciZnak` " +
         "FROM `User` u JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
-        "WHERE u.`aktivny` = 1 ORDER BY u.`priezvisko` ASC, u.`meno` ASC"
+        "WHERE u.`aktivny` = 1 ORDER BY (u.`volaciZnak` IS NULL), u.`volaciZnak` ASC, u.`priezvisko` ASC"
     );
     const vehRows = await query<{ id: number; nazov: string; spz: string; poplatokZaSmenu: number }>(
       "SELECT `id`, `nazov`, `spz`, `poplatokZaSmenu` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"

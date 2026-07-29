@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FreeSlotsView, type FreeSlotVehicle } from "@/components/portal/FreeSlots";
 
 const MESIACE = [
   "Január", "Február", "Marec", "Apríl", "Máj", "Jún",
@@ -73,6 +74,7 @@ export default function DashboardPage() {
   const [tyzden, setTyzden] = useState(nowParts.isoTyzden);
   const [mesiac, setMesiac] = useState(new Date().getMonth() + 1);
   const [data, setData] = useState<Dashboard | null>(null);
+  const [freeSlots, setFreeSlots] = useState<FreeSlotVehicle[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -82,6 +84,14 @@ export default function DashboardPage() {
     )
       .then(setData)
       .catch((e) => setError(e.message));
+    // Voľné smeny na vozidlách — len pri týždennom zobrazení.
+    if (obdobie === "tyzden") {
+      apiFetch<{ vozidla: FreeSlotVehicle[] }>(`/api/portal/free-slots?obdobie=tyzden&rok=${rok}&tyzden=${tyzden}`)
+        .then((d) => setFreeSlots(d.vozidla))
+        .catch(() => setFreeSlots(null));
+    } else {
+      setFreeSlots(null);
+    }
   }, [obdobie, rok, tyzden, mesiac]);
 
   const suffix = obdobie === "tyzden" ? "(týž.)" : obdobie === "mesiac" ? "(mes.)" : "(rok)";
@@ -188,6 +198,15 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </>
+          )}
+
+          {obdobie === "tyzden" && freeSlots && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Voľné smeny na vozidlách (tento týždeň)</CardTitle></CardHeader>
+              <CardContent>
+                <FreeSlotsView vozidla={freeSlots} />
+              </CardContent>
+            </Card>
           )}
 
           <div className="grid md:grid-cols-2 gap-6">

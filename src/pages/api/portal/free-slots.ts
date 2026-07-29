@@ -1,0 +1,68 @@
+// Voľné (neobsadené) smeny na jednotlivých vozidlách za obdobie.
+// Na vozidle sú denne 2 sloty: denná (D) a nočná (N). Slot je voľný, ak naň
+// nie je priradená žiadna smena. Dostupné pre všetky portálové role.
+import type { NextApiRequest, NextApiResponse } from "next";
+import { query } from "@/lib/db";
+import { withAuth } from "@/lib/auth";
+import { withErrorHandler } from "@/lib/apiHelpers";
+import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
+
+const ymd = (d: Date) => d.toISOString().slice(0, 10);
+
+export default withErrorHandler(
+  withAuth(["VODIC", "DISPECER", "MAJITEL"], async (req: NextApiRequest, res: NextApiResponse) => {
+    if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
+
+    const cur = isoWeekParts(new Date());
+    // Voľné smeny podporujú len týždeň a mesiac (pri roku by bol zoznam neprehľadný).
+    const obdobie = (["tyzden", "mesiac"].includes(String(req.query.obdobie))
+      ? req.query.obdobie
+      : "tyzden") as Obdobie;
+    const rok = req.query.rok ? Number(req.query.rok) : cur.isoRok;
+    const tyzden = req.query.tyzden ? Number(req.query.tyzden) : cur.isoTyzden;
+    const mesiac = req.query.mesiac ? Number(req.query.mesiac) : new Date().getUTCMonth() + 1;
+    const range = periodRange(obdobie, { rok, tyzden, mesiac });
+
+    // Dni obdobia.
+    const dni: string[] = [];
+    const d = new Date(range.from);
+    while (d.getTime() <= range.to.getTime()) {
+      dni.push(ymd(d));
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+
+    const vehicles = await query<{ id: number; nazov: string; spz: string }>(
+      "SELECT `id`, `nazov`, `spz` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
+    );
+    const shifts = await query<{ vehicleId: number; datum: string; typ: string }>(
+      "SELECT `vehicleId`, `datum`, `typ` FROM `Shift` " +
+        "WHERE `vehicleId` IS NOT NULL AND `typ` <> 'VOLNO' AND `datum` BETWEEN ? AND ?",
+      [ymd(range.from), ymd(range.to)]
+    );
+
+    // Množina obsadených slotov: `${vehicleId}|${datum}|${typ}`.
+    const obsadene = new Set(shifts.map((s) => `${s.vehicleId}|${s.datum.slice(0, 10)}|${s.typ}`));
+
+    const vozidla = vehicles.map((v) => {
+      const volneSmeny: { datum: string; typ: "DENNA" | "NOCNA" }[] = [];
+      for (const den of dni) {
+        for (const typ of ["DENNA", "NOCNA"] as const) {
+          if (!obsadene.has(`${v.id}|${den}|${typ}`)) volneSmeny.push({ datum: den, typ });
+        }
+      }
+      return {
+        vehicleId: v.id,
+        nazov: v.nazov,
+        spz: v.spz,
+        volneSmeny,
+        pocetVolnych: volneSmeny.length,
+        pocetCelkom: dni.length * 2,
+      };
+    });
+
+    return res.status(200).json({
+      obdobie: { typ: obdobie, rok, tyzden, mesiac, label: range.label, from: ymd(range.from), to: ymd(range.to) },
+      vozidla,
+    });
+  })
+);
