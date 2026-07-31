@@ -27,7 +27,7 @@ import {
 type NavItem = { href: string; label: string; icon: ReactNode; roles: Role[] };
 
 const NAV: NavItem[] = [
-  { href: "/portal", label: "Dashboard", icon: <LayoutDashboard size={18} />, roles: ["MAJITEL", "DISPECER"] },
+  { href: "/portal", label: "Dashboard", icon: <LayoutDashboard size={18} />, roles: ["MAJITEL", "DISPECER", "VODIC"] },
   { href: "/portal/vozidla", label: "Vozidlá", icon: <Car size={18} />, roles: ["MAJITEL"] },
   { href: "/portal/vodici", label: "Vodiči", icon: <Users size={18} />, roles: ["MAJITEL"] },
   { href: "/portal/smeny", label: "Rozpis smien", icon: <CalendarDays size={18} />, roles: ["MAJITEL", "DISPECER"] },

@@ -54,6 +54,15 @@ export function formatEur(n: number | string | null | undefined): string {
   return v.toLocaleString("sk-SK", { style: "currency", currency: "EUR" });
 }
 
+/** Dátum v tvare DD.MM.RRRR (zo vstupu 'YYYY-MM-DD' alebo ISO / Date). */
+export function formatDate(value: string | Date | null | undefined): string {
+  if (!value) return "—";
+  const s = typeof value === "string" ? value.slice(0, 10) : value.toISOString().slice(0, 10);
+  const [y, m, d] = s.split("-");
+  if (!y || !m || !d) return s;
+  return `${d.padStart(2, "0")}.${m.padStart(2, "0")}.${y}`;
+}
+
 export const ROLE_LABELS: Record<Role, string> = {
   MAJITEL: "Majiteľ",
   DISPECER: "Dispečer",

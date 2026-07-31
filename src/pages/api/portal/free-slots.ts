@@ -23,11 +23,13 @@ export default withErrorHandler(
     const mesiac = req.query.mesiac ? Number(req.query.mesiac) : new Date().getUTCMonth() + 1;
     const range = periodRange(obdobie, { rok, tyzden, mesiac });
 
-    // Dni obdobia.
+    // Dni obdobia — len od dnešného dňa (minulé voľné smeny sa nezobrazujú).
+    const dnesStr = ymd(new Date());
     const dni: string[] = [];
     const d = new Date(range.from);
     while (d.getTime() <= range.to.getTime()) {
-      dni.push(ymd(d));
+      const den = ymd(d);
+      if (den >= dnesStr) dni.push(den);
       d.setUTCDate(d.getUTCDate() + 1);
     }
 

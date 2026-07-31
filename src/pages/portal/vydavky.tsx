@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatDate } from "@/lib/portalClient";
 import { INTERVAL_LABELS, type ExpenseInterval } from "@/lib/expenses";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -157,7 +157,7 @@ export default function VydavkyPage() {
           <TableBody>
             {list.map((e) => (
               <TableRow key={e.id}>
-                <TableCell>{e.datum.slice(0, 10)}</TableCell>
+                <TableCell>{formatDate(e.datum)}</TableCell>
                 <TableCell className="font-medium">{e.popis}{e.zdroj !== "MANUAL" && <Badge variant="outline" className="ml-2">z vozidla</Badge>}</TableCell>
                 <TableCell>{e.kategoria}</TableCell>
                 <TableCell>{formatEur(e.suma)}</TableCell>

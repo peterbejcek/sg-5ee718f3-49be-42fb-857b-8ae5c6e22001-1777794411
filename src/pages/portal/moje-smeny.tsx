@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur, SHIFT_LABELS } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatDate, SHIFT_LABELS } from "@/lib/portalClient";
 import { isoWeekParts } from "@/lib/fees";
 import { FreeSlotsView, type FreeSlotVehicle } from "@/components/portal/FreeSlots";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +74,7 @@ export default function MojeSmenyPage() {
       <div className="space-y-6">
         <Card>
           <CardHeader><CardTitle className="text-lg">Voľné smeny na vozidlách</CardTitle></CardHeader>
-          <CardContent><FreeSlotsView vozidla={freeSlots} /></CardContent>
+          <CardContent><FreeSlotsView vozidla={freeSlots} onAssigned={load} /></CardContent>
         </Card>
 
         <div>
@@ -90,7 +90,7 @@ export default function MojeSmenyPage() {
               <TableBody>
                 {shifts.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell>{s.datum.slice(0, 10)}</TableCell>
+                    <TableCell>{formatDate(s.datum)}</TableCell>
                     <TableCell>{SHIFT_LABELS[s.typ]}</TableCell>
                     <TableCell>{s.vehicle ? `${s.vehicle.nazov} (${s.vehicle.spz})` : "—"}</TableCell>
                     <TableCell>{s.poplatokZaSmenu != null ? formatEur(s.poplatokZaSmenu) : "—"}</TableCell>

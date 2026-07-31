@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, ROLE_LABELS, type Role } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatDate, ROLE_LABELS, type Role } from "@/lib/portalClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,14 @@ type User = {
   roles: Role[];
 };
 
+type Unpaid = {
+  vodic: { meno: string; priezvisko: string; volaciZnak: string | null };
+  tyzdennePoplatky: { id: number; isoRok: number; isoTyzden: number; suma: number }[];
+  poplatkyZaPrenajom: { id: number; datum: string; vozidlo: string | null; suma: number }[];
+  registracia: { uhradeny: boolean; poplatok: number };
+  suhrn: { tyzdennePoplatky: number; poplatkyZaPrenajom: number; registracia: number; spolu: number };
+};
+
 const ALL_ROLES: Role[] = ["VODIC", "DISPECER", "MAJITEL"];
 const emptyForm = {
   email: "", meno: "", priezvisko: "", telefon: "", volaciZnak: "",
@@ -32,6 +40,14 @@ export default function VodiciPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
+  const [unpaid, setUnpaid] = useState<Unpaid | null>(null);
+
+  function openUnpaid(u: User) {
+    setUnpaid(null);
+    apiFetch<Unpaid>(`/api/portal/driver-unpaid?driverId=${u.id}`)
+      .then(setUnpaid)
+      .catch((e) => toast({ title: "Chyba", description: e instanceof Error ? e.message : "", variant: "destructive" }));
+  }
 
   function load() {
     apiFetch<{ users: User[] }>("/api/portal/users").then((d) => setList(d.users));
@@ -148,7 +164,11 @@ export default function VodiciPage() {
           <TableBody>
             {list.map((u) => (
               <TableRow key={u.id}>
-                <TableCell className="font-medium">{u.priezvisko} {u.meno}</TableCell>
+                <TableCell className="font-medium">
+                  <button className="text-[#282462] hover:underline text-left" onClick={() => openUnpaid(u)} title="Zobraziť neuhradené poplatky">
+                    {u.priezvisko} {u.meno}
+                  </button>
+                </TableCell>
                 <TableCell>{u.volaciZnak || "—"}</TableCell>
                 <TableCell className="text-sm"><div>{u.email}</div><div className="text-muted-foreground">{u.telefon}</div></TableCell>
                 <TableCell>{u.roles.map((r) => <Badge key={r} variant="outline" className="mr-1">{ROLE_LABELS[r]}</Badge>)}</TableCell>
@@ -173,6 +193,57 @@ export default function VodiciPage() {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={!!unpaid} onOpenChange={(o) => !o && setUnpaid(null)}>
+        <DialogContent>
+          {unpaid && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  Neuhradené poplatky — {unpaid.vodic.priezvisko} {unpaid.vodic.meno}
+                  {unpaid.vodic.volaciZnak ? ` · ${unpaid.vodic.volaciZnak}` : ""}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-muted/40 rounded p-2">Týždenné poplatky<br /><span className="font-semibold">{formatEur(unpaid.suhrn.tyzdennePoplatky)}</span></div>
+                  <div className="bg-muted/40 rounded p-2">Poplatky za prenájom<br /><span className="font-semibold">{formatEur(unpaid.suhrn.poplatkyZaPrenajom)}</span></div>
+                  <div className="bg-muted/40 rounded p-2">Registračný poplatok<br /><span className="font-semibold">{formatEur(unpaid.suhrn.registracia)}</span></div>
+                  <div className="bg-red-50 rounded p-2">Spolu nedoplatok<br /><span className="font-bold text-red-600">{formatEur(unpaid.suhrn.spolu)}</span></div>
+                </div>
+
+                {unpaid.tyzdennePoplatky.length > 0 && (
+                  <div>
+                    <div className="font-medium mb-1">Týždenné poplatky</div>
+                    {unpaid.tyzdennePoplatky.map((r) => (
+                      <div key={r.id} className="flex justify-between border-b py-1">
+                        <span>Týždeň {r.isoTyzden}/{r.isoRok}</span><span className="font-medium">{formatEur(r.suma)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {unpaid.poplatkyZaPrenajom.length > 0 && (
+                  <div>
+                    <div className="font-medium mb-1">Poplatky za prenájom</div>
+                    {unpaid.poplatkyZaPrenajom.map((r) => (
+                      <div key={r.id} className="flex justify-between border-b py-1">
+                        <span>{formatDate(r.datum)}{r.vozidlo ? ` · ${r.vozidlo}` : ""}</span><span className="font-medium">{formatEur(r.suma)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!unpaid.registracia.uhradeny && (
+                  <div className="text-red-600">Neuhradený registračný poplatok: {formatEur(unpaid.registracia.poplatok)}</div>
+                )}
+
+                {unpaid.suhrn.spolu === 0 && <p className="text-green-600">Vodič nemá žiadne nedoplatky 👍</p>}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </PortalLayout>
   );
 }
