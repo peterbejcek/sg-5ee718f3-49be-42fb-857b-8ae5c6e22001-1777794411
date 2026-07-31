@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute, toBool } from "@/lib/db";
+import { query, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
@@ -41,7 +41,7 @@ export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method === "GET") {
       const where: string[] = [];
-      const params: any[] = [];
+      const params: SqlParam[] = [];
       if (req.query.rok) { where.push("YEAR(e.`datum`) = ?"); params.push(Number(req.query.rok)); }
       if (req.query.categoryId) { where.push("e.`categoryId` = ?"); params.push(Number(req.query.categoryId)); }
       const whereSql = where.length ? "WHERE " + where.join(" AND ") : "";

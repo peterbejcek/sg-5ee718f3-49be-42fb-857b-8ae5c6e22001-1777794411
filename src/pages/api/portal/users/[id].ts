@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, queryOne, execute, withTransaction, toBool, getUserRoles } from "@/lib/db";
+import { queryOne, execute, withTransaction, toBool, getUserRoles, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { generateToken, sendPasswordSetupEmail } from "@/lib/email";
@@ -39,8 +39,8 @@ export default withErrorHandler(
 
       await withTransaction(async (tx) => {
         const sets: string[] = [];
-        const params: any[] = [];
-        const add = (col: string, val: unknown) => { sets.push(`\`${col}\` = ?`); params.push(val); };
+        const params: SqlParam[] = [];
+        const add = (col: string, val: SqlParam) => { sets.push(`\`${col}\` = ?`); params.push(val); };
 
         if (body.meno !== undefined) add("meno", body.meno);
         if (body.priezvisko !== undefined) add("priezvisko", body.priezvisko);

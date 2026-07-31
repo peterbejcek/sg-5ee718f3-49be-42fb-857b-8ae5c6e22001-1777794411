@@ -1,7 +1,7 @@
 // Synchronizácia lízingu a poistenia vozidla do pravidelných (mesačných) výdavkov.
 // Pri uložení vozidla sa udržiava naviazaný výdavok (zdroj VOZIDLO_LIZING /
 // VOZIDLO_POISTENIE). Ak je suma 0, naviazaný výdavok sa odstráni.
-import { query, queryOne, execute } from "@/lib/db";
+import { queryOne, execute } from "@/lib/db";
 
 const firstOfMonth = () => {
   const d = new Date();

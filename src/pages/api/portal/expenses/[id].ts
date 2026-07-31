@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute } from "@/lib/db";
+import { query, execute, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { mapExpense } from "./index";
@@ -31,8 +31,8 @@ export default withErrorHandler(
       const body = parseBody(req, res, updateSchema);
       if (!body) return;
       const sets: string[] = [];
-      const params: any[] = [];
-      const add = (c: string, v: unknown) => { sets.push(`\`${c}\` = ?`); params.push(v); };
+      const params: SqlParam[] = [];
+      const add = (c: string, v: SqlParam) => { sets.push(`\`${c}\` = ?`); params.push(v); };
       if (body.datum !== undefined) add("datum", body.datum.slice(0, 10));
       if (body.popis !== undefined) add("popis", body.popis.trim());
       if (body.categoryId !== undefined) add("categoryId", body.categoryId);

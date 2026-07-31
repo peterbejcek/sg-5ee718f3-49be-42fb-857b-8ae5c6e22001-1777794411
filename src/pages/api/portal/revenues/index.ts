@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute, toBool } from "@/lib/db";
+import { query, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { vypocitajPoplatky } from "@/lib/fees";
@@ -38,7 +38,7 @@ export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method === "GET") {
       const where: string[] = [];
-      const params: any[] = [];
+      const params: SqlParam[] = [];
       if (req.query.rok) { where.push("r.`isoRok` = ?"); params.push(Number(req.query.rok)); }
       if (req.query.tyzden) { where.push("r.`isoTyzden` = ?"); params.push(Number(req.query.tyzden)); }
       if (req.query.driverId) { where.push("r.`driverId` = ?"); params.push(Number(req.query.driverId)); }

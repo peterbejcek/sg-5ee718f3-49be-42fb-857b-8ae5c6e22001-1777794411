@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute, toBool } from "@/lib/db";
+import { query, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { vypocitajPoplatky } from "@/lib/fees";
@@ -42,8 +42,8 @@ export default withErrorHandler(
       if (!body) return;
 
       const sets: string[] = [];
-      const params: any[] = [];
-      const add = (col: string, val: unknown) => { sets.push(`\`${col}\` = ?`); params.push(val); };
+      const params: SqlParam[] = [];
+      const add = (col: string, val: SqlParam) => { sets.push(`\`${col}\` = ?`); params.push(val); };
 
       if (body.trzba !== undefined) {
         const tiers = await getFeeTiers();

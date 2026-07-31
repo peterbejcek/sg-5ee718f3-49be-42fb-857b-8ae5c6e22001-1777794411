@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, queryOne, execute } from "@/lib/db";
+import { query, queryOne, execute, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
@@ -19,8 +19,8 @@ export default withErrorHandler(
       const body = parseBody(req, res, updateSchema);
       if (!body) return;
       const sets: string[] = [];
-      const params: any[] = [];
-      const add = (c: string, v: unknown) => { sets.push(`\`${c}\` = ?`); params.push(v); };
+      const params: SqlParam[] = [];
+      const add = (c: string, v: SqlParam) => { sets.push(`\`${c}\` = ?`); params.push(v); };
       if (body.nazov !== undefined) add("nazov", body.nazov.trim());
       if (body.aktivna !== undefined) add("aktivna", body.aktivna ? 1 : 0);
       if (body.poradie !== undefined) add("poradie", body.poradie);

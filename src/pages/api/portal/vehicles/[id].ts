@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute } from "@/lib/db";
+import { query, execute, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { syncVehicleExpenses } from "@/lib/vehicleExpenses";
@@ -45,8 +45,8 @@ export default withErrorHandler(
       if (!body) return;
 
       const sets: string[] = [];
-      const params: any[] = [];
-      const add = (col: string, val: unknown) => { sets.push(`\`${col}\` = ?`); params.push(val); };
+      const params: SqlParam[] = [];
+      const add = (col: string, val: SqlParam) => { sets.push(`\`${col}\` = ?`); params.push(val); };
       if (body.nazov !== undefined) add("nazov", body.nazov);
       if (body.znacka !== undefined) add("znacka", body.znacka);
       if (body.model !== undefined) add("model", body.model);

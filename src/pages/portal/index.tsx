@@ -83,6 +83,7 @@ export default function DashboardPage() {
       .then(setData).catch((e) => setError(e.message));
     loadFreeSlots();
   }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, [obdobie, rok, tyzden, mesiac]);
 
   const suffix = obdobie === "tyzden" ? "(týž.)" : obdobie === "mesiac" ? "(mes.)" : "(rok)";

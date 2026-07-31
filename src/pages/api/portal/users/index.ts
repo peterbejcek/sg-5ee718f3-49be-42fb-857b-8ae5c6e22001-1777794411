@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, queryOne, execute, withTransaction, toBool, type Role } from "@/lib/db";
+import { query, queryOne, withTransaction, toBool, type Role } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { generateToken, sendPasswordSetupEmail } from "@/lib/email";

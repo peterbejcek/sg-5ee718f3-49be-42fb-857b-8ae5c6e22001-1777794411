@@ -7,6 +7,9 @@
 // nie za behu aplikácie.
 import mysql from "mysql2/promise";
 
+/** Prípustné typy SQL parametrov (náhrada za any[] v dopytoch). */
+export type SqlParam = string | number | boolean | Date | null | undefined;
+
 export type Role = "MAJITEL" | "DISPECER" | "VODIC";
 export type TypSmeny = "DENNA" | "NOCNA" | "VOLNO";
 export type DruhPohonu = "ELEKTRO" | "HYBRID" | "BENZIN" | "DIESEL" | "LPG" | "CNG";
@@ -47,7 +50,7 @@ export function getPool(): mysql.Pool {
 /** SELECT vracajúci pole riadkov. */
 export async function query<T = Record<string, unknown>>(
   sql: string,
-  params: any[] = []
+  params: SqlParam[] = []
 ): Promise<T[]> {
   const [rows] = await getPool().query(sql, params);
   return rows as T[];
@@ -56,7 +59,7 @@ export async function query<T = Record<string, unknown>>(
 /** SELECT vracajúci prvý riadok alebo null. */
 export async function queryOne<T = Record<string, unknown>>(
   sql: string,
-  params: any[] = []
+  params: SqlParam[] = []
 ): Promise<T | null> {
   const rows = await query<T>(sql, params);
   return rows.length ? rows[0] : null;
@@ -65,7 +68,7 @@ export async function queryOne<T = Record<string, unknown>>(
 /** INSERT/UPDATE/DELETE — vracia hlavičku výsledku (insertId, affectedRows). */
 export async function execute(
   sql: string,
-  params: any[] = []
+  params: SqlParam[] = []
 ): Promise<mysql.ResultSetHeader> {
   const [result] = await getPool().execute(sql, params);
   return result as mysql.ResultSetHeader;

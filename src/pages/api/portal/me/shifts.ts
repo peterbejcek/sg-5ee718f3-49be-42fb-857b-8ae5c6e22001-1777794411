@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { query, toBool } from "@/lib/db";
+import { query, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, type Obdobie } from "@/lib/fees";
@@ -18,7 +18,7 @@ export default withErrorHandler(
     if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
 
     const where: string[] = ["s.`driverId` = ?"];
-    const params: any[] = [ctx.userId];
+    const params: SqlParam[] = [ctx.userId];
     if (req.query.rok && (req.query.tyzden || req.query.mesiac)) {
       const obdobie = (["tyzden", "mesiac", "rok"].includes(String(req.query.obdobie))
         ? req.query.obdobie
