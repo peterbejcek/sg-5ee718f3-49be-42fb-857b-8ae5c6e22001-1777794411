@@ -18,6 +18,12 @@ export default function PrihlaseniePage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Povolený je len interný relatívny cieľ (žiadne open-redirecty).
+  function safeRedirect(): string {
+    const r = typeof router.query.redirect === "string" ? router.query.redirect : "/portal";
+    return r.startsWith("/") && !r.startsWith("//") ? r : "/portal";
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -27,11 +33,13 @@ export default function PrihlaseniePage() {
         method: "POST",
         body: JSON.stringify({ email, password, turnstileToken }),
       });
-      const redirect = typeof router.query.redirect === "string" ? router.query.redirect : "/portal";
-      router.replace(redirect);
+      // Tvrdá navigácia (nie router.replace): prehliadač pošle čerstvú
+      // session cookie v novej požiadavke, takže middleware ju hneď uvidí.
+      // Zabraňuje to „poskakovaniu"/opakovanému obnovovaniu medzi
+      // /prihlasenie a /portal (súbeh client-routera a middleware).
+      window.location.assign(safeRedirect());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Prihlásenie zlyhalo");
-    } finally {
       setLoading(false);
     }
   }
@@ -49,14 +57,16 @@ export default function PrihlaseniePage() {
             <CardTitle>E-TAXI Košice — Portál</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={submit} className="space-y-4" autoComplete="off">
+            {/* Štandardný prihlasovací formulár — správne autoComplete atribúty,
+                aby prehliadač neponúkal „vytvorenie hesla" (to je pre registráciu). */}
+            <form onSubmit={submit} className="space-y-4" autoComplete="on">
               <div>
                 <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
-                  name="etaxi-email"
+                  name="email"
                   type="email"
-                  autoComplete="off"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -66,9 +76,9 @@ export default function PrihlaseniePage() {
                 <Label htmlFor="password">Heslo</Label>
                 <Input
                   id="password"
-                  name="etaxi-password"
+                  name="password"
                   type="password"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
