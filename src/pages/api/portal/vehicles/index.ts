@@ -17,12 +17,13 @@ const createSchema = z.object({
   poplatokZaSmenu: z.coerce.number().min(0).default(0),
   lizing: z.coerce.number().min(0).default(0),
   poistenie: z.coerce.number().min(0).default(0),
+  sukromne: z.boolean().default(false),
   aktivne: z.boolean().default(true),
 });
 
 type VehicleRow = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; aktivne: number;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; sukromne: number; aktivne: number;
 };
 
 function mapVehicle(v: VehicleRow) {
@@ -31,6 +32,7 @@ function mapVehicle(v: VehicleRow) {
     poplatokZaSmenu: Number(v.poplatokZaSmenu),
     lizing: Number(v.lizing),
     poistenie: Number(v.poistenie),
+    sukromne: v.sukromne === 1,
     aktivne: v.aktivne === 1,
   };
 }
@@ -45,12 +47,12 @@ export default withErrorHandler(
       const body = parseBody(req, res, createSchema);
       if (!body) return;
       const r = await execute(
-        "INSERT INTO `Vehicle` (`nazov`,`znacka`,`model`,`farba`,`spz`,`druhPohonu`,`poplatokZaSmenu`,`lizing`,`poistenie`,`aktivne`,`createdAt`,`updatedAt`) " +
-          "VALUES (?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))",
+        "INSERT INTO `Vehicle` (`nazov`,`znacka`,`model`,`farba`,`spz`,`druhPohonu`,`poplatokZaSmenu`,`lizing`,`poistenie`,`sukromne`,`aktivne`,`createdAt`,`updatedAt`) " +
+          "VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))",
         [
           body.nazov, body.znacka, body.model, body.farba,
           body.spz.toUpperCase().trim(), body.druhPohonu, body.poplatokZaSmenu,
-          body.lizing, body.poistenie, body.aktivne ? 1 : 0,
+          body.lizing, body.poistenie, body.sukromne ? 1 : 0, body.aktivne ? 1 : 0,
         ]
       );
       await syncVehicleExpenses(r.insertId, body.nazov, body.lizing, body.poistenie);

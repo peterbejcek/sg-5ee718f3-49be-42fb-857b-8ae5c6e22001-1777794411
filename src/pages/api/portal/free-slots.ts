@@ -33,8 +33,9 @@ export default withErrorHandler(
       d.setUTCDate(d.getUTCDate() + 1);
     }
 
+    // Súkromné vozidlá sa medzi voľnými smenami neponúkajú.
     const vehicles = await query<{ id: number; nazov: string; spz: string }>(
-      "SELECT `id`, `nazov`, `spz` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
+      "SELECT `id`, `nazov`, `spz` FROM `Vehicle` WHERE `aktivne` = 1 AND `sukromne` = 0 ORDER BY `nazov` ASC"
     );
     const shifts = await query<{ vehicleId: number; datum: string; typ: string }>(
       "SELECT `vehicleId`, `datum`, `typ` FROM `Shift` " +

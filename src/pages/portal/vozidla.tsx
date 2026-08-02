@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -21,11 +22,11 @@ import { useToast } from "@/hooks/use-toast";
 
 type Vehicle = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; aktivne: boolean;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; sukromne: boolean; aktivne: boolean;
 };
 
 const POHONY = ["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"];
-const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, aktivne: true };
+const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, sukromne: false, aktivne: true };
 
 export default function VozidlaPage() {
   const { toast } = useToast();
@@ -91,6 +92,10 @@ export default function VozidlaPage() {
               <div><Label>Poplatok za smenu (€)</Label><Input type="number" step="0.01" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: Number(e.target.value) })} /></div>
               <div><Label>Lízing / mesiac (€)</Label><Input type="number" step="0.01" value={form.lizing} onChange={(e) => setForm({ ...form, lizing: Number(e.target.value) })} /></div>
               <div><Label>Poistenie / mesiac (€)</Label><Input type="number" step="0.01" value={form.poistenie} onChange={(e) => setForm({ ...form, poistenie: Number(e.target.value) })} /></div>
+              <div className="col-span-2 flex items-center gap-2 pt-1">
+                <Checkbox id="sukromne" checked={form.sukromne} onCheckedChange={(v) => setForm({ ...form, sukromne: !!v })} />
+                <Label htmlFor="sukromne" className="font-normal cursor-pointer">Súkromné vozidlo (neponúka sa medzi voľnými smenami)</Label>
+              </div>
             </div>
             <p className="text-xs text-muted-foreground">Lízing a poistenie sa automaticky prenesú do mesačných výdavkov.</p>
             <DialogFooter><Button onClick={save}>Uložiť</Button></DialogFooter>
@@ -117,7 +122,12 @@ export default function VozidlaPage() {
                 <TableCell>{v.spz}</TableCell>
                 <TableCell>{v.druhPohonu}</TableCell>
                 <TableCell>{formatEur(v.poplatokZaSmenu)}</TableCell>
-                <TableCell>{v.aktivne ? <Badge className="bg-green-600">Aktívne</Badge> : <Badge variant="secondary">Neaktívne</Badge>}</TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {v.aktivne ? <Badge className="bg-green-600">Aktívne</Badge> : <Badge variant="secondary">Neaktívne</Badge>}
+                    {v.sukromne && <Badge variant="outline">Súkromné</Badge>}
+                  </div>
+                </TableCell>
                 <TableCell className="text-right whitespace-nowrap">
                   <Button size="sm" variant="ghost" onClick={() => openEdit(v)}>Upraviť</Button>
                   <Button size="sm" variant="ghost" className="text-red-600" onClick={() => remove(v)}>Zmazať</Button>

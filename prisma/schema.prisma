@@ -91,6 +91,7 @@ model Vehicle {
   poplatokZaSmenu Decimal   @db.Decimal(10, 2) @default(0.00) // predvolený poplatok za smenu na tomto vozidle
   lizing         Decimal    @db.Decimal(10, 2) @default(0.00) // mesačný lízing — prenáša sa do výdavkov
   poistenie      Decimal    @db.Decimal(10, 2) @default(0.00) // mesačné poistenie — prenáša sa do výdavkov
+  sukromne       Boolean    @default(false) // súkromné vozidlo — neponúka sa medzi voľnými smenami
   aktivne        Boolean    @default(true)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
