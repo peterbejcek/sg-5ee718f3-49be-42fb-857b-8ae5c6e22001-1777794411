@@ -1,5 +1,7 @@
 import { sk } from "./sk";
 import { en } from "./en";
+import { de } from "./de";
+import { hu } from "./hu";
 import type { Dictionary } from "./sk";
 
 // Pridanie nového jazyka:
@@ -8,7 +10,7 @@ import type { Dictionary } from "./sk";
 // 3. pridajte kód jazyka do `i18n.locales` v next.config.mjs,
 // 4. doplňte URL do public/sitemap.xml.
 
-export const dictionaries = { sk, en } satisfies Record<string, Dictionary>;
+export const dictionaries = { sk, en, de, hu } satisfies Record<string, Dictionary>;
 
 export type Locale = keyof typeof dictionaries;
 

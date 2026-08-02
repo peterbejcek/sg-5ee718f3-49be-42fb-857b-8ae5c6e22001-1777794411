@@ -17,6 +17,8 @@ Web je viacjazyčný (vstavaný i18n routing Next.js):
 
 - **Slovenčina** (hlavný jazyk): `https://e-taxike.sk/`
 - **Angličtina**: `https://e-taxike.sk/en`
+- **Nemčina**: `https://e-taxike.sk/de`
+- **Maďarčina**: `https://e-taxike.sk/hu`
 
 Všetky texty sú v slovníkoch `src/locales/sk.ts` a `src/locales/en.ts`.
 Slovenský slovník definuje typ `Dictionary` — TypeScript ustráži, že žiadny

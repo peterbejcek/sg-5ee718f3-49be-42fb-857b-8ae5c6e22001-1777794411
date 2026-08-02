@@ -21,7 +21,7 @@ const nextConfig = {
   },
   i18n: {
     // Nový jazyk: pridajte kód sem a vytvorte slovník v src/locales (pozri src/locales/index.ts).
-    locales: ["sk", "en"],
+    locales: ["sk", "en", "de", "hu"],
     defaultLocale: "sk",
     localeDetection: false,
   },
