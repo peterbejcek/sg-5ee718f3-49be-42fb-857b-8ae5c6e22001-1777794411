@@ -2,13 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { queryOne, getUserRoles, toBool, type UserRow } from "@/lib/db";
 import { verifyPassword, createSessionToken, setSessionCookie } from "@/lib/auth";
-import { verifyTurnstile } from "@/lib/turnstile";
 import { parseBody, getClientIp, withErrorHandler } from "@/lib/apiHelpers";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
-  turnstileToken: z.string().optional(),
 });
 
 // Jednoduchý in-memory rate-limit (na proces). Na prod ideálne DB/Redis.
@@ -36,11 +34,6 @@ export default withErrorHandler(async (req: NextApiRequest, res: NextApiResponse
   const ip = getClientIp(req) ?? "unknown";
   if (rateLimited(`${ip}:${body.email}`)) {
     return res.status(429).json({ message: "Priveľa pokusov. Skúste neskôr." });
-  }
-
-  const human = await verifyTurnstile(body.turnstileToken, ip);
-  if (!human) {
-    return res.status(400).json({ message: "Overenie, že ste človek, zlyhalo." });
   }
 
   const user = await queryOne<UserRow>("SELECT * FROM `User` WHERE `email` = ?", [

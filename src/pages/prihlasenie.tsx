@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { apiFetch } from "@/lib/portalClient";
-import { Turnstile } from "@/components/portal/Turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,6 @@ export default function PrihlaseniePage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +29,7 @@ export default function PrihlaseniePage() {
     try {
       await apiFetch("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password, turnstileToken }),
+        body: JSON.stringify({ email, password }),
       });
       // Tvrdá navigácia (nie router.replace): prehliadač pošle čerstvú
       // session cookie v novej požiadavke, takže middleware ju hneď uvidí.
@@ -84,8 +82,6 @@ export default function PrihlaseniePage() {
                   required
                 />
               </div>
-
-              <Turnstile onToken={setTurnstileToken} />
 
               {error && <p className="text-sm text-red-600">{error}</p>}
 
