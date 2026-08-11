@@ -41,6 +41,11 @@ enum ExpenseInterval {
   ROCNE
 }
 
+enum TypBloku {
+  NEDOSTUPNE
+  SERVIS
+}
+
 /// Prihlasovací účet aj osoba (vodič / dispečer / majiteľ).
 model User {
   id                          Int        @id @default(autoincrement())
@@ -50,6 +55,7 @@ model User {
   priezvisko                  String
   telefon                     String?
   volaciZnak                  String?    @unique // len vodiči, napr. "E10"
+  miestoStriedania            String?    // miesto striedania vodičov (pre kontakty)
   aktivny                     Boolean    @default(true)
   mustSetPassword             Boolean    @default(true)
   registracnyPoplatokUhradeny Boolean    @default(false)
@@ -92,14 +98,33 @@ model Vehicle {
   lizing         Decimal    @db.Decimal(10, 2) @default(0.00) // mesačný lízing — prenáša sa do výdavkov
   poistenie      Decimal    @db.Decimal(10, 2) @default(0.00) // mesačné poistenie — prenáša sa do výdavkov
   sukromne       Boolean    @default(false) // súkromné vozidlo — neponúka sa medzi voľnými smenami
+  casVymeny      String?    // čas výmeny denná↔nočná, napr. "18:00"
   aktivne        Boolean    @default(true)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
   shifts   Shift[]
   expenses Expense[]
+  blocks   VehicleBlock[]
 
   @@index([aktivne])
+}
+
+/// Časové blokovanie vozidla (nedostupné / servis) — v tomto období sa naň
+/// nedá priradiť smena a existujúce smeny sa hlásia ako kolízia.
+model VehicleBlock {
+  id          Int      @id @default(autoincrement())
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId   Int
+  typ         TypBloku
+  datumOd     DateTime @db.Date
+  datumDo     DateTime @db.Date
+  poznamka    String?
+  createdById Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([vehicleId, datumOd, datumDo])
 }
 
 /// Jedna smena vodiča v konkrétny deň (D/N/V), voliteľne na firemnom vozidle.

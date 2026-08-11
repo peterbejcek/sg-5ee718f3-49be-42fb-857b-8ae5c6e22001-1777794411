@@ -17,7 +17,7 @@ type Obdobie = "tyzden" | "mesiac";
 type Shift = {
   id: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO";
   poplatokZaSmenu: number | null; poplatokUhradeny: boolean;
-  vehicle: { nazov: string; spz: string } | null;
+  vehicle: { nazov: string; spz: string; casVymeny: string | null } | null;
 };
 
 const MESIACE = [
@@ -84,7 +84,7 @@ export default function MojeSmenyPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Dátum</TableHead><TableHead>Smena</TableHead>
-                  <TableHead>Vozidlo</TableHead><TableHead>Poplatok za prenájom</TableHead><TableHead>Stav úhrady</TableHead>
+                  <TableHead>Vozidlo</TableHead><TableHead>Čas výmeny</TableHead><TableHead>Poplatok za prenájom</TableHead><TableHead>Stav úhrady</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -93,6 +93,7 @@ export default function MojeSmenyPage() {
                     <TableCell>{formatDate(s.datum)}</TableCell>
                     <TableCell>{SHIFT_LABELS[s.typ]}</TableCell>
                     <TableCell>{s.vehicle ? `${s.vehicle.nazov} (${s.vehicle.spz})` : "—"}</TableCell>
+                    <TableCell>{s.typ !== "VOLNO" && s.vehicle?.casVymeny ? s.vehicle.casVymeny : "—"}</TableCell>
                     <TableCell>{s.poplatokZaSmenu != null ? formatEur(s.poplatokZaSmenu) : "—"}</TableCell>
                     <TableCell>
                       {s.typ === "VOLNO" || s.poplatokZaSmenu == null ? "—"
@@ -100,7 +101,7 @@ export default function MojeSmenyPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {shifts.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-6">Žiadne smeny za obdobie.</TableCell></TableRow>}
+                {shifts.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-6">Žiadne smeny za obdobie.</TableCell></TableRow>}
               </TableBody>
             </Table>
           </div>

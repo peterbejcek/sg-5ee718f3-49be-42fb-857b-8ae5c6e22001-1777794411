@@ -42,6 +42,14 @@ export default withErrorHandler(
         "WHERE `vehicleId` IS NOT NULL AND `typ` <> 'VOLNO' AND `datum` BETWEEN ? AND ?",
       [ymd(range.from), ymd(range.to)]
     );
+    // Blokované termíny vozidiel (nedostupné / servis) — také dni sa neponúkajú.
+    const blocks = await query<{ vehicleId: number; datumOd: string; datumDo: string }>(
+      "SELECT `vehicleId`, `datumOd`, `datumDo` FROM `VehicleBlock` " +
+        "WHERE `datumOd` <= ? AND `datumDo` >= ?",
+      [ymd(range.to), ymd(range.from)]
+    );
+    const jeBlokovane = (vehicleId: number, den: string) =>
+      blocks.some((b) => b.vehicleId === vehicleId && den >= b.datumOd.slice(0, 10) && den <= b.datumDo.slice(0, 10));
 
     // Množina obsadených slotov: `${vehicleId}|${datum}|${typ}`.
     const obsadene = new Set(shifts.map((s) => `${s.vehicleId}|${s.datum.slice(0, 10)}|${s.typ}`));
@@ -49,6 +57,7 @@ export default withErrorHandler(
     const vozidla = vehicles.map((v) => {
       const volneSmeny: { datum: string; typ: "DENNA" | "NOCNA" }[] = [];
       for (const den of dni) {
+        if (jeBlokovane(v.id, den)) continue; // nedostupné / servis
         for (const typ of ["DENNA", "NOCNA"] as const) {
           if (!obsadene.has(`${v.id}|${den}|${typ}`)) volneSmeny.push({ datum: den, typ });
         }

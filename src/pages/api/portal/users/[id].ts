@@ -12,6 +12,7 @@ const updateSchema = z.object({
   priezvisko: z.string().min(1).optional(),
   telefon: z.string().nullable().optional(),
   volaciZnak: z.string().nullable().optional(),
+  miestoStriedania: z.string().nullable().optional(),
   aktivny: z.boolean().optional(),
   roles: z.array(role).min(1).optional(),
   registracnyPoplatokUhradeny: z.boolean().optional(),
@@ -47,6 +48,8 @@ export default withErrorHandler(
         if (body.telefon !== undefined) add("telefon", body.telefon);
         if (body.volaciZnak !== undefined)
           add("volaciZnak", body.volaciZnak ? body.volaciZnak.toUpperCase().trim() : null);
+        if (body.miestoStriedania !== undefined)
+          add("miestoStriedania", body.miestoStriedania ? body.miestoStriedania.trim() : null);
         if (body.aktivny !== undefined) add("aktivny", body.aktivny ? 1 : 0);
         if (body.registracnyPoplatokUhradeny !== undefined) {
           add("registracnyPoplatokUhradeny", body.registracnyPoplatokUhradeny ? 1 : 0);

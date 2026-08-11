@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur, DAY_NAMES } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatDate, DAY_NAMES } from "@/lib/portalClient";
 import { isoWeekParts, isoWeekDateRange } from "@/lib/fees";
 import { SHIFT_PATTERNS } from "@/lib/shiftPatterns";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,11 @@ type Shift = {
   id: number; driverId: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO";
   vehicleId: number | null; poplatokZaSmenu: number | null; poplatokUhradeny: boolean;
 };
+type Block = {
+  id: number; vehicleId: number; typ: "NEDOSTUPNE" | "SERVIS";
+  datumOd: string; datumDo: string; poznamka: string | null;
+};
+const BLOK_LABEL: Record<string, string> = { NEDOSTUPNE: "Nedostupné", SERVIS: "Servis" };
 
 const TYP_SKRATKA: Record<string, string> = { DENNA: "D", NOCNA: "N", VOLNO: "V" };
 const TYP_COLOR: Record<string, string> = {
@@ -37,8 +42,10 @@ export default function SmenyPage() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [blocks, setBlocks] = useState<Block[]>([]);
   const [edit, setEdit] = useState<{ driver: Driver; datum: string; shift?: Shift } | null>(null);
   const [genOpen, setGenOpen] = useState(false);
+  const [blockFor, setBlockFor] = useState<Vehicle | null>(null);
 
   const { dni } = isoWeekDateRange(rok, tyzden);
 
@@ -47,12 +54,27 @@ export default function SmenyPage() {
       setDrivers(d.drivers); setVehicles(d.vehicles);
     });
     apiFetch<{ shifts: Shift[] }>(`/api/portal/shifts?rok=${rok}&tyzden=${tyzden}`).then((d) => setShifts(d.shifts));
+    apiFetch<{ blocks: Block[] }>(`/api/portal/vehicle-blocks?rok=${rok}&tyzden=${tyzden}`).then((d) => setBlocks(d.blocks));
   }, [rok, tyzden]);
   useEffect(load, [load]);
 
   function cellShift(driverId: number, datum: string): Shift | undefined {
     return shifts.find((s) => s.driverId === driverId && s.datum.slice(0, 10) === datum);
   }
+
+  async function deleteBlock(id: number) {
+    try { await apiFetch(`/api/portal/vehicle-blocks/${id}`, { method: "DELETE" }); load(); toast({ title: "Blok zrušený" }); }
+    catch (e) { toast({ title: "Chyba", description: e instanceof Error ? e.message : "", variant: "destructive" }); }
+  }
+
+  const znakOf = (driverId: number) => {
+    const d = drivers.find((x) => x.id === driverId);
+    return d?.volaciZnak || d?.priezvisko || "?";
+  };
+  const vehShift = (vehicleId: number, datum: string, typ: "DENNA" | "NOCNA") =>
+    shifts.find((s) => s.vehicleId === vehicleId && s.datum.slice(0, 10) === datum && s.typ === typ);
+  const vehBlock = (vehicleId: number, datum: string) =>
+    blocks.find((b) => b.vehicleId === vehicleId && datum >= b.datumOd.slice(0, 10) && datum <= b.datumDo.slice(0, 10));
 
   return (
     <PortalLayout title="Rozpis smien">
@@ -113,6 +135,80 @@ export default function SmenyPage() {
         </table>
       </div>
 
+      {/* ── Obsadenosť vozidiel (denná/nočná) + stavy nedostupné/servis ─────────── */}
+      <div className="mt-8">
+        <div className="flex items-center gap-2 mb-2">
+          <h2 className="text-lg font-semibold">Obsadenosť vozidiel</h2>
+          <span className="text-xs text-muted-foreground">horný riadok = denná (D) · spodný = nočná (N) · volací znak = obsadené</span>
+        </div>
+        <div className="space-y-4">
+          {vehicles.map((v) => (
+            <div key={v.id} className="border rounded-md overflow-hidden">
+              <div className="flex flex-wrap justify-between items-center gap-2 p-2 bg-muted/40">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium">{v.nazov} <span className="text-muted-foreground text-sm">({v.spz})</span></span>
+                  {blocks.filter((b) => b.vehicleId === v.id).map((b) => (
+                    <Badge key={b.id} variant="outline" className={b.typ === "SERVIS" ? "border-orange-400 text-orange-700" : "border-gray-400 text-gray-600"}>
+                      {BLOK_LABEL[b.typ]} {formatDate(b.datumOd)}–{formatDate(b.datumDo)}
+                      <button className="ml-1 text-red-500 hover:text-red-700" title="Zrušiť blok" onClick={() => deleteBlock(b.id)}>×</button>
+                    </Badge>
+                  ))}
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setBlockFor(v)}>+ Nedostupné / servis</Button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/20">
+                      <th className="text-left p-2 w-16"></th>
+                      {dni.map((d, i) => (
+                        <th key={i} className="p-2 text-center whitespace-nowrap font-normal">
+                          {DAY_NAMES[i]}<br /><span className="text-xs text-muted-foreground">{d.getUTCDate()}.{d.getUTCMonth() + 1}.</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(["DENNA", "NOCNA"] as const).map((cellTyp) => (
+                      <tr key={cellTyp} className="border-b last:border-b-0">
+                        <td className="p-2 font-semibold text-muted-foreground">{cellTyp === "DENNA" ? "D" : "N"}</td>
+                        {dni.map((d) => {
+                          const datum = ymd(d);
+                          const s = vehShift(v.id, datum, cellTyp);
+                          const b = vehBlock(v.id, datum);
+                          const kolizia = !!b && !!s;
+                          let cls = "bg-gray-50 text-gray-300";
+                          let obsah = "—";
+                          if (s && b) { cls = "bg-red-100 text-red-700 font-semibold"; obsah = `⚠ ${znakOf(s.driverId)}`; }
+                          else if (b) { cls = b.typ === "SERVIS" ? "bg-orange-50 text-orange-600" : "bg-gray-200 text-gray-500"; obsah = BLOK_LABEL[b.typ]; }
+                          else if (s) { cls = cellTyp === "DENNA" ? "bg-amber-100 text-amber-800 font-medium" : "bg-indigo-100 text-indigo-800 font-medium"; obsah = znakOf(s.driverId); }
+                          return (
+                            <td key={datum} className="p-1 text-center">
+                              <div className={`rounded px-1 py-2 ${cls}`} title={kolizia ? "Kolízia: vozidlo je blokované, no smena je naplánovaná" : ""}>{obsah}</div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+          {vehicles.length === 0 && <p className="text-muted-foreground text-sm">Žiadne aktívne vozidlá.</p>}
+        </div>
+      </div>
+
+      {blockFor && (
+        <BlockDialog
+          vehicle={blockFor}
+          defaultStart={dni[0] ? ymd(dni[0]) : ""}
+          onClose={() => setBlockFor(null)}
+          onSaved={() => { setBlockFor(null); load(); toast({ title: "Blok pridaný" }); }}
+          onError={(m) => toast({ title: "Chyba", description: m, variant: "destructive" })}
+        />
+      )}
+
       {edit && (
         <ShiftEditor
           driver={edit.driver}
@@ -140,6 +236,66 @@ export default function SmenyPage() {
         />
       )}
     </PortalLayout>
+  );
+}
+
+function BlockDialog({
+  vehicle, defaultStart, onClose, onSaved, onError,
+}: {
+  vehicle: Vehicle; defaultStart: string;
+  onClose: () => void; onSaved: () => void; onError: (m: string) => void;
+}) {
+  const [typ, setTyp] = useState<"NEDOSTUPNE" | "SERVIS">("SERVIS");
+  const [datumOd, setDatumOd] = useState(defaultStart);
+  const [datumDo, setDatumDo] = useState(defaultStart);
+  const [poznamka, setPoznamka] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
+    if (!datumOd || !datumDo) { onError("Zadajte dátum od aj do."); return; }
+    setBusy(true);
+    try {
+      await apiFetch("/api/portal/vehicle-blocks", {
+        method: "POST",
+        body: JSON.stringify({ vehicleId: vehicle.id, typ, datumOd, datumDo, poznamka: poznamka || null }),
+      });
+      onSaved();
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "Uloženie zlyhalo");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Nedostupné / servis — {vehicle.nazov} ({vehicle.spz})</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label>Stav</Label>
+            <Select value={typ} onValueChange={(v) => setTyp(v as "NEDOSTUPNE" | "SERVIS")}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SERVIS">Servis</SelectItem>
+                <SelectItem value="NEDOSTUPNE">Nedostupné</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Od dátumu</Label><Input type="date" value={datumOd} onChange={(e) => setDatumOd(e.target.value)} /></div>
+            <div><Label>Do dátumu</Label><Input type="date" value={datumDo} onChange={(e) => setDatumDo(e.target.value)} /></div>
+          </div>
+          <div><Label>Poznámka (voliteľné)</Label><Input value={poznamka} onChange={(e) => setPoznamka(e.target.value)} /></div>
+          <p className="text-xs text-muted-foreground">Počas tohto obdobia sa na vozidlo nedá priradiť smena. Ak už existujú naplánované smeny, zobrazia sa ako kolízia.</p>
+        </div>
+        <DialogFooter>
+          <Button onClick={save} disabled={busy}>{busy ? "Ukladám…" : "Uložiť blok"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type User = {
   id: number; email: string; meno: string; priezvisko: string;
-  telefon: string | null; volaciZnak: string | null; aktivny: boolean;
+  telefon: string | null; volaciZnak: string | null; miestoStriedania: string | null; aktivny: boolean;
   mustSetPassword: boolean; registracnyPoplatokUhradeny: boolean;
   roles: Role[];
 };
@@ -30,7 +30,7 @@ type Unpaid = {
 
 const ALL_ROLES: Role[] = ["VODIC", "DISPECER", "MAJITEL"];
 const emptyForm = {
-  email: "", meno: "", priezvisko: "", telefon: "", volaciZnak: "",
+  email: "", meno: "", priezvisko: "", telefon: "", volaciZnak: "", miestoStriedania: "",
   roles: ["VODIC"] as Role[], registracnyPoplatokUhradeny: false, sendInvite: true,
 };
 
@@ -59,7 +59,8 @@ export default function VodiciPage() {
     setEditing(u);
     setForm({
       email: u.email, meno: u.meno, priezvisko: u.priezvisko, telefon: u.telefon || "",
-      volaciZnak: u.volaciZnak || "", roles: u.roles, registracnyPoplatokUhradeny: u.registracnyPoplatokUhradeny, sendInvite: false,
+      volaciZnak: u.volaciZnak || "", miestoStriedania: u.miestoStriedania || "",
+      roles: u.roles, registracnyPoplatokUhradeny: u.registracnyPoplatokUhradeny, sendInvite: false,
     });
     setOpen(true);
   }
@@ -76,7 +77,7 @@ export default function VodiciPage() {
           method: "PUT",
           body: JSON.stringify({
             meno: form.meno, priezvisko: form.priezvisko, telefon: form.telefon || null,
-            volaciZnak: form.volaciZnak || null, roles: form.roles,
+            volaciZnak: form.volaciZnak || null, miestoStriedania: form.miestoStriedania || null, roles: form.roles,
             registracnyPoplatokUhradeny: form.registracnyPoplatokUhradeny,
           }),
         });
@@ -121,6 +122,7 @@ export default function VodiciPage() {
               <div><Label>Priezvisko</Label><Input value={form.priezvisko} onChange={(e) => setForm({ ...form, priezvisko: e.target.value })} /></div>
               <div><Label>Volací znak</Label><Input placeholder="napr. E10" value={form.volaciZnak} onChange={(e) => setForm({ ...form, volaciZnak: e.target.value })} /></div>
               <div><Label>Telefón</Label><Input value={form.telefon} onChange={(e) => setForm({ ...form, telefon: e.target.value })} /></div>
+              <div className="col-span-2"><Label>Miesto striedania</Label><Input placeholder="napr. Námestie osloboditeľov" value={form.miestoStriedania} onChange={(e) => setForm({ ...form, miestoStriedania: e.target.value })} /></div>
               <div className="col-span-2"><Label>E-mail</Label><Input type="email" disabled={!!editing} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
               <div className="col-span-2">
                 <Label>Roly</Label>

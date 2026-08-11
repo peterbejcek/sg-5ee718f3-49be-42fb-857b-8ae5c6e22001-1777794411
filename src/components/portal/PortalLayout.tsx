@@ -19,6 +19,7 @@ import {
   CalendarDays,
   Euro,
   Wallet,
+  Contact,
   LogOut,
   Menu,
   X,
@@ -35,6 +36,7 @@ const NAV: NavItem[] = [
   { href: "/portal/vydavky", label: "Výdavky", icon: <Wallet size={18} />, roles: ["MAJITEL"] },
   { href: "/portal/moje-smeny", label: "Moje smeny", icon: <CalendarDays size={18} />, roles: ["VODIC"] },
   { href: "/portal/moje-poplatky", label: "Moje poplatky", icon: <Euro size={18} />, roles: ["VODIC"] },
+  { href: "/portal/kontakty", label: "Kontakty", icon: <Contact size={18} />, roles: ["MAJITEL", "DISPECER", "VODIC"] },
 ];
 
 export function PortalLayout({ children, title }: { children: ReactNode; title?: string }) {

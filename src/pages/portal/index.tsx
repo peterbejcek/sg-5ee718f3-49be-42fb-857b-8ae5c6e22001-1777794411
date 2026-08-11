@@ -187,6 +187,21 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Tržba z prenájmu áut (samostatná dlaždica) + vyplatené/nevyplatené smeny */}
+          {data.poplatkyZaSmeny && (
+            <div className="grid md:grid-cols-3 gap-3">
+              <Stat
+                label={`Tržba z prenájmu áut ${suffix}`}
+                value={formatEur(data.poplatkyZaSmeny.vyzbierane + data.poplatkyZaSmeny.neuhradene)}
+                hint={`vybraté ${formatEur(data.poplatkyZaSmeny.vyzbierane)} · dlžné ${formatEur(data.poplatkyZaSmeny.neuhradene)}`}
+              />
+              <Card className="md:col-span-2">
+                <CardHeader><CardTitle className="text-lg">Prenájom áut — vyplatené / nevyplatené smeny</CardTitle></CardHeader>
+                <CardContent><PaidUnpaidBar vyplatene={data.poplatkyZaSmeny.vyzbierane} nevyplatene={data.poplatkyZaSmeny.neuhradene} /></CardContent>
+              </Card>
+            </div>
+          )}
+
           {data.financie && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -310,6 +325,25 @@ function DonutChart({ data }: { data: { label: string; value: number; color: str
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function PaidUnpaidBar({ vyplatene, nevyplatene }: { vyplatene: number; nevyplatene: number }) {
+  const spolu = vyplatene + nevyplatene;
+  const pctV = spolu > 0 ? Math.round((vyplatene / spolu) * 100) : 0;
+  const pctN = spolu > 0 ? 100 - pctV : 0;
+  return (
+    <div className="space-y-3">
+      <div className="flex h-6 rounded overflow-hidden bg-muted">
+        {vyplatene > 0 && <div className="h-full bg-green-600 flex items-center justify-center text-[10px] text-white" style={{ width: `${pctV}%` }} title={`Vyplatené ${formatEur(vyplatene)}`}>{pctV >= 12 ? `${pctV}%` : ""}</div>}
+        {nevyplatene > 0 && <div className="h-full bg-red-500 flex items-center justify-center text-[10px] text-white" style={{ width: `${pctN}%` }} title={`Nevyplatené ${formatEur(nevyplatene)}`}>{pctN >= 12 ? `${pctN}%` : ""}</div>}
+      </div>
+      <div className="flex flex-wrap gap-4 text-sm">
+        <span className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-sm bg-green-600" />Vyplatené smeny <span className="font-semibold">{formatEur(vyplatene)}</span></span>
+        <span className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-sm bg-red-500" />Nevyplatené smeny <span className="font-semibold">{formatEur(nevyplatene)}</span></span>
+      </div>
+      {spolu === 0 && <p className="text-muted-foreground text-sm">Za obdobie nie sú evidované žiadne poplatky za prenájom.</p>}
     </div>
   );
 }

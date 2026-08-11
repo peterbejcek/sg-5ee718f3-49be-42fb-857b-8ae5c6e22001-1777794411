@@ -18,12 +18,14 @@ const createSchema = z.object({
   lizing: z.coerce.number().min(0).default(0),
   poistenie: z.coerce.number().min(0).default(0),
   sukromne: z.boolean().default(false),
+  casVymeny: z.string().nullable().optional(),
   aktivne: z.boolean().default(true),
 });
 
 type VehicleRow = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; sukromne: number; aktivne: number;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number;
+  sukromne: number; casVymeny: string | null; aktivne: number;
 };
 
 function mapVehicle(v: VehicleRow) {
@@ -37,6 +39,13 @@ function mapVehicle(v: VehicleRow) {
   };
 }
 
+// Normalizuj čas "HH:MM" (prázdny → null).
+function normCas(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const t = v.trim();
+  return /^\d{1,2}:\d{2}$/.test(t) ? t.padStart(5, "0") : null;
+}
+
 export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "GET") {
@@ -47,12 +56,12 @@ export default withErrorHandler(
       const body = parseBody(req, res, createSchema);
       if (!body) return;
       const r = await execute(
-        "INSERT INTO `Vehicle` (`nazov`,`znacka`,`model`,`farba`,`spz`,`druhPohonu`,`poplatokZaSmenu`,`lizing`,`poistenie`,`sukromne`,`aktivne`,`createdAt`,`updatedAt`) " +
-          "VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))",
+        "INSERT INTO `Vehicle` (`nazov`,`znacka`,`model`,`farba`,`spz`,`druhPohonu`,`poplatokZaSmenu`,`lizing`,`poistenie`,`sukromne`,`casVymeny`,`aktivne`,`createdAt`,`updatedAt`) " +
+          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))",
         [
           body.nazov, body.znacka, body.model, body.farba,
           body.spz.toUpperCase().trim(), body.druhPohonu, body.poplatokZaSmenu,
-          body.lizing, body.poistenie, body.sukromne ? 1 : 0, body.aktivne ? 1 : 0,
+          body.lizing, body.poistenie, body.sukromne ? 1 : 0, normCas(body.casVymeny), body.aktivne ? 1 : 0,
         ]
       );
       await syncVehicleExpenses(r.insertId, body.nazov, body.lizing, body.poistenie);

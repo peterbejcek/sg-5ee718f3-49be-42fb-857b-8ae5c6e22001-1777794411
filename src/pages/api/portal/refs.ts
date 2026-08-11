@@ -13,10 +13,14 @@ export default withErrorHandler(
         "FROM `User` u JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
         "WHERE u.`aktivny` = 1 ORDER BY (u.`volaciZnak` IS NULL), u.`volaciZnak` ASC, u.`priezvisko` ASC"
     );
-    const vehRows = await query<{ id: number; nazov: string; spz: string; poplatokZaSmenu: number }>(
-      "SELECT `id`, `nazov`, `spz`, `poplatokZaSmenu` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
+    const vehRows = await query<{ id: number; nazov: string; spz: string; poplatokZaSmenu: number; casVymeny: string | null; sukromne: number }>(
+      "SELECT `id`, `nazov`, `spz`, `poplatokZaSmenu`, `casVymeny`, `sukromne` FROM `Vehicle` WHERE `aktivne` = 1 ORDER BY `nazov` ASC"
     );
-    const vehicles = vehRows.map((v) => ({ ...v, poplatokZaSmenu: Number(v.poplatokZaSmenu) }));
+    const vehicles = vehRows.map((v) => ({
+      id: v.id, nazov: v.nazov, spz: v.spz,
+      poplatokZaSmenu: Number(v.poplatokZaSmenu),
+      casVymeny: v.casVymeny, sukromne: v.sukromne === 1,
+    }));
 
     return res.status(200).json({ drivers, vehicles });
   })

@@ -22,11 +22,12 @@ import { useToast } from "@/hooks/use-toast";
 
 type Vehicle = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; sukromne: boolean; aktivne: boolean;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number;
+  sukromne: boolean; casVymeny: string | null; aktivne: boolean;
 };
 
 const POHONY = ["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"];
-const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, sukromne: false, aktivne: true };
+const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, sukromne: false, casVymeny: "", aktivne: true };
 
 export default function VozidlaPage() {
   const { toast } = useToast();
@@ -41,7 +42,7 @@ export default function VozidlaPage() {
   useEffect(load, []);
 
   function openNew() { setEditing(null); setForm(empty); setOpen(true); }
-  function openEdit(v: Vehicle) { setEditing(v); setForm({ ...v }); setOpen(true); }
+  function openEdit(v: Vehicle) { setEditing(v); setForm({ ...v, casVymeny: v.casVymeny ?? "" }); setOpen(true); }
 
   async function save() {
     try {
@@ -90,6 +91,7 @@ export default function VozidlaPage() {
                 </Select>
               </div>
               <div><Label>Poplatok za smenu (€)</Label><Input type="number" step="0.01" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: Number(e.target.value) })} /></div>
+              <div><Label>Čas výmeny (D↔N)</Label><Input type="time" value={form.casVymeny} onChange={(e) => setForm({ ...form, casVymeny: e.target.value })} /></div>
               <div><Label>Lízing / mesiac (€)</Label><Input type="number" step="0.01" value={form.lizing} onChange={(e) => setForm({ ...form, lizing: Number(e.target.value) })} /></div>
               <div><Label>Poistenie / mesiac (€)</Label><Input type="number" step="0.01" value={form.poistenie} onChange={(e) => setForm({ ...form, poistenie: Number(e.target.value) })} /></div>
               <div className="col-span-2 flex items-center gap-2 pt-1">
@@ -110,7 +112,7 @@ export default function VozidlaPage() {
               <TableHead>Názov</TableHead><TableHead>Značka / Model</TableHead>
               <TableHead>Farba</TableHead><TableHead>ŠPZ</TableHead>
               <TableHead>Pohon</TableHead><TableHead>Poplatok/smena</TableHead>
-              <TableHead>Stav</TableHead><TableHead></TableHead>
+              <TableHead>Čas výmeny</TableHead><TableHead>Stav</TableHead><TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,6 +124,7 @@ export default function VozidlaPage() {
                 <TableCell>{v.spz}</TableCell>
                 <TableCell>{v.druhPohonu}</TableCell>
                 <TableCell>{formatEur(v.poplatokZaSmenu)}</TableCell>
+                <TableCell>{v.casVymeny || "—"}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {v.aktivne ? <Badge className="bg-green-600">Aktívne</Badge> : <Badge variant="secondary">Neaktívne</Badge>}
@@ -134,7 +137,7 @@ export default function VozidlaPage() {
                 </TableCell>
               </TableRow>
             ))}
-            {list.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">Zatiaľ žiadne vozidlá.</TableCell></TableRow>}
+            {list.length === 0 && <TableRow><TableCell colSpan={9} className="text-center text-muted-foreground py-6">Zatiaľ žiadne vozidlá.</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>

@@ -18,13 +18,21 @@ const updateSchema = z.object({
   lizing: z.coerce.number().min(0).optional(),
   poistenie: z.coerce.number().min(0).optional(),
   sukromne: z.boolean().optional(),
+  casVymeny: z.string().nullable().optional(),
   aktivne: z.boolean().optional(),
 });
 
 type VehicleRow = {
   id: number; nazov: string; znacka: string; model: string; farba: string;
-  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number; sukromne: number; aktivne: number;
+  spz: string; druhPohonu: string; poplatokZaSmenu: number; lizing: number; poistenie: number;
+  sukromne: number; casVymeny: string | null; aktivne: number;
 };
+
+function normCas(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const t = v.trim();
+  return /^\d{1,2}:\d{2}$/.test(t) ? t.padStart(5, "0") : null;
+}
 
 function mapVehicle(v: VehicleRow) {
   return {
@@ -59,6 +67,7 @@ export default withErrorHandler(
       if (body.lizing !== undefined) add("lizing", body.lizing);
       if (body.poistenie !== undefined) add("poistenie", body.poistenie);
       if (body.sukromne !== undefined) add("sukromne", body.sukromne ? 1 : 0);
+      if (body.casVymeny !== undefined) add("casVymeny", normCas(body.casVymeny));
       if (body.aktivne !== undefined) add("aktivne", body.aktivne ? 1 : 0);
 
       if (sets.length) {

@@ -69,6 +69,20 @@ export default withErrorHandler(
       if (!body) return;
       const datum = body.datum.slice(0, 10);
 
+      // Vozidlo nesmie byť v danom termíne blokované (nedostupné / servis),
+      // ak ide o skutočnú smenu (nie voľno).
+      if (body.vehicleId && body.typ !== "VOLNO") {
+        const block = await queryOne<{ typ: string }>(
+          "SELECT `typ` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo` LIMIT 1",
+          [body.vehicleId, datum]
+        );
+        if (block) {
+          return res.status(409).json({
+            message: `Vozidlo je v tomto termíne ${block.typ === "SERVIS" ? "v servise" : "nedostupné"} — smenu nemožno priradiť.`,
+          });
+        }
+      }
+
       // Predvolený poplatok z vozidla, ak nie je zadaný.
       let poplatok = body.poplatokZaSmenu ?? null;
       if (poplatok === null && body.vehicleId) {

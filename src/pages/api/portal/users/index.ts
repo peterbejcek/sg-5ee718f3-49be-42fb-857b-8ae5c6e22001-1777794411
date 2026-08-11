@@ -13,6 +13,7 @@ const createSchema = z.object({
   priezvisko: z.string().min(1),
   telefon: z.string().optional(),
   volaciZnak: z.string().optional(),
+  miestoStriedania: z.string().nullable().optional(),
   roles: z.array(role).min(1),
   registracnyPoplatokUhradeny: z.boolean().default(false),
   sendInvite: z.boolean().default(true),
@@ -20,7 +21,7 @@ const createSchema = z.object({
 
 type UserListRow = {
   id: number; email: string; meno: string; priezvisko: string;
-  telefon: string | null; volaciZnak: string | null; aktivny: number;
+  telefon: string | null; volaciZnak: string | null; miestoStriedania: string | null; aktivny: number;
   mustSetPassword: number; registracnyPoplatokUhradeny: number;
   registracnyPoplatokDna: string | null; roles: string | null;
 };
@@ -41,6 +42,7 @@ export default withErrorHandler(
           priezvisko: u.priezvisko,
           telefon: u.telefon,
           volaciZnak: u.volaciZnak,
+          miestoStriedania: u.miestoStriedania,
           aktivny: toBool(u.aktivny),
           mustSetPassword: toBool(u.mustSetPassword),
           registracnyPoplatokUhradeny: toBool(u.registracnyPoplatokUhradeny),
@@ -68,12 +70,13 @@ export default withErrorHandler(
       const userId = await withTransaction(async (tx) => {
         const [r] = await tx.execute(
           "INSERT INTO `User` " +
-            "(`email`,`meno`,`priezvisko`,`telefon`,`volaciZnak`,`mustSetPassword`,`registracnyPoplatokUhradeny`,`registracnyPoplatokDna`,`passwordResetToken`,`passwordResetExpires`,`aktivny`,`createdAt`,`updatedAt`) " +
-            "VALUES (?,?,?,?,?,1,?,?,?,?,1,NOW(3),NOW(3))",
+            "(`email`,`meno`,`priezvisko`,`telefon`,`volaciZnak`,`miestoStriedania`,`mustSetPassword`,`registracnyPoplatokUhradeny`,`registracnyPoplatokDna`,`passwordResetToken`,`passwordResetExpires`,`aktivny`,`createdAt`,`updatedAt`) " +
+            "VALUES (?,?,?,?,?,?,1,?,?,?,?,1,NOW(3),NOW(3))",
           [
             email, body.meno.trim(), body.priezvisko.trim(),
             body.telefon?.trim() || null,
             body.volaciZnak?.trim().toUpperCase() || null,
+            body.miestoStriedania?.trim() || null,
             regPaid ? 1 : 0, regPaid ? new Date() : null,
             token, expires,
           ]

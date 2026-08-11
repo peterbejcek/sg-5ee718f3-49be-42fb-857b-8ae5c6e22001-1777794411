@@ -9,7 +9,7 @@ const ymd = (d: Date) => d.toISOString().slice(0, 10);
 type Row = {
   id: number; datum: string; typ: string;
   poplatokZaSmenu: number | null; poplatokUhradeny: number; vehicleId: number | null;
-  v_nazov: string | null; v_spz: string | null;
+  v_nazov: string | null; v_spz: string | null; v_casVymeny: string | null;
 };
 
 // Vodič vidí len svoje smeny.
@@ -34,7 +34,7 @@ export default withErrorHandler(
 
     const rows = await query<Row>(
       "SELECT s.`id`, s.`datum`, s.`typ`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, s.`vehicleId`, " +
-        "v.`nazov` AS v_nazov, v.`spz` AS v_spz " +
+        "v.`nazov` AS v_nazov, v.`spz` AS v_spz, v.`casVymeny` AS v_casVymeny " +
         "FROM `Shift` s LEFT JOIN `Vehicle` v ON v.`id` = s.`vehicleId` " +
         "WHERE " + where.join(" AND ") + " ORDER BY s.`datum` ASC",
       params
@@ -46,7 +46,7 @@ export default withErrorHandler(
       typ: s.typ,
       poplatokZaSmenu: s.poplatokZaSmenu === null ? null : Number(s.poplatokZaSmenu),
       poplatokUhradeny: toBool(s.poplatokUhradeny),
-      vehicle: s.vehicleId ? { nazov: s.v_nazov, spz: s.v_spz } : null,
+      vehicle: s.vehicleId ? { nazov: s.v_nazov, spz: s.v_spz, casVymeny: s.v_casVymeny } : null,
     }));
     return res.status(200).json({ shifts });
   })
