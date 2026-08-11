@@ -119,8 +119,8 @@ export default withErrorHandler(
           "JOIN `UserRole` ur ON ur.`userId` = u.`id` AND ur.`role` = 'VODIC' " +
           "WHERE u.`aktivny` = 1 ORDER BY (u.`volaciZnak` IS NULL), u.`volaciZnak` ASC, u.`priezvisko` ASC"
       );
-      const shifts = await query<{ driverId: number; vehicleId: number | null; typ: string; poplatokZaSmenu: number | null; poplatokUhradeny: number; d_meno: string; d_priezvisko: string; d_volaciZnak: string | null }>(
-        "SELECT s.`driverId`, s.`vehicleId`, s.`typ`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, " +
+      const shifts = await query<{ datum: string; driverId: number; vehicleId: number | null; typ: string; poplatokZaSmenu: number | null; poplatokUhradeny: number; d_meno: string; d_priezvisko: string; d_volaciZnak: string | null }>(
+        "SELECT s.`datum`, s.`driverId`, s.`vehicleId`, s.`typ`, s.`poplatokZaSmenu`, s.`poplatokUhradeny`, " +
           "d.`meno` AS d_meno, d.`priezvisko` AS d_priezvisko, d.`volaciZnak` AS d_volaciZnak " +
           "FROM `Shift` s JOIN `User` d ON d.`id` = s.`driverId` WHERE s.`datum` BETWEEN ? AND ?",
         [ymd(from), ymd(to)]
@@ -140,8 +140,11 @@ export default withErrorHandler(
       };
 
       // Poplatky za prenájom po vodičoch — len majiteľ.
+      // Zobrazujeme len smeny po aktuálny dátum (do včera vrátane); dnešné a
+      // budúce naplánované smeny sa ešte nezapočítavajú (nie sú odpracované).
       if (isOwner) {
-        const feeShifts = shifts.filter((s) => s.poplatokZaSmenu != null);
+        const dnesStr = ymd(now);
+        const feeShifts = shifts.filter((s) => s.poplatokZaSmenu != null && s.datum.slice(0, 10) < dnesStr);
         const byDriver = new Map<number, { driver: { meno: string; priezvisko: string; volaciZnak: string | null }; zaplatene: number; nezaplatene: number }>();
         for (const s of feeShifts) {
           const rec = byDriver.get(s.driverId) ?? { driver: { meno: s.d_meno, priezvisko: s.d_priezvisko, volaciZnak: s.d_volaciZnak }, zaplatene: 0, nezaplatene: 0 };
