@@ -6,7 +6,10 @@ type BookingData = {
   pickup: string;
   destination: string;
   datetime: string;
-  passengers: number;
+  passengers?: number | string;
+  luggage?: string;
+  flightNumber?: string;
+  note?: string;
   phone?: string;
   email?: string;
   priceEstimateOnly?: boolean;
@@ -22,14 +25,18 @@ export default async function handler(
   }
 
   try {
-    const { pickup, destination, datetime, passengers, phone, email, priceEstimateOnly, locale }: BookingData = req.body;
+    const { pickup, destination, datetime, passengers, luggage, flightNumber, note, phone, email, priceEstimateOnly, locale }: BookingData = req.body;
     // Slovník pre komunikáciu so zákazníkom (podľa jazyka webu, z ktorého objednal)
     const t = getDictionary(locale);
 
-    // Validate required fields
-    if (!pickup || !destination || !datetime || !passengers || !phone || !email) {
+    // Povinné polia (zhodné s hviezdičkami vo formulári). passengers/luggage/
+    // flightNumber/note sú nepovinné, preto ich tu nevynucujeme.
+    if (!pickup || !destination || !datetime || !phone || !email) {
       return res.status(400).json({ message: "Chýbajú povinné polia" });
     }
+
+    // Zobraziteľné hodnoty voliteľných polí (v e-mailoch len ak sú vyplnené)
+    const passengersText = passengers ? String(passengers) : "—";
 
     // Validate environment variables
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -45,7 +52,7 @@ To: ${process.env.SMTP_USER || "dispecing@e-taxike.sk"}
 📍 Miesto vyzdvihnutia: ${pickup}
 📍 Cieľ: ${destination}
 🕐 Dátum a čas: ${new Date(datetime).toLocaleString("sk-SK")}
-👥 Počet pasažierov: ${passengers}
+👥 Počet pasažierov: ${passengersText}${luggage ? `\n🧳 Batožina: ${luggage}` : ""}${flightNumber ? `\n✈️ Číslo letu: ${flightNumber}` : ""}${note ? `\n📝 Poznámka: ${note}` : ""}
 📞 Telefón: ${phone}
 📧 Email: ${email}
 ${priceEstimateOnly ? "💰 Iba cenová kalkulácia (bez objednávky)" : ""}
@@ -87,7 +94,10 @@ DETAILY OBJEDNÁVKY
 📍 Miesto vyzdvihnutia: ${pickup}
 📍 Cieľ: ${destination}
 🕐 Dátum a čas: ${new Date(datetime).toLocaleString("sk-SK")}
-👥 Počet pasažierov: ${passengers}
+👥 Počet pasažierov: ${passengersText}
+🧳 Batožina: ${luggage || "—"}
+✈️ Číslo letu: ${flightNumber || "—"}
+📝 Poznámka: ${note || "—"}
 📞 Telefón: ${phone}
 📧 Email: ${email}
 
@@ -141,9 +151,24 @@ Z webu: https://e-taxike.sk
       
       <div class="detail">
         <span class="label">👥 Počet pasažierov:</span><br>
-        ${passengers}
+        ${passengersText}
       </div>
-      
+      ${luggage ? `
+      <div class="detail">
+        <span class="label">🧳 Batožina:</span><br>
+        ${luggage}
+      </div>` : ""}
+      ${flightNumber ? `
+      <div class="detail">
+        <span class="label">✈️ Číslo letu:</span><br>
+        ${flightNumber}
+      </div>` : ""}
+      ${note ? `
+      <div class="detail">
+        <span class="label">📝 Poznámka:</span><br>
+        ${note}
+      </div>` : ""}
+
       <div class="detail">
         <span class="label">📞 Telefón:</span><br>
         <a href="tel:${phone}">${phone}</a>
@@ -190,7 +215,7 @@ ${t.bookingEmail.detailsTitle}
 📍 ${t.bookingEmail.from} ${pickup}
 📍 ${t.bookingEmail.to} ${destination}
 🕐 ${t.bookingEmail.when} ${customerDate}
-👥 ${t.bookingEmail.persons} ${passengers}
+👥 ${t.bookingEmail.persons} ${passengersText}${luggage ? `\n🧳 ${t.bookingForm.luggage}: ${luggage}` : ""}${flightNumber ? `\n✈️ ${t.bookingForm.flightNumber}: ${flightNumber}` : ""}${note ? `\n📝 ${t.bookingForm.note}: ${note}` : ""}
 
 ${priceEstimateOnly ? `💰 ${t.bookingEmail.typeEstimate}` : `✅ ${t.bookingEmail.typeOrder}`}
 
@@ -251,8 +276,23 @@ ${t.bookingEmail.sign}
 
       <div class="detail">
         <span class="label">👥 ${t.bookingEmail.persons}</span><br>
-        ${passengers}
+        ${passengersText}
       </div>
+      ${luggage ? `
+      <div class="detail">
+        <span class="label">🧳 ${t.bookingForm.luggage}</span><br>
+        ${luggage}
+      </div>` : ""}
+      ${flightNumber ? `
+      <div class="detail">
+        <span class="label">✈️ ${t.bookingForm.flightNumber}</span><br>
+        ${flightNumber}
+      </div>` : ""}
+      ${note ? `
+      <div class="detail">
+        <span class="label">📝 ${t.bookingForm.note}</span><br>
+        ${note}
+      </div>` : ""}
 
       ${priceEstimateOnly ? `<div style="background: #fff3cd; padding: 10px; margin: 10px 0; border-left: 4px solid #ff9500;">💰 ${t.bookingEmail.typeEstimate}</div>` : `<div style="background: #d4edda; padding: 10px; margin: 10px 0; border-left: 4px solid #28a745;">✅ ${t.bookingEmail.typeOrder}</div>`}
     </div>
