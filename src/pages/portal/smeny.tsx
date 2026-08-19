@@ -5,6 +5,7 @@ import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
 import { apiFetch, formatEur, formatDate, DAY_NAMES } from "@/lib/portalClient";
 import { isoWeekParts, isoWeekDateRange } from "@/lib/fees";
+import { blockCoversSlot, ROZSAH_LABEL } from "@/lib/vehicleBlocks";
 import { SHIFT_PATTERNS } from "@/lib/shiftPatterns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +22,9 @@ type Shift = {
   id: number; driverId: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO";
   vehicleId: number | null; poplatokZaSmenu: number | null; poplatokUhradeny: boolean;
 };
+type Rozsah = "CELY_DEN" | "DENNA" | "NOCNA";
 type Block = {
-  id: number; vehicleId: number; typ: "NEDOSTUPNE" | "SERVIS";
+  id: number; vehicleId: number; typ: "NEDOSTUPNE" | "SERVIS"; rozsah: Rozsah;
   datumOd: string; datumDo: string; poznamka: string | null;
 };
 const BLOK_LABEL: Record<string, string> = { NEDOSTUPNE: "Nedostupné", SERVIS: "Servis" };
@@ -73,8 +75,14 @@ export default function SmenyPage() {
   };
   const vehShift = (vehicleId: number, datum: string, typ: "DENNA" | "NOCNA") =>
     shifts.find((s) => s.vehicleId === vehicleId && s.datum.slice(0, 10) === datum && s.typ === typ);
-  const vehBlock = (vehicleId: number, datum: string) =>
-    blocks.find((b) => b.vehicleId === vehicleId && datum >= b.datumOd.slice(0, 10) && datum <= b.datumDo.slice(0, 10));
+  const vehBlock = (vehicleId: number, datum: string, typ: "DENNA" | "NOCNA") =>
+    blocks.find(
+      (b) =>
+        b.vehicleId === vehicleId &&
+        datum >= b.datumOd.slice(0, 10) &&
+        datum <= b.datumDo.slice(0, 10) &&
+        blockCoversSlot(b, datum, typ)
+    );
 
   return (
     <PortalLayout title="Rozpis smien">
@@ -150,6 +158,7 @@ export default function SmenyPage() {
                   {blocks.filter((b) => b.vehicleId === v.id).map((b) => (
                     <Badge key={b.id} variant="outline" className={b.typ === "SERVIS" ? "border-orange-400 text-orange-700" : "border-gray-400 text-gray-600"}>
                       {BLOK_LABEL[b.typ]} {formatDate(b.datumOd)}–{formatDate(b.datumDo)}
+                      {b.rozsah !== "CELY_DEN" ? ` · ${ROZSAH_LABEL[b.rozsah]}` : ""}
                       <button className="ml-1 text-red-500 hover:text-red-700" title="Zrušiť blok" onClick={() => deleteBlock(b.id)}>×</button>
                     </Badge>
                   ))}
@@ -175,7 +184,7 @@ export default function SmenyPage() {
                         {dni.map((d) => {
                           const datum = ymd(d);
                           const s = vehShift(v.id, datum, cellTyp);
-                          const b = vehBlock(v.id, datum);
+                          const b = vehBlock(v.id, datum, cellTyp);
                           const kolizia = !!b && !!s;
                           let cls = "bg-gray-50 text-gray-300";
                           let obsah = "—";
@@ -246,10 +255,13 @@ function BlockDialog({
   onClose: () => void; onSaved: () => void; onError: (m: string) => void;
 }) {
   const [typ, setTyp] = useState<"NEDOSTUPNE" | "SERVIS">("SERVIS");
+  const [rozsah, setRozsah] = useState<Rozsah>("CELY_DEN");
   const [datumOd, setDatumOd] = useState(defaultStart);
   const [datumDo, setDatumDo] = useState(defaultStart);
   const [poznamka, setPoznamka] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const viacDni = !!datumOd && !!datumDo && datumDo > datumOd;
 
   async function save() {
     if (!datumOd || !datumDo) { onError("Zadajte dátum od aj do."); return; }
@@ -257,7 +269,7 @@ function BlockDialog({
     try {
       await apiFetch("/api/portal/vehicle-blocks", {
         method: "POST",
-        body: JSON.stringify({ vehicleId: vehicle.id, typ, datumOd, datumDo, poznamka: poznamka || null }),
+        body: JSON.stringify({ vehicleId: vehicle.id, typ, rozsah, datumOd, datumDo, poznamka: poznamka || null }),
       });
       onSaved();
     } catch (e) {
@@ -288,8 +300,22 @@ function BlockDialog({
             <div><Label>Od dátumu</Label><Input type="date" value={datumOd} onChange={(e) => setDatumOd(e.target.value)} /></div>
             <div><Label>Do dátumu</Label><Input type="date" value={datumDo} onChange={(e) => setDatumDo(e.target.value)} /></div>
           </div>
+          <div>
+            <Label>Rozsah {viacDni ? "(posledný deň)" : ""}</Label>
+            <Select value={rozsah} onValueChange={(v) => setRozsah(v as Rozsah)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="CELY_DEN">Celý deň</SelectItem>
+                <SelectItem value="DENNA">Denná</SelectItem>
+                <SelectItem value="NOCNA">Nočná</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div><Label>Poznámka (voliteľné)</Label><Input value={poznamka} onChange={(e) => setPoznamka(e.target.value)} /></div>
-          <p className="text-xs text-muted-foreground">Počas tohto obdobia sa na vozidlo nedá priradiť smena. Ak už existujú naplánované smeny, zobrazia sa ako kolízia.</p>
+          <p className="text-xs text-muted-foreground">
+            Počas tohto obdobia sa na vozidlo nedá priradiť smena; existujúce smeny sa zobrazia ako kolízia.
+            {viacDni ? " Pri viacdňovom intervale platí rozsah len pre posledný deň — ostatné dni sú blokované celý deň." : ""}
+          </p>
         </div>
         <DialogFooter>
           <Button onClick={save} disabled={busy}>{busy ? "Ukladám…" : "Uložiť blok"}</Button>

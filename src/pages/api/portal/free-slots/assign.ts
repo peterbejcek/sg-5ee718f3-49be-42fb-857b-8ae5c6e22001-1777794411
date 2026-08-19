@@ -2,9 +2,10 @@
 // vybrať vodiča. Nedá sa priradiť do minulosti ani na už obsadený slot.
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { queryOne, execute } from "@/lib/db";
+import { query, queryOne, execute } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
+import { blockCoversSlot } from "@/lib/vehicleBlocks";
 
 const schema = z.object({
   vehicleId: z.coerce.number().int(),
@@ -42,11 +43,12 @@ export default withErrorHandler(
     );
     if (!vehicle) return res.status(404).json({ message: "Vozidlo neexistuje." });
 
-    // Vozidlo nesmie byť v danom termíne blokované (nedostupné / servis).
-    const block = await queryOne<{ typ: string }>(
-      "SELECT `typ` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo` LIMIT 1",
+    // Vozidlo nesmie byť pre daný slot blokované (nedostupné / servis).
+    const blocks = await query<{ typ: string; datumDo: string; rozsah: string }>(
+      "SELECT `typ`, `datumDo`, `rozsah` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo`",
       [body.vehicleId, datum]
     );
+    const block = blocks.find((b) => blockCoversSlot(b, datum, body.typ));
     if (block) {
       return res.status(409).json({
         message: `Vozidlo je v tomto termíne ${block.typ === "SERVIS" ? "v servise" : "nedostupné"}.`,

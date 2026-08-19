@@ -46,6 +46,12 @@ enum TypBloku {
   SERVIS
 }
 
+enum RozsahBloku {
+  CELY_DEN
+  DENNA
+  NOCNA
+}
+
 /// Prihlasovací účet aj osoba (vodič / dispečer / majiteľ).
 model User {
   id                          Int        @id @default(autoincrement())
@@ -117,6 +123,7 @@ model VehicleBlock {
   vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   vehicleId   Int
   typ         TypBloku
+  rozsah      RozsahBloku @default(CELY_DEN) // pri viacdňovom intervale platí pre posledný deň
   datumOd     DateTime @db.Date
   datumDo     DateTime @db.Date
   poznamka    String?

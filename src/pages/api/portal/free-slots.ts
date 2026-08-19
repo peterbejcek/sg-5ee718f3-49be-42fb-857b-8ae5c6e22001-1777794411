@@ -6,6 +6,7 @@ import { query } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
+import { blockCoversSlot } from "@/lib/vehicleBlocks";
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -42,14 +43,20 @@ export default withErrorHandler(
         "WHERE `vehicleId` IS NOT NULL AND `typ` <> 'VOLNO' AND `datum` BETWEEN ? AND ?",
       [ymd(range.from), ymd(range.to)]
     );
-    // Blokované termíny vozidiel (nedostupné / servis) — také dni sa neponúkajú.
-    const blocks = await query<{ vehicleId: number; datumOd: string; datumDo: string }>(
-      "SELECT `vehicleId`, `datumOd`, `datumDo` FROM `VehicleBlock` " +
+    // Blokované termíny vozidiel (nedostupné / servis) — podľa rozsahu slotu.
+    const blocks = await query<{ vehicleId: number; datumOd: string; datumDo: string; rozsah: string }>(
+      "SELECT `vehicleId`, `datumOd`, `datumDo`, `rozsah` FROM `VehicleBlock` " +
         "WHERE `datumOd` <= ? AND `datumDo` >= ?",
       [ymd(range.to), ymd(range.from)]
     );
-    const jeBlokovane = (vehicleId: number, den: string) =>
-      blocks.some((b) => b.vehicleId === vehicleId && den >= b.datumOd.slice(0, 10) && den <= b.datumDo.slice(0, 10));
+    const jeBlokovane = (vehicleId: number, den: string, typ: "DENNA" | "NOCNA") =>
+      blocks.some(
+        (b) =>
+          b.vehicleId === vehicleId &&
+          den >= b.datumOd.slice(0, 10) &&
+          den <= b.datumDo.slice(0, 10) &&
+          blockCoversSlot(b, den, typ)
+      );
 
     // Množina obsadených slotov: `${vehicleId}|${datum}|${typ}`.
     const obsadene = new Set(shifts.map((s) => `${s.vehicleId}|${s.datum.slice(0, 10)}|${s.typ}`));
@@ -57,8 +64,8 @@ export default withErrorHandler(
     const vozidla = vehicles.map((v) => {
       const volneSmeny: { datum: string; typ: "DENNA" | "NOCNA" }[] = [];
       for (const den of dni) {
-        if (jeBlokovane(v.id, den)) continue; // nedostupné / servis
         for (const typ of ["DENNA", "NOCNA"] as const) {
+          if (jeBlokovane(v.id, den, typ)) continue; // nedostupné / servis
           if (!obsadene.has(`${v.id}|${den}|${typ}`)) volneSmeny.push({ datum: den, typ });
         }
       }

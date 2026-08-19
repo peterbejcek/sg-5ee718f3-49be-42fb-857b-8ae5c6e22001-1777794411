@@ -4,6 +4,7 @@ import { query, queryOne, execute, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { isoWeekDateRange } from "@/lib/fees";
+import { blockCoversSlot } from "@/lib/vehicleBlocks";
 
 const upsertSchema = z.object({
   driverId: z.coerce.number().int(),
@@ -69,13 +70,14 @@ export default withErrorHandler(
       if (!body) return;
       const datum = body.datum.slice(0, 10);
 
-      // Vozidlo nesmie byť v danom termíne blokované (nedostupné / servis),
+      // Vozidlo nesmie byť pre daný slot blokované (nedostupné / servis),
       // ak ide o skutočnú smenu (nie voľno).
       if (body.vehicleId && body.typ !== "VOLNO") {
-        const block = await queryOne<{ typ: string }>(
-          "SELECT `typ` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo` LIMIT 1",
+        const blocks = await query<{ typ: string; datumDo: string; rozsah: string }>(
+          "SELECT `typ`, `datumDo`, `rozsah` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo`",
           [body.vehicleId, datum]
         );
+        const block = blocks.find((b) => blockCoversSlot(b, datum, body.typ as "DENNA" | "NOCNA"));
         if (block) {
           return res.status(409).json({
             message: `Vozidlo je v tomto termíne ${block.typ === "SERVIS" ? "v servise" : "nedostupné"} — smenu nemožno priradiť.`,
