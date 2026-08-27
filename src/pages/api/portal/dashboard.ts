@@ -200,12 +200,20 @@ export default withErrorHandler(
         vydavkySpolu += amount;
         byCat.set(e.c_nazov, (byCat.get(e.c_nazov) ?? 0) + amount);
       }
-      const prijmy = sumBy(weekRevenues, "celkovyPoplatokRow")
-        + (response.poplatkyZaSmeny ? (response.poplatkyZaSmeny as { vyzbierane: number; neuhradene: number }).vyzbierane + (response.poplatkyZaSmeny as { vyzbierane: number; neuhradene: number }).neuhradene : 0);
+      // Do príjmov a do zisku/straty rátame LEN už uhradené poplatky.
+      // Neuhradené sa vykazujú samostatne (pre zvolené obdobie).
+      const rental = response.poplatkyZaSmeny as { vyzbierane: number; neuhradene: number } | undefined;
+      const prijmyUhradene =
+        weekRevenues.filter((r) => r.uhradene === 1).reduce((s, r) => s + Number(r.celkovyPoplatokRow), 0)
+        + (rental ? rental.vyzbierane : 0);
+      const neuhradeneSpolu =
+        weekRevenues.filter((r) => r.uhradene !== 1).reduce((s, r) => s + Number(r.celkovyPoplatokRow), 0)
+        + (rental ? rental.neuhradene : 0);
       const vydavky = Math.round(vydavkySpolu * 10) / 10;
-      const zisk = Math.round((prijmy - vydavky) * 10) / 10;
+      const zisk = Math.round((prijmyUhradene - vydavky) * 10) / 10;
       response.financie = {
-        prijmy: Math.round(prijmy * 10) / 10,
+        prijmy: Math.round(prijmyUhradene * 10) / 10,
+        prijmyNeuhradene: Math.round(neuhradeneSpolu * 10) / 10,
         vydavky,
         zisk,
         vydavkyPodlaKategorii: Array.from(byCat.entries()).map(([kategoria, suma]) => ({ kategoria, suma: Math.round(suma * 10) / 10 })).sort((a, b) => b.suma - a.suma),

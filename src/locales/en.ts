@@ -428,6 +428,8 @@ export const en: Dictionary = {
   bookingSection: {
     title: "Book a ride",
     textBeforePhone: "Fill in the form and we will get back to you. Or simply call us on ",
+    noticeAdvance:
+      "Please use this form only for rides planned at least 6 hours in advance, so we can be sure to process them in time. If you need a ride right away or sooner, call the dispatch or order through the E-TAXI Košice app.",
   },
 
   bookingForm: {
@@ -459,6 +461,8 @@ export const en: Dictionary = {
       pickup: "Enter a pickup location (min. 3 characters)",
       destination: "Enter a destination (min. 3 characters)",
       datetime: "Select a date and time",
+      datetimeTooSoon:
+        "Orders can be submitted at least 6 hours in advance. If you need a ride sooner, call the dispatch or use the E-TAXI Košice app.",
       phone: "Enter a valid phone number",
       email: "Enter a valid email address",
     },

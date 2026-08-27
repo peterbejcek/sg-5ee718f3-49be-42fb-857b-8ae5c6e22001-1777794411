@@ -30,6 +30,18 @@ const createBookingSchema = (t: Dictionary) =>
     flightNumber: z.string().optional(),
     note: z.string().optional(),
     priceEstimateOnly: z.boolean().default(false),
+  }).superRefine((data, ctx) => {
+    // Objednávku (nie cenovú kalkuláciu) je možné poslať najskôr 6 hodín vopred.
+    if (data.priceEstimateOnly || !data.datetime) return;
+    const when = new Date(data.datetime).getTime();
+    const MIN_ADVANCE_MS = 6 * 60 * 60 * 1000;
+    if (Number.isNaN(when) || when - Date.now() < MIN_ADVANCE_MS) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["datetime"],
+        message: t.bookingForm.validation.datetimeTooSoon,
+      });
+    }
   });
 
 type BookingFormData = z.infer<ReturnType<typeof createBookingSchema>>;

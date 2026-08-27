@@ -306,6 +306,9 @@ export default function Home() {
                   {t.common.phone}
                 </a>
               </p>
+              <div className="mb-8 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
+                ⚠️ {t.bookingSection.noticeAdvance}
+              </div>
               <BookingForm />
             </div>
           </div>

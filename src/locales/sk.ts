@@ -428,6 +428,8 @@ export const sk = {
   bookingSection: {
     title: "Objednať prepravu",
     textBeforePhone: "Vyplňte formulár a my sa vám ozveme. Alebo nám rovno zavolajte na ",
+    noticeAdvance:
+      "Formulár používajte len na objednávky, ktoré plánujete s časovým odstupom aspoň 6 hodín, aby sme ich určite stihli spracovať. Ak potrebujete odvoz hneď alebo v kratšom čase, zavolajte na dispečing alebo objednajte cez aplikáciu E-TAXI Košice.",
   },
 
   bookingForm: {
@@ -459,6 +461,8 @@ export const sk = {
       pickup: "Zadajte odberné miesto (min. 3 znaky)",
       destination: "Zadajte cieľ (min. 3 znaky)",
       datetime: "Vyberte dátum a čas",
+      datetimeTooSoon:
+        "Objednávku je možné odoslať najskôr 6 hodín vopred. Ak potrebujete odvoz skôr, zavolajte na dispečing alebo použite aplikáciu E-TAXI Košice.",
       phone: "Zadajte platné telefónne číslo",
       email: "Zadajte platnú emailovú adresu",
     },

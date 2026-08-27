@@ -428,6 +428,8 @@ export const de: Dictionary = {
   bookingSection: {
     title: "Fahrt buchen",
     textBeforePhone: "Füllen Sie das Formular aus und wir melden uns bei Ihnen. Oder rufen Sie uns einfach an unter ",
+    noticeAdvance:
+      "Bitte nutzen Sie dieses Formular nur für Fahrten, die Sie mindestens 6 Stunden im Voraus planen, damit wir sie sicher rechtzeitig bearbeiten können. Wenn Sie sofort oder kurzfristig eine Fahrt brauchen, rufen Sie die Dispatch-Zentrale an oder bestellen Sie über die App E-TAXI Košice.",
   },
 
   bookingForm: {
@@ -459,6 +461,8 @@ export const de: Dictionary = {
       pickup: "Geben Sie einen Abholort ein (min. 3 Zeichen)",
       destination: "Geben Sie ein Ziel ein (min. 3 Zeichen)",
       datetime: "Wählen Sie Datum und Uhrzeit",
+      datetimeTooSoon:
+        "Bestellungen können frühestens 6 Stunden im Voraus abgeschickt werden. Wenn Sie früher eine Fahrt brauchen, rufen Sie die Dispatch-Zentrale an oder nutzen Sie die App E-TAXI Košice.",
       phone: "Geben Sie eine gültige Telefonnummer ein",
       email: "Geben Sie eine gültige E-Mail-Adresse ein",
     },

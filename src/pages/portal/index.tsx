@@ -42,7 +42,7 @@ type Dashboard = {
   suhrn?: { pocetVodicov: number; celkovaTrzba: number; poplatokApp: number; provizia: number; celkovyPoplatok: number; uhradene: number; neuhradene: number };
   poplatkyZaSmeny?: { vyzbierane: number; neuhradene: number; podlaVodicov: { driver: DriverRef; zaplatene: number; nezaplatene: number }[] };
   neuhradenaRegistracia?: (DriverRef & { id: number })[];
-  financie?: { prijmy: number; vydavky: number; zisk: number; vydavkyPodlaKategorii: { kategoria: string; suma: number }[] };
+  financie?: { prijmy: number; prijmyNeuhradene: number; vydavky: number; zisk: number; vydavkyPodlaKategorii: { kategoria: string; suma: number }[] };
 };
 
 function Stat({ label, value, hint, color }: { label: string; value: string; hint?: string; color?: string }) {
@@ -204,10 +204,11 @@ export default function DashboardPage() {
 
           {data.financie && (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <Stat label={`Príjmy (poplatky) ${suffix}`} value={formatEur(data.financie.prijmy)} hint="poplatky od vodičov" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Stat label={`Príjmy (uhradené) ${suffix}`} value={formatEur(data.financie.prijmy)} hint="len uhradené poplatky" />
+                <Stat label={`Neuhradené ${suffix}`} value={formatEur(data.financie.prijmyNeuhradene)} hint="ešte nezaplatené poplatky" color="text-red-600" />
                 <Stat label={`Výdavky ${suffix}`} value={formatEur(data.financie.vydavky)} />
-                <Stat label={`Zisk / strata ${suffix}`} value={formatEur(data.financie.zisk)} hint="príjmy − výdavky" color={data.financie.zisk >= 0 ? "text-green-600" : "text-red-600"} />
+                <Stat label={`Zisk / strata ${suffix}`} value={formatEur(data.financie.zisk)} hint="uhradené príjmy − výdavky" color={data.financie.zisk >= 0 ? "text-green-600" : "text-red-600"} />
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <Card>
@@ -358,7 +359,7 @@ function ProfitChart({ prijmy, vydavky, zisk }: { prijmy: number; vydavky: numbe
   );
   return (
     <div className="space-y-3">
-      {bar("Príjmy (poplatky)", prijmy, "#28a745")}
+      {bar("Príjmy (uhradené)", prijmy, "#28a745")}
       {bar("Výdavky", vydavky, "#dc3545")}
       {bar("Zisk / strata", zisk, zisk >= 0 ? "#282462" : "#dc3545")}
     </div>

@@ -428,6 +428,8 @@ export const hu: Dictionary = {
   bookingSection: {
     title: "Fuvar foglalása",
     textBeforePhone: "Töltse ki az űrlapot, és jelentkezünk. Vagy egyszerűen hívjon minket a ",
+    noticeAdvance:
+      "Kérjük, az űrlapot csak legalább 6 órával előre tervezett fuvarokhoz használja, hogy biztosan fel tudjuk dolgozni. Ha azonnal vagy rövid időn belül van szüksége fuvarra, hívja a diszpécserszolgálatot, vagy rendeljen az E-TAXI Košice alkalmazáson keresztül.",
   },
 
   bookingForm: {
@@ -459,6 +461,8 @@ export const hu: Dictionary = {
       pickup: "Adja meg a felvételi helyet (min. 3 karakter)",
       destination: "Adja meg az úti célt (min. 3 karakter)",
       datetime: "Válasszon dátumot és időpontot",
+      datetimeTooSoon:
+        "A megrendelés legalább 6 órával előre küldhető el. Ha korábban van szüksége fuvarra, hívja a diszpécserszolgálatot, vagy használja az E-TAXI Košice alkalmazást.",
       phone: "Adjon meg egy érvényes telefonszámot",
       email: "Adjon meg egy érvényes e-mail-címet",
     },
