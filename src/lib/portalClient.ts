@@ -63,6 +63,22 @@ export function formatDate(value: string | Date | null | undefined): string {
   return `${d.padStart(2, "0")}.${m.padStart(2, "0")}.${y}`;
 }
 
+/**
+ * Peňažné/číselné polia sú v portáli textové (kvôli mobilnému Safari, kde
+ * `type=number` blokuje desatinnú čiarku a nedá vymazať predvolenú 0).
+ * Tieto pomocníky ošetria vstup a bezpečne prevedú čiarku aj bodku na číslo.
+ */
+export function sanitizeDecimalInput(v: string): string {
+  return v.replace(/[^0-9.,]/g, "");
+}
+
+/** Prevedie textovú sumu (s čiarkou alebo bodkou) na číslo; neplatné → 0. */
+export function parseDecimal(v: string | number | null | undefined): number {
+  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+  const n = parseFloat(String(v ?? "").replace(",", "."));
+  return Number.isNaN(n) ? 0 : n;
+}
+
 export const ROLE_LABELS: Record<Role, string> = {
   MAJITEL: "Majiteľ",
   DISPECER: "Dispečer",

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur } from "@/lib/portalClient";
+import { apiFetch, formatEur, parseDecimal, sanitizeDecimalInput } from "@/lib/portalClient";
 import { isoWeekParts, vypocitajPoplatky } from "@/lib/fees";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,7 @@ export default function TrzbyPage() {
     try {
       await apiFetch("/api/portal/revenues", {
         method: "POST",
-        body: JSON.stringify({ driverId, isoRok: rok, isoTyzden: tyzden, trzba: Number(val) }),
+        body: JSON.stringify({ driverId, isoRok: rok, isoTyzden: tyzden, trzba: parseDecimal(val) }),
       });
       load(); toast({ title: "Tržba uložená" });
     } catch (e) { toast({ title: "Chyba", description: e instanceof Error ? e.message : "", variant: "destructive" }); }
@@ -63,7 +63,7 @@ export default function TrzbyPage() {
   function preview(driverId: number) {
     const val = inputs[driverId];
     if (!val) return null;
-    return vypocitajPoplatky(Number(val));
+    return vypocitajPoplatky(parseDecimal(val));
   }
 
   const sum = (k: "trzba" | "poplatokApp" | "provizia" | "celkovyPoplatok") =>
@@ -100,9 +100,9 @@ export default function TrzbyPage() {
                   </TableCell>
                   <TableCell>
                     <Input
-                      type="number" step="0.01" className="w-28"
+                      type="text" inputMode="decimal" placeholder="0,00" className="w-28"
                       value={inputs[dr.id] ?? ""}
-                      onChange={(e) => setInputs({ ...inputs, [dr.id]: e.target.value })}
+                      onChange={(e) => setInputs({ ...inputs, [dr.id]: sanitizeDecimalInput(e.target.value) })}
                       onBlur={() => saveTrzba(dr.id)}
                     />
                   </TableCell>

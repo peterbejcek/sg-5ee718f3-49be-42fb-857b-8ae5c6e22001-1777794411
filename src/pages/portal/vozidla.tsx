@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur } from "@/lib/portalClient";
+import { apiFetch, formatEur, parseDecimal, sanitizeDecimalInput } from "@/lib/portalClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +27,7 @@ type Vehicle = {
 };
 
 const POHONY = ["ELEKTRO", "HYBRID", "BENZIN", "DIESEL", "LPG", "CNG"];
-const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: 0, lizing: 0, poistenie: 0, sukromne: false, casVymeny: "", aktivne: true };
+const empty = { nazov: "", znacka: "", model: "", farba: "", spz: "", druhPohonu: "ELEKTRO", poplatokZaSmenu: "0", lizing: "0", poistenie: "0", sukromne: false, casVymeny: "", aktivne: true };
 
 export default function VozidlaPage() {
   const { toast } = useToast();
@@ -42,14 +42,29 @@ export default function VozidlaPage() {
   useEffect(load, []);
 
   function openNew() { setEditing(null); setForm(empty); setOpen(true); }
-  function openEdit(v: Vehicle) { setEditing(v); setForm({ ...v, casVymeny: v.casVymeny ?? "" }); setOpen(true); }
+  function openEdit(v: Vehicle) {
+    setEditing(v);
+    setForm({
+      nazov: v.nazov, znacka: v.znacka, model: v.model, farba: v.farba, spz: v.spz,
+      druhPohonu: v.druhPohonu,
+      poplatokZaSmenu: String(v.poplatokZaSmenu), lizing: String(v.lizing), poistenie: String(v.poistenie),
+      sukromne: v.sukromne, casVymeny: v.casVymeny ?? "", aktivne: v.aktivne,
+    });
+    setOpen(true);
+  }
 
   async function save() {
+    const payload = {
+      ...form,
+      poplatokZaSmenu: parseDecimal(form.poplatokZaSmenu),
+      lizing: parseDecimal(form.lizing),
+      poistenie: parseDecimal(form.poistenie),
+    };
     try {
       if (editing) {
-        await apiFetch(`/api/portal/vehicles/${editing.id}`, { method: "PUT", body: JSON.stringify(form) });
+        await apiFetch(`/api/portal/vehicles/${editing.id}`, { method: "PUT", body: JSON.stringify(payload) });
       } else {
-        await apiFetch("/api/portal/vehicles", { method: "POST", body: JSON.stringify(form) });
+        await apiFetch("/api/portal/vehicles", { method: "POST", body: JSON.stringify(payload) });
       }
       setOpen(false); load();
       toast({ title: "Uložené" });
@@ -90,10 +105,10 @@ export default function VozidlaPage() {
                   <SelectContent>{POHONY.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div><Label>Poplatok za smenu (€)</Label><Input type="number" step="0.01" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: Number(e.target.value) })} /></div>
+              <div><Label>Poplatok za smenu (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.poplatokZaSmenu} onChange={(e) => setForm({ ...form, poplatokZaSmenu: sanitizeDecimalInput(e.target.value) })} /></div>
               <div><Label>Čas výmeny (D↔N)</Label><Input type="time" value={form.casVymeny} onChange={(e) => setForm({ ...form, casVymeny: e.target.value })} /></div>
-              <div><Label>Lízing / mesiac (€)</Label><Input type="number" step="0.01" value={form.lizing} onChange={(e) => setForm({ ...form, lizing: Number(e.target.value) })} /></div>
-              <div><Label>Poistenie / mesiac (€)</Label><Input type="number" step="0.01" value={form.poistenie} onChange={(e) => setForm({ ...form, poistenie: Number(e.target.value) })} /></div>
+              <div><Label>Lízing / mesiac (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.lizing} onChange={(e) => setForm({ ...form, lizing: sanitizeDecimalInput(e.target.value) })} /></div>
+              <div><Label>Poistenie / mesiac (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.poistenie} onChange={(e) => setForm({ ...form, poistenie: sanitizeDecimalInput(e.target.value) })} /></div>
               <div className="col-span-2 flex items-center gap-2 pt-1">
                 <Checkbox id="sukromne" checked={form.sukromne} onCheckedChange={(v) => setForm({ ...form, sukromne: !!v })} />
                 <Label htmlFor="sukromne" className="font-normal cursor-pointer">Súkromné vozidlo (neponúka sa medzi voľnými smenami)</Label>

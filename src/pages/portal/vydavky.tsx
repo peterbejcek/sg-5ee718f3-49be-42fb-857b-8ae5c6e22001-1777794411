@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { PortalLayout } from "@/components/portal/PortalLayout";
-import { apiFetch, formatEur, formatDate } from "@/lib/portalClient";
+import { apiFetch, formatEur, formatDate, sanitizeDecimalInput } from "@/lib/portalClient";
 import { INTERVAL_LABELS, type ExpenseInterval } from "@/lib/expenses";
+import { isoWeekParts, type Obdobie } from "@/lib/fees";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,8 +23,21 @@ type Expense = {
   pravidelny: boolean; interval: ExpenseInterval | null;
   categoryId: number; kategoria: string; vozidlo: string | null; zdroj: string;
 };
+type Summary = {
+  obdobie: { typ: Obdobie; label: string };
+  spolu: number;
+  podlaKategorii: { kategoria: string; suma: number }[];
+};
 
 const INTERVALS: ExpenseInterval[] = ["TYZDENNE", "MESACNE", "STVRTROCNE", "POLROCNE", "ROCNE"];
+const MESIACE = [
+  "Január", "Február", "Marec", "Apríl", "Máj", "Jún",
+  "Júl", "August", "September", "Október", "November", "December",
+];
+const CHART_COLORS = [
+  "#282462", "#ff9500", "#28a745", "#e83e8c", "#17a2b8",
+  "#6f42c1", "#fd7e14", "#20c997", "#dc3545", "#6610f2",
+];
 const today = () => new Date().toISOString().slice(0, 10);
 const emptyForm = {
   datum: today(), popis: "", categoryId: "", suma: "",
@@ -31,9 +46,14 @@ const emptyForm = {
 
 export default function VydavkyPage() {
   const { toast } = useToast();
-  const [rok, setRok] = useState(new Date().getFullYear());
+  const now = isoWeekParts(new Date());
+  const [obdobie, setObdobie] = useState<Obdobie>("mesiac");
+  const [rok, setRok] = useState(now.isoRok);
+  const [tyzden, setTyzden] = useState(now.isoTyzden);
+  const [mesiac, setMesiac] = useState(new Date().getMonth() + 1);
   const [list, setList] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [summary, setSummary] = useState<Summary | null>(null);
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
@@ -44,7 +64,9 @@ export default function VydavkyPage() {
   }, []);
   const load = useCallback(() => {
     apiFetch<{ expenses: Expense[] }>(`/api/portal/expenses?rok=${rok}`).then((d) => setList(d.expenses));
-  }, [rok]);
+    apiFetch<Summary>(`/api/portal/expenses/summary?obdobie=${obdobie}&rok=${rok}&tyzden=${tyzden}&mesiac=${mesiac}`)
+      .then(setSummary).catch(() => setSummary(null));
+  }, [rok, obdobie, tyzden, mesiac]);
   useEffect(() => { loadCats(); }, [loadCats]);
   useEffect(() => { load(); }, [load]);
 
@@ -98,14 +120,34 @@ export default function VydavkyPage() {
       <Head><title>Výdavky — E-TAXI Portál</title></Head>
 
       <div className="flex flex-wrap gap-3 items-end mb-4">
+        <div>
+          <Label>Obdobie</Label>
+          <Select value={obdobie} onValueChange={(v) => setObdobie(v as Obdobie)}>
+            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tyzden">Týždeň</SelectItem>
+              <SelectItem value="mesiac">Mesiac</SelectItem>
+              <SelectItem value="rok">Rok</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div><Label>Rok</Label><Input type="number" className="w-24" value={rok} onChange={(e) => setRok(Number(e.target.value))} /></div>
+        {obdobie === "tyzden" && <div><Label>ISO týždeň</Label><Input type="number" min={1} max={53} className="w-24" value={tyzden} onChange={(e) => setTyzden(Number(e.target.value))} /></div>}
+        {obdobie === "mesiac" && (
+          <div><Label>Mesiac</Label>
+            <Select value={String(mesiac)} onValueChange={(v) => setMesiac(Number(v))}>
+              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+              <SelectContent>{MESIACE.map((m, i) => <SelectItem key={i} value={String(i + 1)}>{m}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+        )}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button className="mb-0" onClick={openNew}>+ Pridať výdavok</Button></DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>{editing ? "Upraviť výdavok" : "Nový výdavok"}</DialogTitle></DialogHeader>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Dátum</Label><Input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} /></div>
-              <div><Label>Suma (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.suma} onChange={(e) => setForm({ ...form, suma: e.target.value.replace(/[^0-9.,]/g, "") })} /></div>
+              <div><Label>Suma (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.suma} onChange={(e) => setForm({ ...form, suma: sanitizeDecimalInput(e.target.value) })} /></div>
               <div className="col-span-2"><Label>Popis</Label><Input value={form.popis} onChange={(e) => setForm({ ...form, popis: e.target.value })} /></div>
               <div className="col-span-2">
                 <Label>Kategória</Label>
@@ -148,6 +190,27 @@ export default function VydavkyPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Súhrn za zvolené obdobie + rozloženie podľa kategórií */}
+      {summary && (
+        <div className="grid md:grid-cols-3 gap-3 mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-sm text-muted-foreground">Výdavky spolu — {summary.obdobie.label}</div>
+              <div className="text-2xl font-bold">{formatEur(summary.spolu)}</div>
+              <div className="text-xs text-muted-foreground mt-1">vrátane rozpočítaných pravidelných výdavkov</div>
+            </CardContent>
+          </Card>
+          <Card className="md:col-span-2">
+            <CardHeader><CardTitle className="text-lg">Rozloženie výdavkov podľa kategórií</CardTitle></CardHeader>
+            <CardContent>
+              {summary.podlaKategorii.length === 0
+                ? <p className="text-muted-foreground text-sm">Žiadne výdavky za obdobie.</p>
+                : <DonutChart data={summary.podlaKategorii.map((c, i) => ({ label: c.kategoria, value: c.suma, color: CHART_COLORS[i % CHART_COLORS.length] }))} />}
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <div className="bg-white rounded-md border overflow-x-auto">
         <Table>
@@ -219,6 +282,40 @@ function CategoryManager({ categories, onChange }: { categories: Category[]; onC
               <Button size="sm" variant="ghost" onClick={() => toggle(c)}>{c.aktivna ? "Deaktivovať" : "Aktivovať"}</Button>
               <Button size="sm" variant="ghost" className="text-red-600" onClick={() => remove(c)}>Zmazať</Button>
             </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Jednoduchý donut graf (bez externých knižníc) — zhoda s dashboardom.
+function DonutChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+  const total = data.reduce((s, d) => s + d.value, 0);
+  const R = 60, r = 38, cx = 70, cy = 70;
+  let angle = -Math.PI / 2;
+  const arcs = data.map((d) => {
+    const frac = total > 0 ? d.value / total : 0;
+    const start = angle, end = angle + frac * 2 * Math.PI;
+    angle = end;
+    const large = end - start > Math.PI ? 1 : 0;
+    const x1 = cx + R * Math.cos(start), y1 = cy + R * Math.sin(start);
+    const x2 = cx + R * Math.cos(end), y2 = cy + R * Math.sin(end);
+    const xi2 = cx + r * Math.cos(end), yi2 = cy + r * Math.sin(end);
+    const xi1 = cx + r * Math.cos(start), yi1 = cy + r * Math.sin(start);
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${r} ${r} 0 ${large} 0 ${xi1} ${yi1} Z`;
+  });
+  return (
+    <div className="flex flex-col sm:flex-row items-center gap-4">
+      <svg width="140" height="140" viewBox="0 0 140 140" className="shrink-0">
+        {total === 0 ? <circle cx={cx} cy={cy} r={R} fill="none" stroke="#e5e7eb" strokeWidth={R - r} /> :
+          arcs.map((d, i) => <path key={i} d={d} fill={data[i].color} />)}
+      </svg>
+      <div className="space-y-1 text-sm w-full">
+        {data.map((d, i) => (
+          <div key={i} className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-sm" style={{ background: d.color }} />{d.label}</span>
+            <span className="text-muted-foreground">{formatEur(d.value)} · {total > 0 ? Math.round((d.value / total) * 100) : 0}%</span>
           </div>
         ))}
       </div>
