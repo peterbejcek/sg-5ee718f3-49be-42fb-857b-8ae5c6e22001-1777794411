@@ -26,16 +26,40 @@ function parseYmd(s: string): Date {
   return new Date(`${s.slice(0, 10)}T00:00:00.000Z`);
 }
 
-function stepDate(d: Date, interval: ExpenseInterval): Date {
-  const n = new Date(d);
+/** Počet dní v mesiaci (0-indexovaný mesiac). */
+function daysInMonth(year: number, month0: number): number {
+  return new Date(Date.UTC(year, month0 + 1, 0)).getUTCDate();
+}
+
+/** Počet mesiacov medzi výskytmi pri mesačných intervaloch (0 = týždenne). */
+function stepMonths(interval: ExpenseInterval): number {
   switch (interval) {
-    case "TYZDENNE": n.setUTCDate(n.getUTCDate() + 7); break;
-    case "MESACNE": n.setUTCMonth(n.getUTCMonth() + 1); break;
-    case "STVRTROCNE": n.setUTCMonth(n.getUTCMonth() + 3); break;
-    case "POLROCNE": n.setUTCMonth(n.getUTCMonth() + 6); break;
-    case "ROCNE": n.setUTCFullYear(n.getUTCFullYear() + 1); break;
+    case "MESACNE": return 1;
+    case "STVRTROCNE": return 3;
+    case "POLROCNE": return 6;
+    case "ROCNE": return 12;
+    default: return 0; // TYZDENNE
   }
-  return n;
+}
+
+/**
+ * k-ty výskyt (k = 0, 1, 2, …) počítaný VŽDY z pôvodného dátumu — bez
+ * kumulatívneho posunu. Deň v mesiaci sa zachová (ukotví) a pri kratších
+ * mesiacoch sa oreže na posledný deň mesiaca. Tým sa mesačný výdavok
+ * so splatnosťou napr. 31. nestratí v 30-dňových mesiacoch.
+ */
+function nthOccurrence(start: Date, interval: ExpenseInterval, k: number): Date {
+  const months = stepMonths(interval);
+  if (months === 0) {
+    const d = new Date(start);
+    d.setUTCDate(d.getUTCDate() + 7 * k); // TYZDENNE
+    return d;
+  }
+  const totalMonths = start.getUTCMonth() + months * k;
+  const year = start.getUTCFullYear() + Math.floor(totalMonths / 12);
+  const month0 = ((totalMonths % 12) + 12) % 12;
+  const day = Math.min(start.getUTCDate(), daysInMonth(year, month0));
+  return new Date(Date.UTC(year, month0, day));
 }
 
 /**
@@ -55,17 +79,11 @@ export function occurrencesInRange(
     return start.getTime() >= from.getTime() && start.getTime() <= to.getTime() ? 1 : 0;
   }
   let count = 0;
-  let d = new Date(start);
-  let guard = 0;
-  // Preskočí výskyty pred obdobím.
-  while (d.getTime() < from.getTime() && guard < 100000) {
-    d = stepDate(d, interval);
-    guard++;
-  }
-  while (d.getTime() <= to.getTime() && guard < 100000) {
-    count++;
-    d = stepDate(d, interval);
-    guard++;
+  // Výskyty sú rastúce; počítame ich priamo z pôvodného dátumu (žiadny drift).
+  for (let k = 0; k < 100000; k++) {
+    const d = nthOccurrence(start, interval, k);
+    if (d.getTime() > to.getTime()) break;
+    if (d.getTime() >= from.getTime()) count++;
   }
   return count;
 }

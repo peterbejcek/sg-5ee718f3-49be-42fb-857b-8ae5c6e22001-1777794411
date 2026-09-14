@@ -25,7 +25,7 @@ type Expense = {
 const INTERVALS: ExpenseInterval[] = ["TYZDENNE", "MESACNE", "STVRTROCNE", "POLROCNE", "ROCNE"];
 const today = () => new Date().toISOString().slice(0, 10);
 const emptyForm = {
-  datum: today(), popis: "", categoryId: "", suma: 0,
+  datum: today(), popis: "", categoryId: "", suma: "",
   uhradene: false, pravidelny: false, interval: "MESACNE" as ExpenseInterval,
 };
 
@@ -58,7 +58,7 @@ export default function VydavkyPage() {
   function openEdit(e: Expense) {
     setEditing(e);
     setForm({
-      datum: e.datum.slice(0, 10), popis: e.popis, categoryId: String(e.categoryId), suma: e.suma,
+      datum: e.datum.slice(0, 10), popis: e.popis, categoryId: String(e.categoryId), suma: String(e.suma),
       uhradene: e.uhradene, pravidelny: e.pravidelny, interval: e.interval ?? "MESACNE",
     });
     setOpen(true);
@@ -66,8 +66,11 @@ export default function VydavkyPage() {
 
   async function save() {
     if (!form.categoryId) { toast({ title: "Vyberte kategóriu", variant: "destructive" }); return; }
+    // Suma je textové pole (kvôli mobilnému Safari): akceptuj čiarku aj bodku.
+    const sumaNum = parseFloat(String(form.suma).replace(",", "."));
+    if (Number.isNaN(sumaNum) || sumaNum < 0) { toast({ title: "Zadajte platnú sumu", variant: "destructive" }); return; }
     const payload = {
-      datum: form.datum, popis: form.popis, categoryId: Number(form.categoryId), suma: form.suma,
+      datum: form.datum, popis: form.popis, categoryId: Number(form.categoryId), suma: sumaNum,
       uhradene: form.uhradene, pravidelny: form.pravidelny,
       interval: form.pravidelny ? form.interval : null,
     };
@@ -102,7 +105,7 @@ export default function VydavkyPage() {
             <DialogHeader><DialogTitle>{editing ? "Upraviť výdavok" : "Nový výdavok"}</DialogTitle></DialogHeader>
             <div className="grid grid-cols-2 gap-3">
               <div><Label>Dátum</Label><Input type="date" value={form.datum} onChange={(e) => setForm({ ...form, datum: e.target.value })} /></div>
-              <div><Label>Suma (€)</Label><Input type="number" step="0.01" value={form.suma} onChange={(e) => setForm({ ...form, suma: Number(e.target.value) })} /></div>
+              <div><Label>Suma (€)</Label><Input type="text" inputMode="decimal" placeholder="0,00" value={form.suma} onChange={(e) => setForm({ ...form, suma: e.target.value.replace(/[^0-9.,]/g, "") })} /></div>
               <div className="col-span-2"><Label>Popis</Label><Input value={form.popis} onChange={(e) => setForm({ ...form, popis: e.target.value })} /></div>
               <div className="col-span-2">
                 <Label>Kategória</Label>
