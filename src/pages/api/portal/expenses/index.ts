@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { query, execute, toBool, type SqlParam } from "@/lib/db";
+import { query, querySafe, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
@@ -60,7 +60,8 @@ export default withErrorHandler(
       const rows = await query<ExpenseRow>(SELECT_JOIN + whereSql, params);
 
       // Stav jednotlivých výskytov (úhrada per výskyt / vynechané výskyty).
-      const occ = await query<{ expenseId: number; datum: string; uhradene: number; vynechany: number }>(
+      // querySafe: ak tabuľka ešte neexistuje (pred migráciou), neberie to stránku.
+      const occ = await querySafe<{ expenseId: number; datum: string; uhradene: number; vynechany: number }>(
         "SELECT `expenseId`, `datum`, `uhradene`, `vynechany` FROM `ExpenseOccurrence`"
       );
       const paidMap = new Map<string, boolean>();

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { query, queryOne, toBool } from "@/lib/db";
+import { query, queryOne, querySafe, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, weeksInRange, isoWeekParts, type Obdobie } from "@/lib/fees";
@@ -191,10 +191,10 @@ export default withErrorHandler(
       // rátajú len po koniec aktuálneho mesiaca a po koniec predpisu (datumDo);
       // vynechané jednotlivé výskyty sa nerátajú.
       const expenseRows = await query<{ id: number; datum: string; suma: number; pravidelny: number; interval: string | null; datumDo: string | null; c_nazov: string }>(
-        "SELECT e.`id`, e.`datum`, e.`suma`, e.`pravidelny`, e.`interval`, e.`datumDo`, c.`nazov` AS c_nazov " +
+        "SELECT e.*, c.`nazov` AS c_nazov " +
           "FROM `Expense` e JOIN `ExpenseCategory` c ON c.`id` = e.`categoryId`"
       );
-      const skipRows = await query<{ expenseId: number; datum: string }>(
+      const skipRows = await querySafe<{ expenseId: number; datum: string }>(
         "SELECT `expenseId`, `datum` FROM `ExpenseOccurrence` WHERE `vynechany` = 1"
       );
       const skipSet = new Set(skipRows.map((s) => `${s.expenseId}|${s.datum.slice(0, 10)}`));

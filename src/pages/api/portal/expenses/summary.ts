@@ -2,7 +2,7 @@
 // a rozloženie podľa kategórií. Pravidelné výdavky sa rozpočítajú cez
 // occurrencesInRange (rovnako ako v dashboarde). Len majiteľ.
 import type { NextApiRequest, NextApiResponse } from "next";
-import { query } from "@/lib/db";
+import { query, querySafe } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
@@ -24,11 +24,12 @@ export default withErrorHandler(
     const range = periodRange(obdobie, { rok, tyzden, mesiac });
 
     const rows = await query<{ id: number; datum: string; suma: number; pravidelny: number; interval: string | null; datumDo: string | null; c_nazov: string }>(
-      "SELECT e.`id`, e.`datum`, e.`suma`, e.`pravidelny`, e.`interval`, e.`datumDo`, c.`nazov` AS c_nazov " +
+      "SELECT e.*, c.`nazov` AS c_nazov " +
         "FROM `Expense` e JOIN `ExpenseCategory` c ON c.`id` = e.`categoryId`"
     );
     // Vynechané (zmazané) jednotlivé výskyty sa do súm nerátajú.
-    const skipRows = await query<{ expenseId: number; datum: string }>(
+    // querySafe: ak tabuľka ešte neexistuje (pred migráciou), neberie to stránku.
+    const skipRows = await querySafe<{ expenseId: number; datum: string }>(
       "SELECT `expenseId`, `datum` FROM `ExpenseOccurrence` WHERE `vynechany` = 1"
     );
     const skipSet = new Set(skipRows.map((s) => `${s.expenseId}|${s.datum.slice(0, 10)}`));

@@ -56,6 +56,23 @@ export async function query<T = Record<string, unknown>>(
   return rows as T[];
 }
 
+/**
+ * Ako query(), ale pri chybe vráti prázdne pole namiesto vyhodenia výnimky.
+ * Použitie: doplnkové čítania (napr. stavy výskytov výdavkov), ktoré nesmú
+ * zhodiť stránku, ak príslušná tabuľka/stĺpec ešte neexistuje (pred migráciou).
+ */
+export async function querySafe<T = Record<string, unknown>>(
+  sql: string,
+  params: SqlParam[] = []
+): Promise<T[]> {
+  try {
+    return await query<T>(sql, params);
+  } catch (e) {
+    console.error("querySafe: dopyt zlyhal, vraciam []:", e instanceof Error ? e.message : e);
+    return [];
+  }
+}
+
 /** SELECT vracajúci prvý riadok alebo null. */
 export async function queryOne<T = Record<string, unknown>>(
   sql: string,
