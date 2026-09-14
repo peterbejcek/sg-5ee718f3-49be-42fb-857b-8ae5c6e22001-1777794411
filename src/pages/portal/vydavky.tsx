@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type Category = { id: number; nazov: string; aktivna: boolean };
 type Expense = {
-  id: number; datum: string; popis: string; suma: number; uhradene: boolean;
+  id: number; datum: string; zaciatok?: string; popis: string; suma: number; uhradene: boolean;
   pravidelny: boolean; interval: ExpenseInterval | null;
   categoryId: number; kategoria: string; vozidlo: string | null; zdroj: string;
 };
@@ -61,6 +61,7 @@ export default function VydavkyPage() {
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
+  const [delTarget, setDelTarget] = useState<Expense | null>(null);
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
   const loadCats = useCallback(() => {
@@ -88,7 +89,9 @@ export default function VydavkyPage() {
   function openEdit(e: Expense) {
     setEditing(e);
     setForm({
-      datum: e.datum.slice(0, 10), popis: e.popis, categoryId: String(e.categoryId), suma: String(e.suma),
+      // Pri pravidelnom výdavku upravujeme predpis — použijeme pôvodný začiatok, nie dátum výskytu.
+      datum: (e.pravidelny ? e.zaciatok ?? e.datum : e.datum).slice(0, 10),
+      popis: e.popis, categoryId: String(e.categoryId), suma: String(e.suma),
       uhradene: e.uhradene, pravidelny: e.pravidelny, interval: e.interval ?? "MESACNE",
     });
     setOpen(true);
@@ -113,14 +116,36 @@ export default function VydavkyPage() {
   }
 
   async function togglePaid(e: Expense) {
-    await apiFetch(`/api/portal/expenses/${e.id}`, { method: "PUT", body: JSON.stringify({ uhradene: !e.uhradene }) });
-    load();
+    try {
+      if (e.pravidelny) {
+        // Úhrada per výskyt — neovplyvní ostatné mesiace.
+        await apiFetch("/api/portal/expenses/occurrence", {
+          method: "PUT",
+          body: JSON.stringify({ expenseId: e.id, datum: e.datum, uhradene: !e.uhradene }),
+        });
+      } else {
+        await apiFetch(`/api/portal/expenses/${e.id}`, { method: "PUT", body: JSON.stringify({ uhradene: !e.uhradene }) });
+      }
+      load();
+    } catch (err) { toast({ title: "Chyba", description: err instanceof Error ? err.message : "", variant: "destructive" }); }
   }
   async function remove(e: Expense) {
     if (e.zdroj !== "MANUAL") { toast({ title: "Tento výdavok sa spravuje pri vozidle (lízing/poistenie).", variant: "destructive" }); return; }
+    if (e.pravidelny) { setDelTarget(e); return; } // pravidelný → spýtaj sa na rozsah zmazania
     if (!confirm(`Zmazať výdavok „${e.popis}"?`)) return;
     try { await apiFetch(`/api/portal/expenses/${e.id}`, { method: "DELETE" }); load(); }
     catch (err) { toast({ title: "Chyba", description: err instanceof Error ? err.message : "", variant: "destructive" }); }
+  }
+  async function removeRecurring(scope: "one" | "series") {
+    if (!delTarget) return;
+    try {
+      await apiFetch("/api/portal/expenses/occurrence", {
+        method: "DELETE",
+        body: JSON.stringify({ expenseId: delTarget.id, datum: delTarget.datum, scope }),
+      });
+      setDelTarget(null); load();
+      toast({ title: scope === "series" ? "Výskyt aj nasledujúce zmazané" : "Výskyt zmazaný" });
+    } catch (err) { toast({ title: "Chyba", description: err instanceof Error ? err.message : "", variant: "destructive" }); }
   }
 
   return (
@@ -269,6 +294,26 @@ export default function VydavkyPage() {
           <Button size="sm" variant="outline" disabled={page >= pocetStran} onClick={() => setPage((p) => Math.min(pocetStran, p + 1))}>Ďalšia →</Button>
         </div>
       </div>
+
+      {/* Zmazanie pravidelného výdavku — voľba rozsahu */}
+      <Dialog open={!!delTarget} onOpenChange={(o) => !o && setDelTarget(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Zmazať pravidelný výdavok</DialogTitle></DialogHeader>
+          {delTarget && (
+            <div className="space-y-3">
+              <p className="text-sm">
+                „{delTarget.popis}" — výskyt {formatDate(delTarget.datum)}.<br />
+                Chcete zmazať iba tento výskyt, alebo aj všetky nasledujúce?
+              </p>
+              <div className="flex flex-col gap-2">
+                <Button variant="outline" onClick={() => removeRecurring("one")}>Iba tento výskyt</Button>
+                <Button variant="destructive" onClick={() => removeRecurring("series")}>Tento aj nasledujúce výskyty</Button>
+                <Button variant="ghost" onClick={() => setDelTarget(null)}>Zrušiť</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </PortalLayout>
   );
 }

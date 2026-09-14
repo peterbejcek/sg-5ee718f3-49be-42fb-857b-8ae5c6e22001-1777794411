@@ -221,6 +221,7 @@ model Expense {
   uhradeneDna  DateTime?
   pravidelny   Boolean          @default(false)
   interval     ExpenseInterval?
+  datumDo      DateTime?        @db.Date // koniec pravidelného predpisu (výskyty po ňom sa nezobrazujú)
   category     ExpenseCategory  @relation(fields: [categoryId], references: [id])
   categoryId   Int
   // Ak výdavok pochádza z vozidla (lízing/poistenie), je naviazaný sem.
@@ -231,8 +232,27 @@ model Expense {
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
+  occurrences  ExpenseOccurrence[]
+
   @@index([datum])
   @@index([categoryId])
   @@index([vehicleId])
   @@index([pravidelny])
+}
+
+/// Stav jednotlivého výskytu pravidelného výdavku (úhrada per výskyt,
+/// prípadne vynechanie jedného výskytu).
+model ExpenseOccurrence {
+  id          Int       @id @default(autoincrement())
+  expense     Expense   @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  expenseId   Int
+  datum       DateTime  @db.Date
+  uhradene    Boolean   @default(false)
+  uhradeneDna DateTime?
+  vynechany   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([expenseId, datum])
+  @@index([expenseId])
 }

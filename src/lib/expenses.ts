@@ -114,6 +114,37 @@ export function occurrenceDatesInRange(
   return out;
 }
 
+/** Posledný deň mesiaca daného dátumu (UTC). */
+function endOfMonthUTC(d: Date): Date {
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0));
+}
+
+/**
+ * Dátumy výskytov výdavku, ktoré sa majú v období [from, to] ZOBRAZIŤ:
+ * - jednorazový: dátum, ak spadá do obdobia (bez obmedzenia budúcnosťou),
+ * - pravidelný: výskyty v období, ale najviac po koniec aktuálneho mesiaca
+ *   (budúce mesiace sa nezobrazujú) a po koniec predpisu `datumDo` (ak je).
+ */
+export function visibleOccurrenceDates(
+  e: { datum: string; pravidelny: boolean; interval: ExpenseInterval | null; datumDo?: string | null },
+  from: Date,
+  to: Date,
+  now: Date = new Date()
+): string[] {
+  if (!e.pravidelny || !e.interval) {
+    return occurrenceDatesInRange(e.datum, false, null, from, to);
+  }
+  let toEff = to;
+  const cap = endOfMonthUTC(now); // pravidelné len po koniec aktuálneho mesiaca
+  if (cap.getTime() < toEff.getTime()) toEff = cap;
+  if (e.datumDo) {
+    const dd = parseYmd(e.datumDo);
+    if (dd.getTime() < toEff.getTime()) toEff = dd;
+  }
+  if (toEff.getTime() < from.getTime()) return [];
+  return occurrenceDatesInRange(e.datum, true, e.interval, from, toEff);
+}
+
 export type ExpenseRowLike = {
   datum: string;
   suma: number;

@@ -3,7 +3,7 @@ import { query, queryOne, toBool } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, weeksInRange, isoWeekParts, type Obdobie } from "@/lib/fees";
-import { expenseAmountInRange, type ExpenseInterval } from "@/lib/expenses";
+import { visibleOccurrenceDates, type ExpenseInterval } from "@/lib/expenses";
 import { getRegistrationFee } from "@/lib/settings";
 
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
@@ -187,16 +187,26 @@ export default withErrorHandler(
           "WHERE u.`registracnyPoplatokUhradeny` = 0 AND u.`aktivny` = 1"
       );
 
-      // Výdavky za obdobie + zisk/strata + rozloženie.
-      const expenseRows = await query<{ datum: string; suma: number; pravidelny: number; interval: string | null; c_nazov: string }>(
-        "SELECT e.`datum`, e.`suma`, e.`pravidelny`, e.`interval`, c.`nazov` AS c_nazov " +
+      // Výdavky za obdobie + zisk/strata + rozloženie. Pravidelné výdavky sa
+      // rátajú len po koniec aktuálneho mesiaca a po koniec predpisu (datumDo);
+      // vynechané jednotlivé výskyty sa nerátajú.
+      const expenseRows = await query<{ id: number; datum: string; suma: number; pravidelny: number; interval: string | null; datumDo: string | null; c_nazov: string }>(
+        "SELECT e.`id`, e.`datum`, e.`suma`, e.`pravidelny`, e.`interval`, e.`datumDo`, c.`nazov` AS c_nazov " +
           "FROM `Expense` e JOIN `ExpenseCategory` c ON c.`id` = e.`categoryId`"
       );
+      const skipRows = await query<{ expenseId: number; datum: string }>(
+        "SELECT `expenseId`, `datum` FROM `ExpenseOccurrence` WHERE `vynechany` = 1"
+      );
+      const skipSet = new Set(skipRows.map((s) => `${s.expenseId}|${s.datum.slice(0, 10)}`));
       const byCat = new Map<string, number>();
       let vydavkySpolu = 0;
       for (const e of expenseRows) {
-        const amount = expenseAmountInRange({ datum: e.datum, suma: Number(e.suma), pravidelny: e.pravidelny === 1, interval: e.interval as ExpenseInterval | null }, from, to);
-        if (amount === 0) continue;
+        const dates = visibleOccurrenceDates(
+          { datum: e.datum, pravidelny: e.pravidelny === 1, interval: e.interval as ExpenseInterval | null, datumDo: e.datumDo },
+          from, to
+        ).filter((d) => !skipSet.has(`${e.id}|${d}`));
+        if (dates.length === 0) continue;
+        const amount = Number(e.suma) * dates.length;
         vydavkySpolu += amount;
         byCat.set(e.c_nazov, (byCat.get(e.c_nazov) ?? 0) + amount);
       }

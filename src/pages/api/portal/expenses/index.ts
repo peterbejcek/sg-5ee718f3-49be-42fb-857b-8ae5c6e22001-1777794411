@@ -4,7 +4,7 @@ import { query, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
-import { occurrenceDatesInRange, type ExpenseInterval } from "@/lib/expenses";
+import { visibleOccurrenceDates, type ExpenseInterval } from "@/lib/expenses";
 
 const interval = z.enum(["TYZDENNE", "MESACNE", "STVRTROCNE", "POLROCNE", "ROCNE"]);
 
@@ -20,7 +20,7 @@ const createSchema = z.object({
 
 type ExpenseRow = {
   id: number; datum: string; popis: string; suma: number; uhradene: number;
-  uhradeneDna: string | null; pravidelny: number; interval: string | null;
+  uhradeneDna: string | null; pravidelny: number; interval: string | null; datumDo: string | null;
   categoryId: number; c_nazov: string; vehicleId: number | null; v_nazov: string | null; zdroj: string;
 };
 
@@ -59,13 +59,34 @@ export default withErrorHandler(
       const whereSql = where.length ? "WHERE " + where.join(" AND ") : "";
       const rows = await query<ExpenseRow>(SELECT_JOIN + whereSql, params);
 
-      // Rozviň každý výdavok na jeho výskyty v období (dátum výskytu = zobrazený dátum).
+      // Stav jednotlivých výskytov (úhrada per výskyt / vynechané výskyty).
+      const occ = await query<{ expenseId: number; datum: string; uhradene: number; vynechany: number }>(
+        "SELECT `expenseId`, `datum`, `uhradene`, `vynechany` FROM `ExpenseOccurrence`"
+      );
+      const paidMap = new Map<string, boolean>();
+      const skipSet = new Set<string>();
+      for (const o of occ) {
+        const key = `${o.expenseId}|${o.datum.slice(0, 10)}`;
+        if (o.vynechany === 1) skipSet.add(key);
+        paidMap.set(key, o.uhradene === 1);
+      }
+
+      // Rozviň každý výdavok na jeho výskyty v období (dátum výskytu = zobrazený dátum),
+      // vrátane obmedzenia na aktuálny mesiac a koniec predpisu.
       const items = rows.flatMap((e) => {
-        const dates = occurrenceDatesInRange(
-          e.datum, e.pravidelny === 1, e.interval as ExpenseInterval | null, range.from, range.to
+        const dates = visibleOccurrenceDates(
+          { datum: e.datum, pravidelny: e.pravidelny === 1, interval: e.interval as ExpenseInterval | null, datumDo: e.datumDo },
+          range.from, range.to
         );
         const base = mapExpense(e);
-        return dates.map((d) => ({ ...base, datum: d }));
+        return dates
+          .filter((d) => !skipSet.has(`${e.id}|${d}`))
+          .map((d) => ({
+            ...base,
+            zaciatok: base.datum, // pôvodný začiatok predpisu (pre editáciu)
+            datum: d,             // dátum konkrétneho výskytu (zobrazený)
+            uhradene: base.pravidelny ? (paidMap.get(`${e.id}|${d}`) ?? false) : base.uhradene,
+          }));
       });
       items.sort((a, b) => (a.datum < b.datum ? 1 : a.datum > b.datum ? -1 : b.id - a.id));
 
@@ -88,16 +109,27 @@ export default withErrorHandler(
     if (req.method === "POST") {
       const body = parseBody(req, res, createSchema);
       if (!body) return;
+      const datum = body.datum.slice(0, 10);
+      // Pri pravidelnom výdavku sa úhrada eviduje per výskyt (nie na predpise),
+      // aby sa ďalšie mesiace neoznačovali automaticky ako uhradené.
       const r = await execute(
         "INSERT INTO `Expense` (`datum`,`popis`,`suma`,`uhradene`,`uhradeneDna`,`pravidelny`,`interval`,`categoryId`,`zdroj`,`createdById`,`createdAt`,`updatedAt`) " +
           "VALUES (?,?,?,?,?,?,?,?,'MANUAL',?,NOW(3),NOW(3))",
         [
-          body.datum.slice(0, 10), body.popis.trim(), body.suma,
-          body.uhradene ? 1 : 0, body.uhradene ? new Date() : null,
+          datum, body.popis.trim(), body.suma,
+          !body.pravidelny && body.uhradene ? 1 : 0,
+          !body.pravidelny && body.uhradene ? new Date() : null,
           body.pravidelny ? 1 : 0, body.pravidelny ? body.interval ?? "MESACNE" : null,
           body.categoryId, ctx.userId,
         ]
       );
+      // Ak je pravidelný a prvý mesiac je uhradený, ulož to ako výskyt.
+      if (body.pravidelny && body.uhradene) {
+        await execute(
+          "INSERT INTO `ExpenseOccurrence` (`expenseId`,`datum`,`uhradene`,`uhradeneDna`) VALUES (?,?,1,NOW(3))",
+          [r.insertId, datum]
+        );
+      }
       const rows = await query<ExpenseRow>(SELECT_JOIN + "WHERE e.`id` = ?", [r.insertId]);
       return res.status(201).json({ expense: rows.length ? mapExpense(rows[0]) : null });
     }
