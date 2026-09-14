@@ -54,6 +54,10 @@ export default function VydavkyPage() {
   const [list, setList] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
+  const [pocetStran, setPocetStran] = useState(1);
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
@@ -63,12 +67,16 @@ export default function VydavkyPage() {
     apiFetch<{ categories: Category[] }>("/api/portal/expense-categories").then((d) => setCategories(d.categories));
   }, []);
   const load = useCallback(() => {
-    apiFetch<{ expenses: Expense[] }>(`/api/portal/expenses?rok=${rok}`).then((d) => setList(d.expenses));
+    apiFetch<{ expenses: Expense[]; total: number; page: number; pocetStran: number }>(
+      `/api/portal/expenses?obdobie=${obdobie}&rok=${rok}&tyzden=${tyzden}&mesiac=${mesiac}&page=${page}&pageSize=${pageSize}`
+    ).then((d) => { setList(d.expenses); setTotal(d.total); setPocetStran(d.pocetStran); setPage(d.page); });
     apiFetch<Summary>(`/api/portal/expenses/summary?obdobie=${obdobie}&rok=${rok}&tyzden=${tyzden}&mesiac=${mesiac}`)
       .then(setSummary).catch(() => setSummary(null));
-  }, [rok, obdobie, tyzden, mesiac]);
+  }, [rok, obdobie, tyzden, mesiac, page, pageSize]);
   useEffect(() => { loadCats(); }, [loadCats]);
   useEffect(() => { load(); }, [load]);
+  // Pri zmene obdobia / filtra / veľkosti stránky sa vrátime na 1. stranu.
+  useEffect(() => { setPage(1); }, [obdobie, rok, tyzden, mesiac, pageSize]);
 
   const activeCats = categories.filter((c) => c.aktivna);
 
@@ -222,7 +230,7 @@ export default function VydavkyPage() {
           </TableHeader>
           <TableBody>
             {list.map((e) => (
-              <TableRow key={e.id}>
+              <TableRow key={`${e.id}-${e.datum}`}>
                 <TableCell>{formatDate(e.datum)}</TableCell>
                 <TableCell className="font-medium">{e.popis}{e.zdroj !== "MANUAL" && <Badge variant="outline" className="ml-2">z vozidla</Badge>}</TableCell>
                 <TableCell>{e.kategoria}</TableCell>
@@ -240,9 +248,26 @@ export default function VydavkyPage() {
                 </TableCell>
               </TableRow>
             ))}
-            {list.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-6">Žiadne výdavky za rok {rok}.</TableCell></TableRow>}
+            {list.length === 0 && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-6">Žiadne výdavky za obdobie {summary?.obdobie.label ?? ""}.</TableCell></TableRow>}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Stránkovanie + počet záznamov na stranu */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mt-3 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">Na stranu:</span>
+          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+            <SelectTrigger className="w-20 h-8"><SelectValue /></SelectTrigger>
+            <SelectContent>{[10, 25, 50, 100].map((n) => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
+          </Select>
+          <span className="text-muted-foreground">Spolu {total} záznamov</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>← Predošlá</Button>
+          <span className="text-muted-foreground">Strana {page} z {pocetStran}</span>
+          <Button size="sm" variant="outline" disabled={page >= pocetStran} onClick={() => setPage((p) => Math.min(pocetStran, p + 1))}>Ďalšia →</Button>
+        </div>
       </div>
     </PortalLayout>
   );

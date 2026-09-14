@@ -88,6 +88,32 @@ export function occurrencesInRange(
   return count;
 }
 
+/**
+ * Zoznam dátumov (YYYY-MM-DD) výskytov výdavku v období [from, to].
+ * Pre jednorazový vráti [datum] ak spadá do obdobia, inak [].
+ */
+export function occurrenceDatesInRange(
+  datumStr: string,
+  pravidelny: boolean,
+  interval: ExpenseInterval | null,
+  from: Date,
+  to: Date
+): string[] {
+  const start = parseYmd(datumStr);
+  if (!pravidelny || !interval) {
+    return start.getTime() >= from.getTime() && start.getTime() <= to.getTime()
+      ? [start.toISOString().slice(0, 10)]
+      : [];
+  }
+  const out: string[] = [];
+  for (let k = 0; k < 100000; k++) {
+    const d = nthOccurrence(start, interval, k);
+    if (d.getTime() > to.getTime()) break;
+    if (d.getTime() >= from.getTime()) out.push(d.toISOString().slice(0, 10));
+  }
+  return out;
+}
+
 export type ExpenseRowLike = {
   datum: string;
   suma: number;

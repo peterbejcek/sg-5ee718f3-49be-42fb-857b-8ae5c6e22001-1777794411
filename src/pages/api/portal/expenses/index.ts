@@ -3,6 +3,8 @@ import { z } from "zod";
 import { query, execute, toBool, type SqlParam } from "@/lib/db";
 import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
+import { periodRange, isoWeekParts, type Obdobie } from "@/lib/fees";
+import { occurrenceDatesInRange, type ExpenseInterval } from "@/lib/expenses";
 
 const interval = z.enum(["TYZDENNE", "MESACNE", "STVRTROCNE", "POLROCNE", "ROCNE"]);
 
@@ -40,16 +42,47 @@ export function mapExpense(e: ExpenseRow) {
 export default withErrorHandler(
   withAuth(["MAJITEL"], async (req: NextApiRequest, res: NextApiResponse, ctx) => {
     if (req.method === "GET") {
+      // Obdobie: týždeň / mesiac / rok. Zoznam obsahuje výskyty výdavkov
+      // (aj rozvinuté pravidelné) padnúce do zvoleného obdobia, so stránkovaním.
+      const cur = isoWeekParts(new Date());
+      const obdobie = (["tyzden", "mesiac", "rok"].includes(String(req.query.obdobie))
+        ? req.query.obdobie
+        : "rok") as Obdobie;
+      const rok = req.query.rok ? Number(req.query.rok) : cur.isoRok;
+      const tyzden = req.query.tyzden ? Number(req.query.tyzden) : cur.isoTyzden;
+      const mesiac = req.query.mesiac ? Number(req.query.mesiac) : new Date().getUTCMonth() + 1;
+      const range = periodRange(obdobie, { rok, tyzden, mesiac });
+
       const where: string[] = [];
       const params: SqlParam[] = [];
-      if (req.query.rok) { where.push("YEAR(e.`datum`) = ?"); params.push(Number(req.query.rok)); }
       if (req.query.categoryId) { where.push("e.`categoryId` = ?"); params.push(Number(req.query.categoryId)); }
       const whereSql = where.length ? "WHERE " + where.join(" AND ") : "";
-      const rows = await query<ExpenseRow>(
-        SELECT_JOIN + whereSql + " ORDER BY e.`datum` DESC, e.`id` DESC",
-        params
-      );
-      return res.status(200).json({ expenses: rows.map(mapExpense) });
+      const rows = await query<ExpenseRow>(SELECT_JOIN + whereSql, params);
+
+      // Rozviň každý výdavok na jeho výskyty v období (dátum výskytu = zobrazený dátum).
+      const items = rows.flatMap((e) => {
+        const dates = occurrenceDatesInRange(
+          e.datum, e.pravidelny === 1, e.interval as ExpenseInterval | null, range.from, range.to
+        );
+        const base = mapExpense(e);
+        return dates.map((d) => ({ ...base, datum: d }));
+      });
+      items.sort((a, b) => (a.datum < b.datum ? 1 : a.datum > b.datum ? -1 : b.id - a.id));
+
+      const total = items.length;
+      const pageSize = Math.min(Math.max(Number(req.query.pageSize) || 25, 1), 200);
+      const pocetStran = Math.max(1, Math.ceil(total / pageSize));
+      const page = Math.min(Math.max(Number(req.query.page) || 1, 1), pocetStran);
+      const expenses = items.slice((page - 1) * pageSize, page * pageSize);
+
+      return res.status(200).json({
+        expenses,
+        total,
+        page,
+        pageSize,
+        pocetStran,
+        obdobie: { typ: obdobie, rok, tyzden, mesiac, label: range.label },
+      });
     }
 
     if (req.method === "POST") {
