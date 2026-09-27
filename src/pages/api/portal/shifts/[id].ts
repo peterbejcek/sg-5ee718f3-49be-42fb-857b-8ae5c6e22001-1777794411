@@ -5,7 +5,7 @@ import { withAuth } from "@/lib/auth";
 import { parseBody, withErrorHandler } from "@/lib/apiHelpers";
 
 const updateSchema = z.object({
-  typ: z.enum(["DENNA", "NOCNA", "VOLNO"]).optional(),
+  typ: z.enum(["DENNA", "NOCNA", "VOLNO", "H24"]).optional(),
   vehicleId: z.coerce.number().int().nullable().optional(),
   poplatokZaSmenu: z.coerce.number().min(0).nullable().optional(),
   poplatokUhradeny: z.boolean().optional(),

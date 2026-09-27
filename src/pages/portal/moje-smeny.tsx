@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 type Obdobie = "tyzden" | "mesiac";
 type Shift = {
-  id: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO";
+  id: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO" | "H24";
   poplatokZaSmenu: number | null; poplatokUhradeny: boolean;
   vehicle: { nazov: string; spz: string; casVymeny: string | null } | null;
 };

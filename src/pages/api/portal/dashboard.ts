@@ -80,9 +80,9 @@ export default withErrorHandler(
       prenajomNezaplatene: myShiftFees.filter((s) => s.poplatokUhradeny !== 1).reduce((s, x) => s + Number(x.poplatokZaSmenu ?? 0), 0),
       registracia: { poplatok: registrationFee, uhradeny: toBool(me?.registracnyPoplatokUhradeny) },
       vytazenost: {
-        odpracovane: myWorked.length,
-        denne: myWorked.filter((s) => s.typ === "DENNA").length,
-        nocne: myWorked.filter((s) => s.typ === "NOCNA").length,
+        odpracovane: myWorked.reduce((n, s) => n + (s.typ === "H24" ? 2 : 1), 0),
+        denne: myWorked.filter((s) => s.typ === "DENNA" || s.typ === "H24").length,
+        nocne: myWorked.filter((s) => s.typ === "NOCNA" || s.typ === "H24").length,
       },
     };
 
@@ -127,15 +127,22 @@ export default withErrorHandler(
       );
       const worked = shifts.filter((s) => s.typ !== "VOLNO");
       const maxSlots = pocetDni * 2;
+      // 24-hodinová smena (H24) sa počíta ako denná + nočná (2 sloty).
+      const slotyD = (t: string) => (t === "DENNA" || t === "H24" ? 1 : 0);
+      const slotyN = (t: string) => (t === "NOCNA" || t === "H24" ? 1 : 0);
+      const pocetSlotov = (t: string) => slotyD(t) + slotyN(t);
 
       response.vytazenost = {
         vozidla: vehicles.map((v) => {
           const vs = worked.filter((s) => s.vehicleId === v.id);
-          return { vehicleId: v.id, nazov: v.nazov, spz: v.spz, obsadenychSmien: vs.length, maxSmien: maxSlots, vytazenostPct: maxSlots ? Math.round((vs.length / maxSlots) * 100) : 0 };
+          const obsadenych = vs.reduce((n, s) => n + pocetSlotov(s.typ), 0);
+          return { vehicleId: v.id, nazov: v.nazov, spz: v.spz, obsadenychSmien: obsadenych, maxSmien: maxSlots, vytazenostPct: maxSlots ? Math.round((obsadenych / maxSlots) * 100) : 0 };
         }),
         vodici: drivers.map((d) => {
           const ds = worked.filter((s) => s.driverId === d.id);
-          return { driverId: d.id, meno: d.meno, priezvisko: d.priezvisko, volaciZnak: d.volaciZnak, odpracovanychSmien: ds.length, denne: ds.filter((s) => s.typ === "DENNA").length, nocne: ds.filter((s) => s.typ === "NOCNA").length };
+          const denne = ds.reduce((n, s) => n + slotyD(s.typ), 0);
+          const nocne = ds.reduce((n, s) => n + slotyN(s.typ), 0);
+          return { driverId: d.id, meno: d.meno, priezvisko: d.priezvisko, volaciZnak: d.volaciZnak, odpracovanychSmien: denne + nocne, denne, nocne };
         }),
       };
 

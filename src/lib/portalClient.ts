@@ -91,4 +91,5 @@ export const SHIFT_LABELS: Record<string, string> = {
   DENNA: "Denná (D)",
   NOCNA: "Nočná (N)",
   VOLNO: "Voľno (V)",
+  H24: "24 hodín (D+N)",
 };

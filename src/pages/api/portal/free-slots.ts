@@ -59,7 +59,13 @@ export default withErrorHandler(
       );
 
     // Množina obsadených slotov: `${vehicleId}|${datum}|${typ}`.
-    const obsadene = new Set(shifts.map((s) => `${s.vehicleId}|${s.datum.slice(0, 10)}|${s.typ}`));
+    // 24-hodinová smena (H24) obsadí dennú aj nočnú.
+    const obsadene = new Set<string>();
+    for (const s of shifts) {
+      const base = `${s.vehicleId}|${s.datum.slice(0, 10)}`;
+      if (s.typ === "H24") { obsadene.add(`${base}|DENNA`); obsadene.add(`${base}|NOCNA`); }
+      else obsadene.add(`${base}|${s.typ}`);
+    }
 
     const vozidla = vehicles.map((v) => {
       const volneSmeny: { datum: string; typ: "DENNA" | "NOCNA" }[] = [];

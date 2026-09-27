@@ -9,7 +9,7 @@ import { blockCoversSlot } from "@/lib/vehicleBlocks";
 const upsertSchema = z.object({
   driverId: z.coerce.number().int(),
   datum: z.string().min(8), // YYYY-MM-DD
-  typ: z.enum(["DENNA", "NOCNA", "VOLNO"]),
+  typ: z.enum(["DENNA", "NOCNA", "VOLNO", "H24"]),
   vehicleId: z.coerce.number().int().nullable().optional(),
   poplatokZaSmenu: z.coerce.number().min(0).nullable().optional(),
   poznamka: z.string().nullable().optional(),
@@ -77,7 +77,9 @@ export default withErrorHandler(
           "SELECT `typ`, `datumDo`, `rozsah` FROM `VehicleBlock` WHERE `vehicleId` = ? AND ? BETWEEN `datumOd` AND `datumDo`",
           [body.vehicleId, datum]
         );
-        const block = blocks.find((b) => blockCoversSlot(b, datum, body.typ as "DENNA" | "NOCNA"));
+        // 24-hodinová smena zaberá dennú aj nočnú — skontroluj oba sloty.
+        const slots: ("DENNA" | "NOCNA")[] = body.typ === "H24" ? ["DENNA", "NOCNA"] : [body.typ as "DENNA" | "NOCNA"];
+        const block = blocks.find((b) => slots.some((t) => blockCoversSlot(b, datum, t)));
         if (block) {
           return res.status(409).json({
             message: `Vozidlo je v tomto termíne ${block.typ === "SERVIS" ? "v servise" : "nedostupné"} — smenu nemožno priradiť.`,

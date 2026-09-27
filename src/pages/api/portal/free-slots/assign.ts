@@ -55,9 +55,9 @@ export default withErrorHandler(
       });
     }
 
-    // Slot musí byť voľný.
+    // Slot musí byť voľný (obsadí ho aj 24-hodinová smena).
     const occupied = await queryOne<{ id: number }>(
-      "SELECT `id` FROM `Shift` WHERE `vehicleId` = ? AND `datum` = ? AND `typ` = ?",
+      "SELECT `id` FROM `Shift` WHERE `vehicleId` = ? AND `datum` = ? AND `typ` IN (?, 'H24')",
       [body.vehicleId, datum, body.typ]
     );
     if (occupied) return res.status(409).json({ message: "Táto smena je už obsadená." });

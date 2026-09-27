@@ -31,6 +31,7 @@ enum TypSmeny {
   DENNA // D
   NOCNA // N
   VOLNO // V
+  H24 // 24 hod — obsadí dennú aj nočnú
 }
 
 enum ExpenseInterval {

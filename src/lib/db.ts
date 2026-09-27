@@ -11,7 +11,7 @@ import mysql from "mysql2/promise";
 export type SqlParam = string | number | boolean | Date | null | undefined;
 
 export type Role = "MAJITEL" | "DISPECER" | "VODIC";
-export type TypSmeny = "DENNA" | "NOCNA" | "VOLNO";
+export type TypSmeny = "DENNA" | "NOCNA" | "VOLNO" | "H24";
 export type DruhPohonu = "ELEKTRO" | "HYBRID" | "BENZIN" | "DIESEL" | "LPG" | "CNG";
 
 const globalForDb = globalThis as unknown as { etaxiPool?: mysql.Pool };

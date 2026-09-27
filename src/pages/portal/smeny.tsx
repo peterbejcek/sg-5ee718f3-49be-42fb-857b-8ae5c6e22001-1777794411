@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 type Driver = { id: number; meno: string; priezvisko: string; volaciZnak: string | null };
 type Vehicle = { id: number; nazov: string; spz: string; poplatokZaSmenu: number };
 type Shift = {
-  id: number; driverId: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO";
+  id: number; driverId: number; datum: string; typ: "DENNA" | "NOCNA" | "VOLNO" | "H24";
   vehicleId: number | null; poplatokZaSmenu: number | null; poplatokUhradeny: boolean;
 };
 type Rozsah = "CELY_DEN" | "DENNA" | "NOCNA";
@@ -29,9 +29,10 @@ type Block = {
 };
 const BLOK_LABEL: Record<string, string> = { NEDOSTUPNE: "Nedostupné", SERVIS: "Servis" };
 
-const TYP_SKRATKA: Record<string, string> = { DENNA: "D", NOCNA: "N", VOLNO: "V" };
+const TYP_SKRATKA: Record<string, string> = { DENNA: "D", NOCNA: "N", VOLNO: "V", H24: "24" };
 const TYP_COLOR: Record<string, string> = {
   DENNA: "bg-amber-100 text-amber-800", NOCNA: "bg-indigo-100 text-indigo-800", VOLNO: "bg-gray-100 text-gray-500",
+  H24: "bg-emerald-100 text-emerald-800",
 };
 
 function ymd(d: Date) { return d.toISOString().slice(0, 10); }
@@ -74,7 +75,7 @@ export default function SmenyPage() {
     return d?.volaciZnak || d?.priezvisko || "?";
   };
   const vehShift = (vehicleId: number, datum: string, typ: "DENNA" | "NOCNA") =>
-    shifts.find((s) => s.vehicleId === vehicleId && s.datum.slice(0, 10) === datum && s.typ === typ);
+    shifts.find((s) => s.vehicleId === vehicleId && s.datum.slice(0, 10) === datum && (s.typ === typ || s.typ === "H24"));
   const vehBlock = (vehicleId: number, datum: string, typ: "DENNA" | "NOCNA") =>
     blocks.find(
       (b) =>
@@ -502,6 +503,7 @@ function ShiftEditor({
               <SelectContent>
                 <SelectItem value="DENNA">Denná (D)</SelectItem>
                 <SelectItem value="NOCNA">Nočná (N)</SelectItem>
+                <SelectItem value="H24">24 hodín (D+N)</SelectItem>
                 <SelectItem value="VOLNO">Voľno (V)</SelectItem>
               </SelectContent>
             </Select>
