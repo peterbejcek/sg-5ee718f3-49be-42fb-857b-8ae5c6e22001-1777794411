@@ -4,7 +4,8 @@ export const pricingData = {
   note: "Konkrétnu cenu určuje aplikácia vopred",
   basicPricing: [
     { label: "Štartovné", price: "2 €" },
-    { label: "Jazdné", price: "1,10 € / km" },
+    { label: "Štartovné mimo mesto", price: "0,75 € / km" },
+    { label: "Jazdné", price: "1,50 € / km" },
     { label: "Čakanie", price: "20 € / hod" },
     { label: "Minimálne jazdné", price: "6 €" },
     { label: "Znečistenie vozidla", price: "od 50 €" },
