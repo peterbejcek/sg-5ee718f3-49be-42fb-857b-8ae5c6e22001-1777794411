@@ -33,7 +33,7 @@ export const en: Dictionary = {
     pricing: {
       title: "Taxi Price List | E-TAXI Košice | Rates per km and Airport Transfers",
       description:
-        "Current E-TAXI Košice price list ✓ City taxi from €1.10/km ✓ Budapest transfer €250 ✓ Krakow transfer €290 ✓ Vienna transfer €450 ✓ Transparent prices with no hidden fees",
+        "Current E-TAXI Košice price list ✓ City taxi from €1.50/km ✓ Budapest transfer €250 ✓ Krakow transfer €290 ✓ Vienna transfer €450 ✓ Transparent prices with no hidden fees",
       keywords:
         "taxi price list Košice, taxi prices Košice, airport transfer price, taxi price per km Košice, airport transfer cost",
     },
@@ -230,7 +230,8 @@ export const en: Dictionary = {
     transfersTitleShort: "Airport transfers",
     basicPricing: [
       { label: "Base fare", price: "€2" },
-      { label: "Rate per km", price: "€1.10 / km" },
+      { label: "Base fare outside city centre", price: "€0.75 / km" },
+      { label: "Rate per km", price: "€1.50 / km" },
       { label: "Waiting", price: "€20 / hour" },
       { label: "Minimum fare", price: "€6" },
       { label: "Vehicle soiling", price: "from €50" },
@@ -241,7 +242,7 @@ export const en: Dictionary = {
       { label: "DRINK Taxi", price: "2× the fare, min. €20" },
     ],
     transfers: [
-      { destination: "Košice – Košice Airport", price: "from €15" },
+      { destination: "Košice – Košice Airport", price: "from €18" },
       { destination: "Košice – Budapest Airport", price: "€250" },
       { destination: "Košice – Krakow Airport", price: "€290" },
       { destination: "Košice – Bratislava", price: "€390" },
@@ -290,6 +291,54 @@ export const en: Dictionary = {
       title: "Need a taxi right now?",
       text: "Call us or book online",
     },
+  },
+
+  partners: {
+    title: "Our Partners & References",
+    subtitle:
+      "After years of reliable rides, the trust of local businesses in Kosice is our greatest reward. Clicking a partner opens their website in a new window.",
+    partners: [
+      {
+        name: "Boutique Hotel Golden",
+        type: "Hotel **** & apartments",
+        address: "Bajzova 4, 040 01 Kosice, Slovakia",
+        website: "https://www.hotelgolden.sk/",
+        phone: "+421 55 221 11 00",
+        email: "reception@goldenapartments.sk",
+        logo: "/partners/boutique-hotel-golden.png",
+      },
+      {
+        name: "Metro",
+        type: "Wholesale",
+        address: "Americka trieda 2828/1A, 040 13 Kosice, Slovakia",
+        website: "https://www.metro.sk/",
+        phone: "0850 123 223",
+        email: "info@metro.sk",
+        logo: "/partners/metro.png",
+      },
+      {
+        name: "Hotel Dália",
+        type: "Certified eco-hotel",
+        address: "Löfflerova 1, 040 01 Kosice, Slovakia",
+        website: "https://hoteldalia.sk",
+        phone: "+421 55 799 43 21",
+        email: "welcome@hoteldalia.sk",
+        logo: "/partners/hotel-dalia.png",
+      },
+      {
+        name: "MS Art Autokomplex",
+        type: "Auto services & contract repair",
+        address: "Bajzova 4, 040 01 Kosice, Slovakia",
+        website: "https://msart.sk",
+        phone: "+421 915 770 100",
+        email: "info@msart.sk",
+        logo: "/partners/ms-art.png",
+      },
+    ],
+    openInNewTab: "Opens in a new window",
+    visitSite: "Visit website",
+    ctaText: "Is your company looking to ride with us?",
+    ctaButton: "Contact us",
   },
 
   blogSection: {
@@ -396,7 +445,7 @@ export const en: Dictionary = {
         id: "6",
         question: "How is the fare calculated?",
         answer:
-          "The price consists of: a base fee (€3), a per-kilometre rate (€1.20/km in the city, €0.90/km outside the city) and any surcharges (night, weekend, luggage). For an exact estimate, use our online form or give us a call.",
+          "The price consists of: a base fee (€2; €0.75/km outside the city centre), a per-kilometre rate (€1.50/km) and any surcharges (night, weekend, luggage). For an exact estimate, use our online form or give us a call.",
       },
       {
         id: "7",
