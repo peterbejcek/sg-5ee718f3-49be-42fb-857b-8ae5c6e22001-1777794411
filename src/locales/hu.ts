@@ -33,7 +33,7 @@ export const hu: Dictionary = {
     pricing: {
       title: "Taxi árlista | E-TAXI Kassa | Kilométerdíjak és reptéri transzferek",
       description:
-        "Az E-TAXI Kassa aktuális árlistája ✓ Városi taxi 1,10 €/km-től ✓ Budapest transzfer 250 € ✓ Krakkó transzfer 290 € ✓ Bécs transzfer 450 € ✓ Átlátható árak rejtett díjak nélkül",
+        "Az E-TAXI Kassa aktuális árlistája ✓ Városi taxi 1,50 €/km-től ✓ Budapest transzfer 250 € ✓ Krakkó transzfer 290 € ✓ Bécs transzfer 450 € ✓ Átlátható árak rejtett díjak nélkül",
       keywords:
         "taxi árlista Kassa, taxi árak Kassa, reptéri transzfer ára, taxi kilométerdíj Kassa, reptéri transzfer költsége",
     },
@@ -230,7 +230,8 @@ export const hu: Dictionary = {
     transfersTitleShort: "Reptéri transzferek",
     basicPricing: [
       { label: "Alapdíj", price: "2 €" },
-      { label: "Kilométerdíj", price: "1,10 € / km" },
+      { label: "Alapdíj a belvároson kívül", price: "0,75 € / km" },
+      { label: "Kilométerdíj", price: "1,50 € / km" },
       { label: "Várakozás", price: "20 € / óra" },
       { label: "Minimális fuvardíj", price: "6 €" },
       { label: "Jármű beszennyezése", price: "50 €-tól" },
@@ -241,7 +242,7 @@ export const hu: Dictionary = {
       { label: "DRINK Taxi", price: "2× fuvardíj, min. 20 €" },
     ],
     transfers: [
-      { destination: "Kassa – Kassai reptér", price: "15 €-tól" },
+      { destination: "Kassa – Kassai reptér", price: "18 €-tól" },
       { destination: "Kassa – Budapesti reptér", price: "250 €" },
       { destination: "Kassa – Krakkói reptér", price: "290 €" },
       { destination: "Kassa – Pozsony", price: "390 €" },
@@ -290,6 +291,54 @@ export const hu: Dictionary = {
       title: "Most van szüksége taxira?",
       text: "Hívjon minket, vagy foglaljon online",
     },
+  },
+
+  partners: {
+    title: "Közreműködőink és referenciáink",
+    subtitle:
+      "Az évek során szerzett bizalmát a kosice-i vállalkozásoknak — ez a legértékesebb díszünk. A partnerre kattintva a weboldala új ablakban nyílik meg.",
+    partners: [
+      {
+        name: "Boutique Hotel Golden",
+        type: "Hotel **** & apartmanok",
+        address: "Bajzova 4, 040 01 Kosice, Szlovákia",
+        website: "https://www.hotelgolden.sk/",
+        phone: "+421 55 221 11 00",
+        email: "reception@goldenapartments.sk",
+        logo: "/partners/boutique-hotel-golden.png",
+      },
+      {
+        name: "Metro",
+        type: "Nagykereskedelem",
+        address: "Americká trieda 2828/1A, 040 13 Kosice, Szlovákia",
+        website: "https://www.metro.sk/",
+        phone: "0850 123 223",
+        email: "info@metro.sk",
+        logo: "/partners/metro.png",
+      },
+      {
+        name: "Hotel Dália",
+        type: "Tanúsított öko-hotel",
+        address: "Löfflerova 1, 040 01 Kosice, Szlovákia",
+        website: "https://hoteldalia.sk",
+        phone: "+421 55 799 43 21",
+        email: "welcome@hoteldalia.sk",
+        logo: "/partners/hotel-dalia.png",
+      },
+      {
+        name: "MS Art Autokomplex",
+        type: "Autószerviz & szerződéses javítás",
+        address: "Bajzova 4, 040 01 Kosice, Szlovákia",
+        website: "https://msart.sk",
+        phone: "+421 915 770 100",
+        email: "info@msart.sk",
+        logo: "/partners/ms-art.png",
+      },
+    ],
+    openInNewTab: "Új ablakban nyílik",
+    visitSite: "Weboldal megnyitása",
+    ctaText: "Vállalata szeretne velünk utazni?",
+    ctaButton: "Lépjen kapcsolatba velünk",
   },
 
   blogSection: {
@@ -396,7 +445,7 @@ export const hu: Dictionary = {
         id: "6",
         question: "Hogyan számítják ki a fuvardíjat?",
         answer:
-          "Az ár a következőkből áll: alapdíj (3 €), kilométerdíj (1,20 €/km a városban, 0,90 €/km a városon kívül) és esetleges felárak (éjszakai, hétvégi, csomag). Pontos becsléshez használja online űrlapunkat, vagy hívjon minket.",
+          "Az ár a következőkből áll: alapdíj (2 €; a belvároson kívül 0,75 €/km), kilométerdíj (1,50 €/km) és esetleges felárak (éjszakai, hétvégi, csomag). Pontos becsléshez használja online űrlapunkat, vagy hívjon minket.",
       },
       {
         id: "7",

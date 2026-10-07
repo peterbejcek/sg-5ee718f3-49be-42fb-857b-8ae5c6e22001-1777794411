@@ -33,7 +33,7 @@ export const sk = {
     pricing: {
       title: "Cenník taxislužby | E-TAXI Košice | Ceny za km a transfery na letisko",
       description:
-        "Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 1,10€/km ✓ Transfer Budapešť 250€ ✓ Transfer Krakov 290€ ✓ Transfer Viedeň 450€ ✓ Transparentné ceny bez skrytých poplatkov",
+        "Aktuálny cenník E-TAXI Košice ✓ Mestská taxislužba od 1,50€/km ✓ Transfer Budapešť 250€ ✓ Transfer Krakov 290€ ✓ Transfer Viedeň 450€ ✓ Transparentné ceny bez skrytých poplatkov",
       keywords:
         "cenník taxi Košice, ceny taxi Košice, cena transfer letisko, taxi cena za km Košice, letiskový transfer cena",
     },
@@ -230,7 +230,8 @@ export const sk = {
     transfersTitleShort: "Letiskové transfery",
     basicPricing: [
       { label: "Štartovné", price: "2 €" },
-      { label: "Jazdné", price: "1,10 € / km" },
+      { label: "Štartovné mimo centrum mesta", price: "0,75 € / km" },
+      { label: "Jazdné", price: "1,50 € / km" },
       { label: "Čakanie", price: "20 € / hod" },
       { label: "Minimálne jazdné", price: "6 €" },
       { label: "Znečistenie vozidla", price: "od 50 €" },
@@ -241,7 +242,7 @@ export const sk = {
       { label: "DRINK Taxi", price: "2x jazdné, min. 20€" },
     ],
     transfers: [
-      { destination: "Košice - Letisko Košice", price: "od 15 EUR" },
+      { destination: "Košice - Letisko Košice", price: "od 18 EUR" },
       { destination: "Košice - Letisko Budapešť", price: "250 EUR" },
       { destination: "Košice - Letisko Krakov", price: "290 EUR" },
       { destination: "Košice - Bratislava", price: "390 EUR" },
@@ -290,6 +291,54 @@ export const sk = {
       title: "Potrebujete taxík práve teraz?",
       text: "Zavolajte nám alebo objednajte online",
     },
+  },
+
+  partners: {
+    title: "Spolupracujeme a referencie",
+    subtitle:
+      "Za roky spoľahlivých jazd je pre nás najcennejšia dôvera košických firiem. Kliknutím na partnera sa otvorí jeho stránka v novom okne.",
+    partners: [
+      {
+        name: "Boutique Hotel Golden",
+        type: "Hotel **** & apartmány",
+        address: "Bajzova 4, 040 01 Košice",
+        website: "https://www.hotelgolden.sk/",
+        phone: "+421 55 221 11 00",
+        email: "reception@goldenapartments.sk",
+        logo: "/partners/boutique-hotel-golden.png",
+      },
+      {
+        name: "Metro",
+        type: "Velkoobchod",
+        address: "Americká trieda 2828/1A, 040 13 Košice",
+        website: "https://www.metro.sk/",
+        phone: "0850 123 223",
+        email: "info@metro.sk",
+        logo: "/partners/metro.png",
+      },
+      {
+        name: "Hotel Dália",
+        type: "Certifikovaný eco-hotel",
+        address: "Löfflerova 1, 040 01 Košice",
+        website: "https://hoteldalia.sk",
+        phone: "+421 55 799 43 21",
+        email: "welcome@hoteldalia.sk",
+        logo: "/partners/hotel-dalia.png",
+      },
+      {
+        name: "MS Art Autokomplex",
+        type: "Autoslúžby & zmluvný servis",
+        address: "Bajzova 4, 040 01 Košice",
+        website: "https://msart.sk",
+        phone: "+421 915 770 100",
+        email: "info@msart.sk",
+        logo: "/partners/ms-art.png",
+      },
+    ],
+    openInNewTab: "Otvorí sa v novom okne",
+    visitSite: "Navštíviť stránku",
+    ctaText: "Vaša firma chce jazdiť s nami?",
+    ctaButton: "Kontaktujte nás",
   },
 
   blogSection: {
@@ -396,7 +445,7 @@ export const sk = {
         id: "6",
         question: "Ako sa počíta cena jazdy?",
         answer:
-          "Cena sa skladá z: nástupného poplatku (3€), kilometrovej sadzby (1,20€/km v meste, 0,90€/km mimo mesta) a prípadných prirážok (nočná, víkendová, batožina). Pre presný odhad použite náš online formulár alebo zavolajte.",
+          "Cena sa skladá z: nástupného poplatku (2 €, mimo centra mesta 0,75 €/km), kilometrovej sadzby (1,50 €/km) a prípadných prirážok (nočná, víkendová, batožina). Pre presný odhad použite náš online formulár alebo zavolajte.",
       },
       {
         id: "7",

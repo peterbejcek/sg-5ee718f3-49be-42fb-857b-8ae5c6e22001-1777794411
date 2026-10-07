@@ -33,7 +33,7 @@ export const de: Dictionary = {
     pricing: {
       title: "Taxi-Preisliste | E-TAXI Košice | Preise pro km und Flughafentransfers",
       description:
-        "Aktuelle Preisliste von E-TAXI Košice ✓ Stadttaxi ab 1,10 €/km ✓ Transfer Budapest 250 € ✓ Transfer Krakau 290 € ✓ Transfer Wien 450 € ✓ Transparente Preise ohne versteckte Gebühren",
+        "Aktuelle Preisliste von E-TAXI Košice ✓ Stadttaxi ab 1,50 €/km ✓ Transfer Budapest 250 € ✓ Transfer Krakau 290 € ✓ Transfer Wien 450 € ✓ Transparente Preise ohne versteckte Gebühren",
       keywords:
         "Taxi-Preisliste Košice, Taxipreise Košice, Preis Flughafentransfer, Taxipreis pro km Košice, Kosten Flughafentransfer",
     },
@@ -230,7 +230,8 @@ export const de: Dictionary = {
     transfersTitleShort: "Flughafentransfers",
     basicPricing: [
       { label: "Grundgebühr", price: "2 €" },
-      { label: "Fahrpreis pro km", price: "1,10 € / km" },
+      { label: "Grundgebühr außerhalb der Innenstadt", price: "0,75 € / km" },
+      { label: "Fahrpreis pro km", price: "1,50 € / km" },
       { label: "Wartezeit", price: "20 € / Std." },
       { label: "Mindestfahrpreis", price: "6 €" },
       { label: "Verschmutzung des Fahrzeugs", price: "ab 50 €" },
@@ -241,7 +242,7 @@ export const de: Dictionary = {
       { label: "DRINK-Taxi", price: "2× Fahrpreis, min. 20 €" },
     ],
     transfers: [
-      { destination: "Košice – Flughafen Košice", price: "ab 15 €" },
+      { destination: "Košice – Flughafen Košice", price: "ab 18 €" },
       { destination: "Košice – Flughafen Budapest", price: "250 €" },
       { destination: "Košice – Flughafen Krakau", price: "290 €" },
       { destination: "Košice – Bratislava", price: "390 €" },
@@ -290,6 +291,54 @@ export const de: Dictionary = {
       title: "Brauchen Sie jetzt ein Taxi?",
       text: "Rufen Sie uns an oder buchen Sie online",
     },
+  },
+
+  partners: {
+    title: "Unsere Partner und Referenzen",
+    subtitle:
+      "Nach vielen Jahren zuverlässiger Fahrten schätzen wir vor allem das Vertrauen der Unternehmen in Košice. Ein Klick auf einen Partner öffnet dessen Website in einem neuen Fenster.",
+    partners: [
+      {
+        name: "Boutique Hotel Golden",
+        type: "Hotel **** & Apartments",
+        address: "Bajzova 4, 040 01 Košice, Slowakei",
+        website: "https://www.hotelgolden.sk/",
+        phone: "+421 55 221 11 00",
+        email: "reception@goldenapartments.sk",
+        logo: "/partners/boutique-hotel-golden.png",
+      },
+      {
+        name: "Metro",
+        type: "Großhandel",
+        address: "Americká trieda 2828/1A, 040 13 Košice, Slowakei",
+        website: "https://www.metro.sk/",
+        phone: "0850 123 223",
+        email: "info@metro.sk",
+        logo: "/partners/metro.png",
+      },
+      {
+        name: "Hotel Dália",
+        type: "Zertifiziertes Eco-Hotel",
+        address: "Löfflerova 1, 040 01 Košice, Slowakei",
+        website: "https://hoteldalia.sk",
+        phone: "+421 55 799 43 21",
+        email: "welcome@hoteldalia.sk",
+        logo: "/partners/hotel-dalia.png",
+      },
+      {
+        name: "MS Art Autokomplex",
+        type: "Kfz-Service & Vertragsreparaturen",
+        address: "Bajzova 4, 040 01 Košice, Slowakei",
+        website: "https://msart.sk",
+        phone: "+421 915 770 100",
+        email: "info@msart.sk",
+        logo: "/partners/ms-art.png",
+      },
+    ],
+    openInNewTab: "Wird in einem neuen Fenster geöffnet",
+    visitSite: "Website besuchen",
+    ctaText: "Möchte Ihr Unternehmen mit uns fahren?",
+    ctaButton: "Kontaktieren Sie uns",
   },
 
   blogSection: {
@@ -396,7 +445,7 @@ export const de: Dictionary = {
         id: "6",
         question: "Wie wird der Fahrpreis berechnet?",
         answer:
-          "Der Preis setzt sich zusammen aus: einer Grundgebühr (3 €), einem Kilometertarif (1,20 €/km in der Stadt, 0,90 €/km außerhalb) und eventuellen Zuschlägen (nachts, am Wochenende, Gepäck). Für einen genauen Kostenvoranschlag nutzen Sie unser Online-Formular oder rufen Sie uns an.",
+          "Der Preis setzt sich zusammen aus: einer Grundgebühr (2 €; außerhalb der Innenstadt 0,75 €/km), einem Kilometertarif (1,50 €/km) und eventuellen Zuschlägen (nachts, am Wochenende, Gepäck). Für einen genauen Kostenvoranschlag nutzen Sie unser Online-Formular oder rufen Sie uns an.",
       },
       {
         id: "7",

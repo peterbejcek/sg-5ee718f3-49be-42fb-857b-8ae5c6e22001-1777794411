@@ -26,6 +26,10 @@ const AboutSection = dynamic(() => import("@/components/AboutSection").then((mod
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
 
+const PartnersSection = dynamic(() => import("@/components/PartnersSection").then((mod) => ({ default: mod.PartnersSection })), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
+});
+
 const BlogSection = dynamic(() => import("@/components/BlogSection").then((mod) => ({ default: mod.BlogSection })), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-muted/30" />
 });
@@ -287,6 +291,8 @@ export default function Home() {
         <PricingSection />
 
         <AboutSection />
+
+        <PartnersSection />
 
         <BlogSection />
 
